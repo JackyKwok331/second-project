@@ -1,0 +1,3760 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jacky & Tina House</title>
+  <!-- 引入 Google Fonts 现代艺术字体 Bricolage Grotesque -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+  <!-- 引入轻量级五彩纸屑动画库 -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <style>
+    :root {
+      --primary: #21926c;
+      --primary-hover: #041648;
+      --bg-color: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      background: var(--card-bg);
+      max-width: 860px;
+      width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      border: 1px solid var(--border-color);
+      overflow: hidden;
+    }
+
+    /* 顶部标题区：封面 Banner */
+    .header {
+      background: linear-gradient(rgba(15, 23, 42, 0.2), rgba(15, 23, 42, 0.75)),
+                  url("photo_2026-10-21_20-48-01.jpg");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      min-height: 300px; 
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px 28px 16px 28px;
+      text-align: left;
+    }
+
+    .header-title-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      width: 100%;
+      margin-bottom: 6px;
+      gap: 12px;
+    }
+
+    /* 应用 Bricolage Grotesque 字体 */
+    .header-title-row h1 {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 700;
+      font-style: normal;
+      font-variation-settings: "wdth" 100;
+      font-size: 30px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.35);
+    }
+
+    .header p {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.88);
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    /* 右上角：头像与积分胶囊 */
+    .user-points-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 18px;
+      padding: 4px 18px 4px 4px;
+      min-width: 145px;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 999px;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+      user-select: none;
+      align-self: flex-end;
+      margin-bottom: 2px;
+    }
+
+    .avatar-dropdown-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .user-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      object-position: center;
+      border: 2px solid rgba(255, 255, 255, 0.9);
+      background-color: var(--card-bg);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      display: block;
+    }
+
+    .avatar-dropdown-wrapper:hover .user-avatar {
+      transform: scale(1.05);
+      border-color: #facc15;
+    }
+
+    .avatar-dropdown-menu {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.25);
+      padding: 6px;
+      min-width: 125px;
+      display: none;
+      flex-direction: column;
+      gap: 2px;
+      z-index: 100;
+    }
+
+    .avatar-dropdown-menu.active {
+      display: flex;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-main);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--bg-color);
+      color: var(--primary);
+    }
+
+    .dropdown-item-danger:hover {
+      background-color: #fef2f2;
+      color: #ef4444;
+    }
+
+    .dropdown-icon {
+      font-size: 14px;
+    }
+
+    .points-box {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+
+    .points-box:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .points-icon {
+      font-size: 14px;
+    }
+
+    .points-num {
+      font-size: 15px;
+      font-weight: 700;
+      color: #facc15;
+    }
+
+    .points-unit {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.85);
+    }
+
+    .content {
+      padding: 28px;
+    }
+
+    /* 社交媒体图标栏 */
+    .social-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .social-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.25s ease;
+    }
+
+    .social-icon {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+      transition: fill 0.2s ease;
+    }
+
+    .social-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .social-btn.btn-youtube:hover {
+      color: #ff0000;
+      border-color: rgba(255, 0, 0, 0.3);
+      background-color: #fff5f5;
+    }
+
+    .social-btn.btn-facebook:hover {
+      color: #1877f2;
+      border-color: rgba(24, 119, 242, 0.3);
+      background-color: #f0f7ff;
+    }
+
+    .social-btn.btn-instagram:hover {
+      color: #e1306c;
+      border-color: rgba(225, 48, 108, 0.3);
+      background-color: #fdf2f6;
+    }
+
+    .social-btn.btn-x:hover {
+      color: #000000;
+      border-color: rgba(0, 0, 0, 0.3);
+      background-color: #f4f4f5;
+    }
+
+    /* 签到、日历、天气 3 栏网格 */
+    .widget-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .widget-card {
+      background-color: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-height: 210px;
+      text-align: left;
+    }
+
+    .checkin-card {
+      justify-content: space-between;
+    }
+
+    .checkin-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    .checkin-status {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 9px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      user-select: none;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      background-color: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .checkin-card .btn {
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .calendar-card {
+      justify-content: flex-start;
+      gap: 8px;
+    }
+
+    .calendar-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .calendar-weekdays {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .calendar-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+      text-align: center;
+      font-size: 11px;
+    }
+
+    .calendar-day {
+      height: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 6px;
+      color: var(--text-main);
+    }
+
+    .calendar-day.today {
+      background-color: var(--primary);
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .weather-card {
+      justify-content: space-between;
+    }
+
+    .weather-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .weather-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .weather-icon {
+      font-size: 26px;
+      line-height: 1;
+    }
+
+    .weather-content {
+      margin-top: auto;
+    }
+
+    .weather-text {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .weather-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* 游戏中心入口横幅 */
+    .game-entry-card {
+      background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    }
+
+    .game-entry-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .game-entry-desc {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+
+    .btn-game-entry {
+      background: linear-gradient(135deg, #21926c, #10b981);
+      padding: 9px 18px;
+      white-space: nowrap;
+      border-radius: 8px;
+      font-weight: 600;
+    }
+
+    .btn-game-entry:hover {
+      background: linear-gradient(135deg, #1b7a5a, #059669);
+    }
+
+    /* 游戏大厅弹窗 (Modal) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-container {
+      background: var(--card-bg);
+      width: 100%;
+      max-width: 880px;
+      border-radius: 16px;
+      padding: 20px 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.25);
+      max-height: 120vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .modal-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .modal-points-tag {
+      font-size: 12px;
+      color: var(--text-main);
+      background: var(--bg-color);
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .daily-limit-badge {
+      font-size: 11px;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+
+    .modal-close-btn {
+      background: none;
+      border: none;
+      font-size: 26px;
+      color: var(--text-muted);
+      cursor: pointer;
+      line-height: 1;
+      padding: 0 4px;
+    }
+
+    .modal-close-btn:hover {
+      color: var(--text-main);
+    }
+
+    /* 顶部三栏分类导航 Tab */
+    .lobby-tabs-nav {
+      display: flex;
+      gap: 8px;
+      margin: 14px 0 16px;
+      background: var(--bg-color);
+      padding: 4px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+    }
+
+    .lobby-tab-btn {
+      flex: 1;
+      text-align: center;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: transparent;
+      border: none;
+      transition: all 0.2s ease;
+      user-select: none;
+    }
+
+    .lobby-tab-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+    }
+
+    .lobby-tab-btn:hover:not(.active) {
+      color: var(--text-main);
+    }
+
+    /* 建设中占位提示面板 */
+    .coming-soon-panel {
+      display: none;
+      padding: 40px 20px;
+      text-align: center;
+      background: var(--bg-color);
+      border: 1px dashed var(--border-color);
+      border-radius: 12px;
+      margin-top: 8px;
+    }
+
+    .coming-soon-icon {
+      font-size: 42px;
+      margin-bottom: 12px;
+    }
+
+    .coming-soon-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .coming-soon-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* 视图 1：经典娱乐 8 宫格列表 */
+    .game-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .game-item-card {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 14px 10px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .game-item-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .game-item-icon {
+      font-size: 28px;
+      margin-bottom: 4px;
+    }
+
+    .game-item-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+
+    .game-item-cost {
+      font-size: 11px;
+      color: #d97706;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .game-item-play-btn {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 11px;
+      cursor: pointer;
+      width: 100%;
+      font-weight: 600;
+      transition: background-color 0.2s;
+    }
+
+    .game-item-play-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    .game-item-play-btn.btn-pending {
+      background: #94a3b8;
+      cursor: pointer;
+    }
+
+    .game-item-play-btn.btn-pending:hover {
+      background: #64748b;
+    }
+
+    /* 视图 2：游戏游玩舞台共通 */
+    .game-stage-view {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 100%;
+    }
+
+    .game-stage-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .btn-back-lobby {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-back-lobby:hover {
+      background: #e2e8f0;
+    }
+
+    /* 游戏 1：幸运大转盘专项样式 (5分/次) */
+    .wheel-stage-wrapper {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 4px 0;
+    }
+
+    .wheel-outer-box {
+      position: relative;
+      width: 270px;
+      height: 270px;
+      margin-bottom: 16px;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 12px solid transparent;
+      border-right: 12px solid transparent;
+      border-top: 24px solid #ef4444;
+      z-index: 10;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    }
+
+    #wheelCanvas {
+      width: 270px;
+      height: 270px;
+      border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      transition: transform 4s cubic-bezier(0.15, 0.85, 0.15, 1);
+    }
+
+    .wheel-center-pin {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 3px solid #facc15;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .wheel-controls {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .btn-spin {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      padding: 10px 28px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      transition: all 0.2s ease;
+      width: 260px;
+    }
+
+    .btn-spin:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-spin:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .wheel-result-msg {
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      color: var(--text-muted);
+    }
+
+    .btn-toggle-prob {
+      font-size: 12px;
+      color: var(--text-muted);
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      padding: 4px 8px;
+      user-select: none;
+    }
+
+    .btn-toggle-prob:hover {
+      color: var(--primary);
+    }
+
+    .wheel-prob-panel {
+      display: none;
+      width: 100%;
+      max-width: 380px;
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 6px;
+      font-size: 12px;
+      text-align: left;
+    }
+
+    .wheel-prob-panel.active {
+      display: block;
+    }
+
+    .prob-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      color: var(--text-main);
+    }
+
+    .prob-item {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px dashed var(--border-color);
+      padding-bottom: 2px;
+    }
+
+    .prob-item b {
+      color: #f59e0b;
+    }
+
+    /* 游戏 2：摇骰子猜大小专项样式 (可选2/5/8/10分, 豹子12倍) */
+    .dice-stage-wrapper {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 6px 0;
+      gap: 14px;
+    }
+
+    .dice-tray {
+      background: linear-gradient(145deg, #0f172a, #1e293b);
+      border: 3px solid #334155;
+      border-radius: 18px;
+      padding: 22px 30px;
+      display: flex;
+      gap: 18px;
+      box-shadow: inset 0 4px 12px rgba(0, 0, 0, 0.5), 0 8px 20px rgba(0, 0, 0, 0.15);
+      position: relative;
+    }
+
+    .dice-tray.shaking {
+      animation: diceShake 0.12s infinite;
+    }
+
+    @keyframes diceShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      25% { transform: translate(-2px, -1px) rotate(-1deg); }
+      50% { transform: translate(-1px, 2px) rotate(1deg); }
+      75% { transform: translate(2px, 1px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    .dice-cube {
+      width: 54px;
+      height: 54px;
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 6px 0 #cbd5e1, 0 10px 15px rgba(0, 0, 0, 0.3);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      padding: 6px;
+      user-select: none;
+      transition: transform 0.2s ease;
+    }
+
+    .pip {
+      width: 10px;
+      height: 10px;
+      background-color: #1e293b;
+      border-radius: 50%;
+      margin: auto;
+      visibility: hidden;
+    }
+
+    .pip.red {
+      background-color: #ef4444;
+    }
+
+    .chips-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chip-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px dashed #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s, border 0.15s;
+    }
+
+    .chip-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .chip-btn.active {
+      transform: scale(1.15);
+      border: 3px solid #facc15;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.6);
+    }
+
+    .chip-2 { background: #3b82f6; }
+    .chip-5 { background: #10b981; }
+    .chip-8 { background: #f59e0b; }
+    .chip-10 { background: #ef4444; }
+
+    .bet-options-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .bet-box {
+      background: var(--bg-color);
+      border: 2px solid var(--border-color);
+      border-radius: 10px;
+      padding: 10px 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .bet-box:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .bet-box.selected {
+      border-color: #f59e0b;
+      background: rgba(245, 158, 11, 0.08);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.25);
+    }
+
+    .bet-box-name {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .bet-box-desc {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .bet-box-odds {
+      font-size: 11px;
+      font-weight: 700;
+      color: #f59e0b;
+    }
+
+    .btn-roll-dice {
+      background: linear-gradient(135deg, #10b981, #059669);
+      color: #ffffff;
+      border: none;
+      padding: 10px 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      transition: all 0.2s ease;
+      width: 260px;
+    }
+
+    .btn-roll-dice:hover:not(:disabled) {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+    }
+
+    .btn-roll-dice:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .dice-result-msg {
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      color: var(--text-muted);
+    }
+
+    /* 游戏 3：刮刮乐专项样式 (10分/张, Canvas鼠标涂抹+一键刮开) */
+    .scratch-stage-wrapper {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 4px 0;
+      gap: 14px;
+    }
+
+    .scratch-card-container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      overflow: hidden;
+      border: 3px solid #d97706;
+      background: linear-gradient(135deg, #fef3c7, #fde68a);
+      user-select: none;
+    }
+
+    /* 底层奖品网格 */
+    .scratch-grid-under {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(3, 1fr);
+      gap: 6px;
+      padding: 10px;
+    }
+
+    .scratch-cell {
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      border: 1px solid rgba(217, 119, 6, 0.25);
+    }
+
+    .scratch-cell.matched {
+      background: #fef08a;
+      border: 2px solid #eab308;
+      animation: cellPulse 0.8s infinite alternate;
+    }
+
+    @keyframes cellPulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.06); }
+    }
+
+    /* 顶层 Canvas 涂层 */
+    #scratchCanvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 280px;
+      height: 280px;
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .scratch-controls {
+      display: flex;
+      gap: 12px;
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .btn-buy-scratch {
+      flex: 1;
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-buy-scratch:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-buy-scratch:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn-auto-scratch {
+      background: var(--bg-color);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .btn-auto-scratch:hover:not(:disabled) {
+      background: #e2e8f0;
+    }
+
+    .btn-auto-scratch:disabled {
+      color: #94a3b8;
+      cursor: not-allowed;
+    }
+
+    .scratch-result-msg {
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      color: var(--text-muted);
+    }
+
+    /* 游戏 4：水果机专项样式 (可选2/5/10分, 三滚轴拉霸) */
+    .slot-stage-wrapper {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 6px 0;
+      gap: 14px;
+    }
+
+    .slot-machine-box {
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 3px solid #f59e0b;
+      border-radius: 18px;
+      padding: 20px 24px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      width: 100%;
+      max-width: 360px;
+    }
+
+    .slot-reels-container {
+      display: flex;
+      gap: 12px;
+      background: #020617;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid #334155;
+    }
+
+    .slot-reel {
+      width: 74px;
+      height: 96px;
+      background: #ffffff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 44px;
+      box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      user-select: none;
+      transition: transform 0.1s ease;
+    }
+
+    .slot-reel.rolling {
+      animation: reelBlur 0.1s infinite alternate;
+    }
+
+    @keyframes reelBlur {
+      0% { transform: translateY(-4px); filter: blur(1px); }
+      100% { transform: translateY(4px); filter: blur(1px); }
+    }
+
+    .slot-chips-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .slot-chip-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      border: 2px dashed #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      transition: transform 0.15s, border 0.15s;
+    }
+
+    .slot-chip-btn:hover {
+      transform: scale(1.08);
+    }
+
+    .slot-chip-btn.active {
+      transform: scale(1.15);
+      border: 3px solid #facc15;
+      box-shadow: 0 0 12px rgba(250, 204, 21, 0.6);
+    }
+
+    .slot-chip-2 { background: #3b82f6; }
+    .slot-chip-5 { background: #10b981; }
+    .slot-chip-10 { background: #ef4444; }
+
+    .btn-spin-slot {
+      background: linear-gradient(135deg, #f59e0b, #d97706);
+      color: #ffffff;
+      border: none;
+      padding: 10px 32px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+      transition: all 0.2s ease;
+      width: 260px;
+    }
+
+    .btn-spin-slot:hover:not(:disabled) {
+      transform: translateY(-1px);
+    }
+
+    .btn-spin-slot:disabled {
+      background: #94a3b8;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .slot-result-msg {
+      font-size: 13px;
+      font-weight: 600;
+      min-height: 20px;
+      color: var(--text-muted);
+    }
+
+    /* 通用优雅轻提示 Toast */
+    .app-toast {
+      position: fixed;
+      top: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(15, 23, 42, 0.9);
+      color: #ffffff;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 9999;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .app-toast.active {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* 通用弹窗模态框 Custom Dialog */
+    .custom-dialog-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.65);
+      backdrop-filter: blur(4px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      padding: 16px;
+    }
+
+    .custom-dialog-overlay.active {
+      display: flex;
+    }
+
+    .custom-dialog-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 360px;
+      padding: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+      text-align: left;
+    }
+
+    .custom-dialog-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .custom-dialog-msg {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 16px;
+      white-space: pre-wrap;
+    }
+
+    .custom-dialog-input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      outline: none;
+    }
+
+    .custom-dialog-input:focus {
+      border-color: var(--primary);
+    }
+
+    .custom-dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* 响应式适配 */
+    @media (max-width: 768px) {
+      .widget-row {
+        grid-template-columns: 1fr;
+      }
+      .widget-card {
+        min-height: auto;
+      }
+      .game-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .game-entry-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+      }
+      .btn-game-entry {
+        width: 100%;
+      }
+      .bet-options-grid {
+        gap: 6px;
+      }
+      .dice-tray {
+        padding: 16px 20px;
+        gap: 12px;
+      }
+      .dice-cube {
+        width: 44px;
+        height: 44px;
+      }
+    }
+
+    /* 照片展示模块样式 */
+    .photo-card {
+      background-color: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      margin-bottom: 20px;
+    }
+
+    .photo-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+    }
+
+    .photo-wrapper {
+      width: 100%;
+      height: 220px;
+      background-color: #f1f5f9;
+      overflow: hidden;
+    }
+
+.photo-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+
+    .photo-card:hover .photo-img {
+      transform: scale(1.03);
+    }
+
+    .photo-info {
+      padding: 20px;
+      text-align: left;
+    }
+
+    .photo-tag {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(33, 146, 108, 0.1);
+      padding: 3px 8px;
+      border-radius: 6px;
+      margin-bottom: 8px;
+    }
+
+    .photo-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .photo-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    /* 游戏 5：数字轮盘专属样式 */
+.roulette-stage-wrapper { display: none; flex-direction: column; align-items: center; width: 100%; gap: 14px; }
+.roulette-wheel-box { position: relative; width: 270px; height: 270px; margin-bottom: 12px; }
+.roulette-ball-pointer { position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 16px; height: 16px; background: #facc15; border: 2px solid #ffffff; border-radius: 50%; z-index: 10; box-shadow: 0 2px 6px rgba(0,0,0,0.4); }
+#rouletteCanvas { width: 270px; height: 270px; border-radius: 50%; box-shadow: 0 8px 24px rgba(0,0,0,0.18); transition: transform 4.5s cubic-bezier(0.12, 0.88, 0.12, 1); }
+.roulette-center-pin { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 46px; height: 46px; border-radius: 50%; background: #0f172a; border: 3px solid #facc15; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 700; font-size: 16px; z-index: 5; }
+.roulette-board { width: 100%; max-width: 520px; background: #0f172a; padding: 14px; border-radius: 12px; border: 2px solid #334155; display: flex; flex-direction: column; gap: 10px; }
+.roulette-numbers-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.r-btn { padding: 8px 4px; border-radius: 6px; font-weight: 700; font-size: 13px; color: #ffffff; cursor: pointer; border: 2px solid transparent; user-select: none; transition: all 0.15s; }
+.r-btn:hover { transform: scale(1.05); }
+.r-btn.selected { border-color: #facc15; box-shadow: 0 0 10px rgba(250, 204, 21, 0.8); }
+.r-green { background: #15803d; } .r-red { background: #dc2626; } .r-black { background: #1e293b; }
+.roulette-outside-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.r-outside-btn { background: #1e293b; padding: 9px 4px; border-radius: 6px; font-size: 12px; font-weight: 700; color: #ffffff; cursor: pointer; border: 2px solid transparent; transition: all 0.15s; }
+.r-outside-btn.selected { border-color: #facc15; background: #334155; box-shadow: 0 0 10px rgba(250, 204, 21, 0.7); }
+.btn-spin-roulette { background: linear-gradient(135deg, #f59e0b, #d97706); color: #ffffff; border: none; padding: 10px 32px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); transition: all 0.2s ease; width: 260px; }
+.btn-spin-roulette:hover:not(:disabled) { transform: translateY(-1px); }
+.btn-spin-roulette:disabled { background: #94a3b8; cursor: not-allowed; }
+
+/* 游戏 7：成语抢答专属样式 */
+.idiom-stage-wrapper { display: none; flex-direction: column; align-items: center; width: 100%; gap: 14px; }
+.idiom-rule-table { width: 100%; max-width: 500px; border-collapse: collapse; font-size: 12px; margin-bottom: 8px; background: var(--bg-color); border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); }
+.idiom-rule-table th, .idiom-rule-table td { padding: 7px 10px; border: 1px solid var(--border-color); text-align: center; }
+.idiom-rule-table th { background: #f1f5f9; font-weight: 700; color: var(--text-main); }
+.idiom-quiz-box { width: 100%; max-width: 500px; background: var(--bg-color); border: 2px solid var(--border-color); border-radius: 14px; padding: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.idiom-progress-bar-wrap { width: 100%; height: 6px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+.idiom-timer-bar { width: 100%; height: 100%; background: var(--primary); transition: width 1s linear; }
+.idiom-expression-display { font-size: 26px; font-weight: 700; letter-spacing: 4px; color: var(--text-main); background: var(--card-bg); padding: 12px 24px; border-radius: 10px; border: 1px solid var(--border-color); }
+.idiom-options-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; width: 100%; }
+.idiom-opt-btn { background: var(--card-bg); border: 2px solid var(--border-color); padding: 12px; border-radius: 10px; font-size: 16px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: all 0.15s ease; }
+.idiom-opt-btn:hover { border-color: var(--primary); background: #f0fdf4; }
+.idiom-opt-btn.correct { background: #22c55e !important; color: #ffffff !important; border-color: #16a34a !important; }
+.idiom-opt-btn.wrong { background: #ef4444 !important; color: #ffffff !important; border-color: #dc2626 !important; }
+/* ================= 游戏 5：数字轮盘 (0~12 迷你欧盘) 样式 ================= */
+    .roulette-stage-wrapper {
+      width: 100%;
+      max-width: 720px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(145deg, #064e3b, #022c22);
+      border: 3px solid #f59e0b;
+      border-radius: 16px;
+      padding: 20px;
+      color: #ffffff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+      margin-bottom: 12px;
+    }
+
+    .roulette-top-bar {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .roulette-wheel-display {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(0, 0, 0, 0.45);
+      padding: 10px 20px;
+      border-radius: 999px;
+      border: 2px solid rgba(250, 204, 21, 0.5);
+    }
+
+    .roulette-ball-num {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: #10b981;
+      color: #ffffff;
+      font-size: 24px;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 3px 6px rgba(255,255,255,0.4), 0 4px 10px rgba(0,0,0,0.4);
+      border: 3px solid #ffffff;
+      transition: transform 0.15s ease, background-color 0.2s;
+    }
+
+    .roulette-ball-num.rolling {
+      animation: pulseBall 0.25s infinite alternate;
+    }
+
+    @keyframes pulseBall {
+      from { transform: scale(0.92) rotate(-8deg); }
+      to { transform: scale(1.08) rotate(8deg); }
+    }
+
+    .roulette-bet-select-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .roulette-chip-btn {
+      padding: 5px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .roulette-chip-btn.active {
+      background: #facc15;
+      color: #0f172a;
+      border-color: #facc15;
+      box-shadow: 0 2px 8px rgba(250, 204, 21, 0.4);
+    }
+
+    .roulette-table-grid {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .roulette-numbers-row {
+      display: grid;
+      grid-template-columns: 60px repeat(6, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .r-cell {
+      padding: 12px 6px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 800;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      transition: all 0.15s ease;
+      user-select: none;
+      position: relative;
+    }
+
+    .r-cell:hover {
+      transform: translateY(-2px);
+      border-color: #facc15;
+    }
+
+    .r-cell.selected {
+      border-color: #facc15;
+      box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.45);
+      transform: translateY(-2px);
+    }
+
+    .r-cell.r-green {
+      background: #10b981;
+      grid-row: span 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    .r-cell.r-red { background: #dc2626; }
+    .r-cell.r-black { background: #1e293b; }
+
+    .roulette-outside-row {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+      width: 100%;
+    }
+
+    .r-out-btn {
+      padding: 10px 4px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      transition: all 0.15s;
+    }
+
+    .r-out-btn.out-red { background: rgba(220, 38, 38, 0.7); }
+    .r-out-btn.out-black { background: rgba(30, 41, 59, 0.85); }
+
+    .r-out-btn.selected {
+      border-color: #facc15;
+      box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.45);
+      background: rgba(250, 204, 21, 0.25);
+    }
+
+    /* ================= 游戏 6：Show Hand (五张梭哈) 样式 ================= */
+    .showhand-stage-wrapper {
+      width: 100%;
+      max-width: 720px;
+      background: radial-gradient(circle at center, #0f5132 0%, #052c1e 100%);
+      border: 3px solid #d97706;
+      border-radius: 16px;
+      padding: 20px;
+      color: #ffffff;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+      margin-bottom: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .poker-hud-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .poker-hand-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-height: 118px;
+      padding: 8px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .poker-zone-label {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .poker-rank-badge {
+      background: #f59e0b;
+      color: #0f172a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .poker-cards-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .playing-card {
+      width: 64px;
+      height: 92px;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 6px;
+      color: #0f172a;
+      font-weight: 800;
+      user-select: none;
+      position: relative;
+      border: 2px solid #e2e8f0;
+      transition: transform 0.2s ease;
+    }
+
+    .playing-card.red-suit { color: #dc2626; }
+    .playing-card.black-suit { color: #0f172a; }
+
+    .playing-card.card-hidden {
+      background: repeating-linear-gradient(
+        45deg,
+        #1e3a8a,
+        #1e3a8a 8px,
+        #1d4ed8 8px,
+        #1d4ed8 16px
+      );
+      border-color: #93c5fd;
+      color: transparent;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .playing-card.card-hidden::after {
+      content: "🎴";
+      font-size: 26px;
+      color: #ffffff;
+    }
+
+    .card-corner-top {
+      font-size: 13px;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .card-center-suit {
+      font-size: 26px;
+      text-align: center;
+      line-height: 1;
+    }
+
+    .card-corner-bottom {
+      font-size: 12px;
+      line-height: 1;
+      text-align: right;
+      opacity: 0.75;
+    }
+
+    .poker-actions-bar {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <div class="header-title-row">
+        <h1>Jacky & Tina House</h1>
+
+        <!-- 右上角：头像与积分胶囊 -->
+        <div class="user-points-badge">
+          <div class="avatar-dropdown-wrapper" id="avatarDropdownWrapper">
+            <img 
+              src="https://api.dicebear.com/7.x/bottts/svg?seed=Jacky" 
+              alt="头像" 
+              class="user-avatar" 
+              id="userAvatar"
+              title="点击展开头像菜单"
+            >
+            <div class="avatar-dropdown-menu" id="avatarDropdownMenu">
+              <div class="dropdown-item" id="changeAvatarBtn">
+                <span class="dropdown-icon">📷</span> 修改头像
+              </div>
+              <div class="dropdown-item dropdown-item-danger" id="resetAvatarBtn">
+                <span class="dropdown-icon">🔄</span> 恢复默认
+              </div>
+            </div>
+          </div>
+
+          <input type="file" id="avatarFileInput" accept="image/*" style="display: none;">
+
+          <div class="points-box" id="pointsBox" title="点击管理积分（管理员测试）">
+            <span class="points-icon">🪙</span>
+            <span class="points-num" id="pointsVal">0</span>
+            <span class="points-unit">分</span>
+          </div>
+        </div>
+      </div>
+      <p>记录生活中的美好瞬间与日常灵感</p>
+    </div>
+
+    <div class="content">
+      <div class="social-bar">
+        <a href="https://www.youtube.com/@jackyguuu" target="_blank" rel="noopener noreferrer" class="social-btn btn-youtube" title="YouTube">
+          <svg viewBox="0 0 24 24" class="social-icon"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
+        </a>
+
+        <a href="https://www.facebook.com/profile.php?id=100005342419384" target="_blank" rel="noopener noreferrer" class="social-btn btn-facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" class="social-icon"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+        </a>
+
+        <a href="https://www.instagram.com/eason.gu/" target="_blank" rel="noopener noreferrer" class="social-btn btn-instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" class="social-icon"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+        </a>
+
+        <a href="https://x.com/jacky841" target="_blank" rel="noopener noreferrer" class="social-btn btn-x" title="X (Twitter)">
+          <svg viewBox="0 0 24 24" class="social-icon"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+        </a>
+      </div>
+
+      <!-- 签到、日历、天气 3 栏网格 -->
+      <div class="widget-row">
+        <div class="widget-card checkin-card">
+          <div class="card-info">
+            <div class="checkin-title" id="checkinTitle" title="管理员提示：双击可撤销今日签到">📅 今日签到</div>
+            <div class="checkin-status" id="checkinStatus">今日尚未签到（随机 100-200 积分）</div>
+          </div>
+          <button class="btn" id="checkinBtn">立即签到</button>
+        </div>
+
+        <div class="widget-card calendar-card">
+          <div class="calendar-header">
+            <span id="calendarTitle">📅 本月日历</span>
+          </div>
+          <div class="calendar-weekdays">
+            <span>一</span><span>二</span><span>三</span><span>四</span><span>五</span><span>六</span><span>日</span>
+          </div>
+          <div class="calendar-days" id="calendarDays"></div>
+        </div>
+
+        <div class="widget-card weather-card" id="weatherBar">
+          <div class="weather-header">
+            <span class="weather-label">实时天气</span>
+            <span class="weather-icon" id="weatherIcon">⏳</span>
+          </div>
+          <div class="weather-content">
+            <div class="weather-text" id="weatherText">正在获取天气...</div>
+            <div class="weather-sub" id="weatherSub">自动定位中</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 游戏中心入口横幅 -->
+      <div class="game-entry-card">
+        <div class="game-entry-info">
+          <div class="game-entry-title">🎮 休闲游戏厅</div>
+          <div class="game-entry-desc">纯鼠标点击畅玩趣味小游戏，赢取海量积分与神秘奖励！</div>
+        </div>
+        <button class="btn btn-game-entry" id="openGameModalBtn">游戏大厅➔</button>
+      </div>
+
+      <!-- 照片展示模块 -->
+      <div class="photo-card">
+        <div class="photo-wrapper">
+          <img src="photo_2026-10-21_19-49-36.jpg" alt="我的精选照片" class="photo-img">
+        </div>
+        <div class="photo-info">
+          <div class="photo-tag">精选瞬间</div>
+          <div class="photo-title">温暖角落 · 温润日常</div>
+          <div class="photo-desc">生活不在别处，当下即是全部。保留一份松弛感，用心感受生活细节。</div>
+        </div>
+      </div>
+
+      <div class="photo-card">
+        <div class="photo-wrapper">
+          <img src="photo_2026-10-21_19-49-12.jpg" alt="第二张精选照片" class="photo-img">
+        </div>
+        <div class="photo-info">
+          <div class="photo-tag">旅行足迹</div>
+          <div class="photo-title">山野漫游 · 拥抱自然</div>
+          <div class="photo-desc">步履不停，穿行于山川与林海之间。记录每一寸风景，收藏每一种心情。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 游戏大厅弹窗浮层 -->
+  <div class="modal-overlay" id="gameModal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <div class="modal-title">
+          <span>🎮 游戏中心</span>
+          <span class="modal-points-tag">当前积分: <b id="modalUserPoints">0</b> 🪙</span>
+          <span class="daily-limit-badge" id="dailyLimitBadge">今日已投: 0 / 200 分</span>
+        </div>
+        <button class="modal-close-btn" id="closeGameModalBtn" title="点击关闭">&times;</button>
+      </div>
+
+      <!-- 顶部三栏分类导航 Tab -->
+      <div class="lobby-tabs-nav" id="lobbyTabsNav">
+        <button class="lobby-tab-btn active" data-tab="classic">🎪 经典娱乐</button>
+        <button class="lobby-tab-btn" data-tab="stock">📈 股市大富翁</button>
+        <button class="lobby-tab-btn" data-tab="sports">⚽ 体育博彩</button>
+      </div>
+
+      <!-- 视图 1：经典娱乐 8 宫格游戏列表 -->
+      <div class="game-grid" id="classicLobbyView">
+        <!-- 游戏 1：幸运大转盘 (原有保留) -->
+        <div class="game-item-card" data-game="wheel">
+          <div>
+            <div class="game-item-icon">🎡</div>
+            <div class="game-item-name">幸运大转盘</div>
+            <div class="game-item-cost">单次 5 积分</div>
+          </div>
+          <button class="game-item-play-btn">立即游玩</button>
+        </div>
+
+        <!-- 游戏 2：摇骰子猜大小 (原有保留) -->
+        <div class="game-item-card" data-game="dice">
+          <div>
+            <div class="game-item-icon">🎲</div>
+            <div class="game-item-name">摇骰子猜大小</div>
+            <div class="game-item-cost">单次 2~10 积分</div>
+          </div>
+          <button class="game-item-play-btn">立即游玩</button>
+        </div>
+
+        <!-- 游戏 3：刮刮乐 (本次新增交付) -->
+        <div class="game-item-card" data-game="scratch">
+          <div>
+            <div class="game-item-icon">🎫</div>
+            <div class="game-item-name">刮刮乐</div>
+            <div class="game-item-cost">单次 10 积分</div>
+          </div>
+          <button class="game-item-play-btn">立即游玩</button>
+        </div>
+
+        <!-- 游戏 4：水果机 (本次新增交付) -->
+        <div class="game-item-card" data-game="slot">
+          <div>
+            <div class="game-item-icon">🎰</div>
+            <div class="game-item-name">水果机</div>
+            <div class="game-item-cost">单次 2~10 积分</div>
+          </div>
+          <button class="game-item-play-btn">立即游玩</button>
+        </div>
+
+        <!-- 游戏 5：数字轮盘 (规划就绪) -->
+        <div class="game-item-card" data-game="roulette">
+          <div>
+            <div class="game-item-icon">🎯</div>
+            <div class="game-item-name">数字轮盘</div>
+            <div class="game-item-cost">单次 2~10 积分</div>
+          </div>
+          <button class="game-item-play-btn btn-pending">立即游玩</button>
+        </div>
+
+        <!-- 游戏 6：Show Hand (规划就绪) -->
+        <div class="game-item-card" data-game="showhand">
+          <div>
+            <div class="game-item-icon">♠️</div>
+            <div class="game-item-name">Show Hand</div>
+            <div class="game-item-cost">底注 10 积分</div>
+          </div>
+          <button class="game-item-play-btn btn-pending">立即游玩</button>
+        </div>
+
+        <!-- 游戏 7：成语抢答 (规划就绪) -->
+        <div class="game-item-card" data-game="idiom">
+          <div>
+            <div class="game-item-icon">📜</div>
+            <div class="game-item-name">成语抢答</div>
+            <div class="game-item-cost">门票 5 分 / 局</div>
+          </div>
+          <button class="game-item-play-btn btn-pending">敬请期待</button>
+        </div>
+
+        <!-- 游戏 8：21点 (规划就绪) -->
+        <div class="game-item-card" data-game="blackjack">
+          <div>
+            <div class="game-item-icon">🃏</div>
+            <div class="game-item-name">21点</div>
+            <div class="game-item-cost">单次 2~8 积分</div>
+          </div>
+          <button class="game-item-play-btn btn-pending">敬请期待</button>
+        </div>
+      </div>
+
+      <!-- 股市大富翁 建设中提示 -->
+      <div class="coming-soon-panel" id="stockComingSoonPanel">
+        <div class="coming-soon-icon">📈</div>
+        <div class="coming-soon-title">股市大富翁板块</div>
+        <div class="coming-soon-desc">尚在设计中，即将开放，请耐心等待！</div>
+      </div>
+
+      <!-- 体育博彩 建设中提示 -->
+      <div class="coming-soon-panel" id="sportsComingSoonPanel">
+        <div class="coming-soon-icon">⚽</div>
+        <div class="coming-soon-title">体育博彩板块</div>
+        <div class="coming-soon-desc">尚在设计中，即将开放，请耐心等待！</div>
+      </div>
+
+      <!-- 视图 2：游戏游玩舞台 -->
+      <div class="game-stage-view" id="gameStageView">
+        <div class="game-stage-header">
+          <button class="btn-back-lobby" id="backToLobbyBtn">‹ 返回大厅</button>
+          <span id="currentStageGameName" style="font-weight: 700; font-size: 14px;"></span>
+        </div>
+        
+        <!-- 游戏 1：大转盘舞台 (单次5分) -->
+        <div class="wheel-stage-wrapper" id="wheelGameWrapper">
+          <div class="wheel-outer-box">
+            <div class="wheel-pointer"></div>
+            <canvas id="wheelCanvas" width="540" height="540"></canvas>
+            <div class="wheel-center-pin">🎁</div>
+          </div>
+          <div class="wheel-controls">
+            <button class="btn-spin" id="spinWheelBtn">🎯 开始抽奖 (消耗 5 积分)</button>
+            <div class="wheel-result-msg" id="wheelResultMsg">点击按钮旋转，祝你好运！</div>
+            
+            <button class="btn-toggle-prob" id="toggleProbBtn">📊 点击查看各档位真实概率</button>
+            <div class="wheel-prob-panel" id="probPanel">
+              <div class="prob-grid" id="probGrid"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 游戏 2：摇骰子猜大小舞台 (可选2/5/8/10分, 豹子12倍) -->
+        <div class="dice-stage-wrapper" id="diceGameWrapper">
+          <div class="dice-tray" id="diceTray">
+            <div class="dice-cube" id="dice1"></div>
+            <div class="dice-cube" id="dice2"></div>
+            <div class="dice-cube" id="dice3"></div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: -4px;">① 鼠标点击选择下注筹码：</div>
+          <div class="chips-row">
+            <div class="chip-btn chip-2 active" data-chip="2">2</div>
+            <div class="chip-btn chip-5" data-chip="5">5</div>
+            <div class="chip-btn chip-8" data-chip="8">8</div>
+            <div class="chip-btn chip-10" data-chip="10">10</div>
+          </div>
+
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: -4px;">② 鼠标点击选择押注目标：</div>
+          <div class="bet-options-grid">
+            <div class="bet-box selected" data-target="small">
+              <div class="bet-box-name">押小</div>
+              <div class="bet-box-desc">总点数 4 ~ 10</div>
+              <div class="bet-box-odds">1 : 1</div>
+            </div>
+            <div class="bet-box" data-target="triple">
+              <div class="bet-box-name">押豹子</div>
+              <div class="bet-box-desc">三同号 (通杀大小)</div>
+              <div class="bet-box-odds">1 : 12</div>
+            </div>
+            <div class="bet-box" data-target="big">
+              <div class="bet-box-name">押大</div>
+              <div class="bet-box-desc">总点数 11 ~ 17</div>
+              <div class="bet-box-odds">1 : 1</div>
+            </div>
+          </div>
+
+          <button class="btn-roll-dice" id="rollDiceBtn">🎲 开始摇骰 (下注 2 积分)</button>
+          <div class="dice-result-msg" id="diceResultMsg">请选择筹码与目标后开摇！</div>
+        </div>
+
+        <!-- 游戏 3：刮刮乐舞台 (10分/张) -->
+        <div class="scratch-stage-wrapper" id="scratchGameWrapper">
+          <div class="scratch-card-container">
+            <div class="scratch-grid-under" id="scratchGridUnder">
+              <!-- 九宫格奖项图标动态填充 -->
+            </div>
+            <canvas id="scratchCanvas" width="280" height="280"></canvas>
+          </div>
+
+          <div class="scratch-controls">
+            <button class="btn-buy-scratch" id="buyScratchBtn">🎫 购买新卡 (10 积分)</button>
+            <button class="btn-auto-scratch" id="autoScratchBtn" disabled>✨ 一键刮开</button>
+          </div>
+          <div class="scratch-result-msg" id="scratchResultMsg">购买新卡后，可用鼠标涂抹刮开或点一键刮开！</div>
+        </div>
+
+        <!-- 游戏 4：水果机舞台 (可选2/5/10分) -->
+        <div class="slot-stage-wrapper" id="slotGameWrapper">
+          <div class="slot-machine-box">
+            <div class="slot-reels-container">
+              <div class="slot-reel" id="slotReel1">7️⃣</div>
+              <div class="slot-reel" id="slotReel2">🍒</div>
+              <div class="slot-reel" id="slotReel3">💎</div>
+            </div>
+
+            <div style="font-size: 12px; color: #94a3b8;">选择单次拉杆筹码：</div>
+            <div class="slot-chips-row">
+              <div class="slot-chip-btn slot-chip-2 active" data-chip="2">2</div>
+              <div class="slot-chip-btn slot-chip-5" data-chip="5">5</div>
+              <div class="slot-chip-btn slot-chip-10" data-chip="10">10</div>
+            </div>
+
+            <button class="btn-spin-slot" id="spinSlotBtn">🕹️ 拉杆启动 (消耗 2 积分)</button>
+          </div>
+          <div class="slot-result-msg" id="slotResultMsg">三个相同大奖翻倍，两个相同保底盈利 50%！</div>
+        </div>
+
+        <!-- 游戏 5：数字轮盘舞台 -->
+        <div class="roulette-stage-wrapper" id="rouletteGameWrapper">
+          <div class="roulette-wheel-box">
+            <div class="roulette-ball-pointer"></div>
+            <canvas id="rouletteCanvas" width="540" height="540"></canvas>
+            <div class="roulette-center-pin" id="rouletteCenterPin">🎯</div>
+          </div>
+          <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 2px;">① 选择下注筹码：</div>
+          <div class="chips-row">
+            <div class="chip-btn chip-2 active" data-rchip="2">2</div>
+            <div class="chip-btn chip-5" data-rchip="5">5</div>
+            <div class="chip-btn chip-8" data-rchip="8">8</div>
+            <div class="chip-btn chip-10" data-rchip="10">10</div>
+          </div>
+          <div class="roulette-board">
+            <div style="font-size: 11px; color: #94a3b8; text-align: left;">② 点击选择下注区域（单号 1:10 赔率，红黑/单双/大小 1:1）：</div>
+            <div class="roulette-numbers-row" id="rouletteNumbersRow"></div>
+            <div class="roulette-outside-row">
+              <button class="r-outside-btn selected" data-rtarget="red">🔴 押红 (1:1)</button>
+              <button class="r-outside-btn" data-rtarget="black">⚫ 押黑 (1:1)</button>
+              <button class="r-outside-btn" data-rtarget="odd">🔢 押单数 (1:1)</button>
+              <button class="r-outside-btn" data-rtarget="even">🔢 押双数 (1:1)</button>
+            </div>
+            <div class="roulette-outside-row" style="grid-template-columns: 1fr 1fr;">
+              <button class="r-outside-btn" data-rtarget="low">🔽 押小 (1~6)</button>
+              <button class="r-outside-btn" data-rtarget="high">🔼 押大 (7~12)</button>
+            </div>
+          </div>
+          <button class="btn-spin-roulette" id="spinRouletteBtn">🎯 旋转轮盘 (押红 · 下注 2 积分)</button>
+          <div id="rouletteResultMsg" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">买定离手，点击按钮开转！</div>
+        </div>
+
+        <!-- 游戏 7：成语抢答舞台 -->
+        <div class="idiom-stage-wrapper" id="idiomGameWrapper">
+          <div style="display: flex; justify-content: space-between; width: 100%; max-width: 500px; font-size: 12px; font-weight: 700; color: var(--text-muted);">
+            <span id="idiomDailyRounds">今日剩余局数: 5 / 5 局</span>
+            <span id="idiomStreakBadge" style="color: #d97706;">满分连胜: 0 次 (+0分)</span>
+          </div>
+          <table class="idiom-rule-table">
+            <thead>
+              <tr><th>答对题数</th><th>结算积分</th><th>扣除5分门票【净损益】</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0 ~ 3 题</td><td>+0 分</td><td style="color:#ef4444;">-5 分（净亏）</td></tr>
+              <tr><td>4 ~ 5 题</td><td>+5 分</td><td style="color:#64748b;">±0 分（保本）</td></tr>
+              <tr><td>6 ~ 7 题</td><td>+8 分</td><td style="color:#16a34a;">+3 分（净赚 3 分）</td></tr>
+              <tr><td>8 ~ 9 题</td><td>+10 分</td><td style="color:#16a34a;">+5 分（净赚 5 分）</td></tr>
+              <tr><td>10 题 (全对)</td><td>+13 分</td><td style="color:#d97706; font-weight:700;">+8 分（连胜再+2分）</td></tr>
+            </tbody>
+          </table>
+          <div id="idiomLobbyBox" style="width: 100%; max-width: 500px; text-align: center;">
+            <button class="btn" style="padding: 12px 36px; font-size: 15px; font-weight: 700;" id="startIdiomBtn">📜 开始挑战 (门票 5 积分)</button>
+          </div>
+          <div class="idiom-quiz-box" id="idiomQuizBox" style="display: none;">
+            <div style="width: 100%; display: flex; justify-content: space-between; font-size: 13px; font-weight: 700;">
+              <span id="idiomCurrentIndex">第 1 / 10 题</span>
+              <span id="idiomTimerText" style="color: #ef4444;">8 秒</span>
+            </div>
+            <div class="idiom-progress-bar-wrap"><div class="idiom-timer-bar" id="idiomTimerBar"></div></div>
+            <div class="idiom-expression-display" id="idiomExpression">画 龙 点 【？】</div>
+            <div id="idiomExplanation" style="font-size: 12px; color: var(--text-muted); min-height: 18px;">比喻在关键处点缀，使内容更加生动有力。</div>
+            <div class="idiom-options-grid" id="idiomOptionsGrid"></div>
+          </div>
+          <div id="idiomResultMsg" style="font-size: 13px; font-weight: 600; color: var(--text-muted);">门票 5 积分，考验你的成语底蕴！</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 轻提示 Toast 容器 -->
+  <div class="app-toast" id="appToast"></div>
+
+  <!-- 自定义模态对话框 Custom Dialog -->
+  <div class="custom-dialog-overlay" id="customDialogOverlay">
+    <div class="custom-dialog-box">
+      <div class="custom-dialog-title" id="customDialogTitle">提示</div>
+      <div class="custom-dialog-msg" id="customDialogMsg">内容信息</div>
+      <input type="text" class="custom-dialog-input" id="customDialogInput" style="display: none;">
+      <div class="custom-dialog-actions">
+        <button class="btn" style="background: #94a3b8;" id="customDialogCancelBtn">取消</button>
+        <button class="btn" id="customDialogConfirmBtn">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ================= 0. 全局元素与积分 & 防沉迷统一管理 =================
+    const DEFAULT_INITIAL_POINTS = 500;
+    const CHECKIN_MIN_POINTS = 100;
+    const CHECKIN_MAX_POINTS = 200;
+    const DAILY_MAX_INVEST = 200; // 每日投入上限 200 积分
+
+    const pointsValEl = document.getElementById('pointsVal');
+    const pointsBox = document.getElementById('pointsBox');
+    const modalUserPoints = document.getElementById('modalUserPoints');
+    const dailyLimitBadge = document.getElementById('dailyLimitBadge');
+    const gameModal = document.getElementById('gameModal');
+    const openGameModalBtn = document.getElementById('openGameModalBtn');
+    const closeGameModalBtn = document.getElementById('closeGameModalBtn');
+
+    const lobbyTabsNav = document.getElementById('lobbyTabsNav');
+    const classicLobbyView = document.getElementById('classicLobbyView');
+    const stockComingSoonPanel = document.getElementById('stockComingSoonPanel');
+    const sportsComingSoonPanel = document.getElementById('sportsComingSoonPanel');
+
+    const gameStageView = document.getElementById('gameStageView');
+    const backToLobbyBtn = document.getElementById('backToLobbyBtn');
+    const currentStageGameName = document.getElementById('currentStageGameName');
+
+    const wheelGameWrapper = document.getElementById('wheelGameWrapper');
+    const diceGameWrapper = document.getElementById('diceGameWrapper');
+    const scratchGameWrapper = document.getElementById('scratchGameWrapper');
+    const slotGameWrapper = document.getElementById('slotGameWrapper');
+
+    const avatarDropdownWrapper = document.getElementById('avatarDropdownWrapper');
+    const avatarDropdownMenu = document.getElementById('avatarDropdownMenu');
+    const userAvatar = document.getElementById('userAvatar');
+    const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+    const resetAvatarBtn = document.getElementById('resetAvatarBtn');
+    const avatarFileInput = document.getElementById('avatarFileInput');
+    const defaultAvatarUrl = 'https://api.dicebear.com/7.x/bottts/svg?seed=Jacky';
+
+    // 优雅轻提示与自定义弹窗工具函数
+    const appToast = document.getElementById('appToast');
+    let toastTimer = null;
+    function showToast(msg) {
+      if (!appToast) return;
+      appToast.textContent = msg;
+      appToast.classList.add('active');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        appToast.classList.remove('active');
+      }, 2500);
+    }
+
+    const customDialogOverlay = document.getElementById('customDialogOverlay');
+    const customDialogTitle = document.getElementById('customDialogTitle');
+    const customDialogMsg = document.getElementById('customDialogMsg');
+    const customDialogInput = document.getElementById('customDialogInput');
+    const customDialogCancelBtn = document.getElementById('customDialogCancelBtn');
+    const customDialogConfirmBtn = document.getElementById('customDialogConfirmBtn');
+
+    function openCustomDialog(options) {
+      customDialogTitle.textContent = options.title || '提示';
+      customDialogMsg.textContent = options.msg || '';
+      
+      if (options.hasInput) {
+        customDialogInput.style.display = 'block';
+        customDialogInput.value = options.defaultInput || '';
+      } else {
+        customDialogInput.style.display = 'none';
+      }
+
+      if (options.hideCancel) {
+        customDialogCancelBtn.style.display = 'none';
+      } else {
+        customDialogCancelBtn.style.display = 'inline-block';
+      }
+
+      customDialogOverlay.classList.add('active');
+
+      return new Promise((resolve) => {
+        const onConfirm = () => {
+          cleanup();
+          resolve(options.hasInput ? customDialogInput.value : true);
+        };
+        const onCancel = () => {
+          cleanup();
+          resolve(null);
+        };
+        const cleanup = () => {
+          customDialogConfirmBtn.removeEventListener('click', onConfirm);
+          customDialogCancelBtn.removeEventListener('click', onCancel);
+          customDialogOverlay.classList.remove('active');
+        };
+
+        customDialogConfirmBtn.addEventListener('click', onConfirm);
+        customDialogCancelBtn.addEventListener('click', onCancel);
+      });
+    }
+
+    function getRandomPoints(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getTodayKey() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    }
+
+    function getPoints() {
+      try {
+        const saved = localStorage.getItem('user_points');
+        if (saved === null) {
+          localStorage.setItem('user_points', DEFAULT_INITIAL_POINTS.toString());
+          return DEFAULT_INITIAL_POINTS;
+        }
+        return parseInt(saved, 10) || 0;
+      } catch (e) {
+        return DEFAULT_INITIAL_POINTS;
+      }
+    }
+
+    function updatePoints(amount) {
+      let current = getPoints();
+      current = Math.max(0, current + amount);
+      try {
+        localStorage.setItem('user_points', current.toString());
+      } catch (e) {}
+      pointsValEl.textContent = current;
+      if (modalUserPoints) modalUserPoints.textContent = current;
+      return current;
+    }
+
+    // 每日投入上限防沉迷管理
+    function getDailyInvested() {
+      const today = getTodayKey();
+      try {
+        const savedDate = localStorage.getItem('daily_invest_date');
+        if (savedDate !== today) {
+          localStorage.setItem('daily_invest_date', today);
+          localStorage.setItem('daily_invested_points', '0');
+          return 0;
+        }
+        return parseInt(localStorage.getItem('daily_invested_points') || '0', 10);
+      } catch (e) {
+        return 0;
+      }
+    }
+
+    function recordDailyInvest(amount) {
+      const current = getDailyInvested() + amount;
+      try {
+        localStorage.setItem('daily_invested_points', current.toString());
+      } catch (e) {}
+      updateDailyBadge();
+      return current;
+    }
+
+    function canInvest(amount) {
+      const current = getDailyInvested();
+      if (current + amount > DAILY_MAX_INVEST) {
+        openCustomDialog({
+          title: '防沉迷额度提醒',
+          msg: `您今日已累计投入 ${current} 积分。\n每日游戏投入上限为 ${DAILY_MAX_INVEST} 积分，本次需要投入 ${amount} 积分，已超出限额，请明日再来畅玩！`,
+          hideCancel: true
+        });
+        return false;
+      }
+      return true;
+    }
+
+    function updateDailyBadge() {
+      if (dailyLimitBadge) {
+        const invested = getDailyInvested();
+        dailyLimitBadge.textContent = `今日已投: ${invested} / ${DAILY_MAX_INVEST} 分`;
+      }
+    }
+
+    pointsValEl.textContent = getPoints();
+    updateDailyBadge();
+
+    pointsBox.addEventListener('click', async () => {
+      const current = getPoints();
+      const input = await openCustomDialog({
+        title: '管理员积分调试',
+        msg: `当前积分: ${current}\n请输入你想设置的新积分数值:`,
+        hasInput: true,
+        defaultInput: current.toString()
+      });
+
+      if (input !== null) {
+        const newScore = parseInt(input, 10);
+        if (!isNaN(newScore) && newScore >= 0) {
+          try {
+            localStorage.setItem('user_points', newScore.toString());
+          } catch (e) {}
+          pointsValEl.textContent = newScore;
+          if (modalUserPoints) modalUserPoints.textContent = newScore;
+          showToast(`积分已成功更新为：${newScore}`);
+        } else {
+          showToast('请输入合法的非负整数！');
+        }
+      }
+    });
+
+    // ================= 头像管理与下拉菜单 =================
+    try {
+      const savedAvatar = localStorage.getItem('user_custom_avatar');
+      if (savedAvatar) {
+        userAvatar.src = savedAvatar;
+      }
+    } catch (e) {}
+
+    avatarDropdownWrapper.addEventListener('click', (e) => {
+      e.stopPropagation();
+      avatarDropdownMenu.classList.toggle('active');
+    });
+
+    document.addEventListener('click', () => {
+      avatarDropdownMenu.classList.remove('active');
+    });
+
+    changeAvatarBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      avatarDropdownMenu.classList.remove('active');
+      avatarFileInput.click();
+    });
+
+    resetAvatarBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      avatarDropdownMenu.classList.remove('active');
+      try {
+        localStorage.removeItem('user_custom_avatar');
+      } catch (err) {}
+      userAvatar.src = defaultAvatarUrl;
+      showToast('头像已恢复为默认样式');
+    });
+
+    avatarFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      if (!file.type.startsWith('image/')) {
+        showToast('请选择有效的图片文件！');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        const tempImg = new Image();
+        tempImg.onload = function() {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const size = 200;
+          canvas.width = size;
+          canvas.height = size;
+
+          const minEdge = Math.min(tempImg.width, tempImg.height);
+          const startX = (tempImg.width - minEdge) / 2;
+          const startY = (tempImg.height - minEdge) / 2;
+          ctx.drawImage(tempImg, startX, startY, minEdge, minEdge, 0, 0, size, size);
+
+          const base64Data = canvas.toDataURL('image/jpeg', 0.88);
+          try {
+            localStorage.setItem('user_custom_avatar', base64Data);
+            userAvatar.src = base64Data;
+            showToast('头像修改成功！');
+          } catch (err) {
+            showToast('图片体积过大，请尝试换一张稍小的图片。');
+          }
+        };
+        tempImg.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+      avatarFileInput.value = '';
+    });
+
+    // ================= 1. 签到功能 =================
+    const checkinBtn = document.getElementById('checkinBtn');
+    const checkinStatus = document.getElementById('checkinStatus');
+    const checkinTitle = document.getElementById('checkinTitle');
+
+    let streakDays = 0;
+    let lastDate = null;
+    let lastTime = null;
+    try {
+      streakDays = parseInt(localStorage.getItem('checkin_streak') || '0', 10);
+      lastDate = localStorage.getItem('checkin_last_date');
+      lastTime = localStorage.getItem('checkin_last_time');
+    } catch (e) {}
+
+    const todayStr = getTodayKey();
+
+    if (lastDate === todayStr) {
+      let lastEarned = `${CHECKIN_MIN_POINTS}~${CHECKIN_MAX_POINTS}`;
+      try {
+        lastEarned = localStorage.getItem('checkin_earned_points') || lastEarned;
+      } catch (e) {}
+      checkinBtn.disabled = true;
+      checkinBtn.textContent = '已签到';
+      checkinTitle.innerHTML = `📅 已签到 <span style="color: var(--primary); font-weight: 700;">${streakDays}</span> 天`;
+      checkinStatus.textContent = `已于 ${lastTime} 完成签到 (+${lastEarned}分) ✅`;
+      checkinStatus.style.color = 'var(--primary)';
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yStr = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, '0')}-${String(yesterday.getDate()).padStart(2, '0')}`;
+      
+      if (lastDate && lastDate !== yStr) {
+        streakDays = 0;
+        try {
+          localStorage.setItem('checkin_streak', '0');
+        } catch (e) {}
+      }
+    }
+
+    checkinBtn.addEventListener('click', () => {
+      streakDays++;
+      if (typeof confetti === 'function') {
+        confetti({
+          particleCount: 90,
+          spread: 70,
+          origin: { y: 0.65 },
+          colors: ['#21926c', '#3b82f6', '#f59e0b', '#ec4899', '#8b5cf6']
+        });
+      }
+
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      const earnedPoints = getRandomPoints(CHECKIN_MIN_POINTS, CHECKIN_MAX_POINTS);
+      updatePoints(earnedPoints);
+      try {
+        localStorage.setItem('checkin_earned_points', earnedPoints.toString());
+        localStorage.setItem('checkin_streak', streakDays.toString());
+        localStorage.setItem('checkin_last_date', todayStr);
+        localStorage.setItem('checkin_last_time', timeStr);
+      } catch (e) {}
+
+      checkinBtn.disabled = true;
+      checkinBtn.textContent = '已签到';
+      checkinTitle.innerHTML = `📅 已签到 <span style="color: var(--primary); font-weight: 700;">${streakDays}</span> 天`;
+      checkinStatus.textContent = `已于 ${timeStr} 完成签到 (+${earnedPoints}分) ✅`;
+      checkinStatus.style.color = 'var(--primary)';
+      showToast(`签到成功！获得 +${earnedPoints} 积分！`);
+    });
+
+    checkinTitle.style.cursor = 'pointer';
+    checkinTitle.addEventListener('dblclick', async () => {
+      let isChecked = false;
+      try {
+        isChecked = localStorage.getItem('checkin_last_date') === getTodayKey();
+      } catch (e) {}
+
+      if (!isChecked) {
+        showToast('今日尚未签到，无需撤回。');
+        return;
+      }
+
+      let earned = 150;
+      try {
+        earned = parseInt(localStorage.getItem('checkin_earned_points') || '150', 10);
+      } catch (e) {}
+
+      const confirmed = await openCustomDialog({
+        title: '管理员撤回操作',
+        msg: `确定要撤回今日签到吗？\n（将精准回收今日签到获得的 ${earned} 积分，签到天数减 1）`
+      });
+
+      if (confirmed) {
+        try {
+          const currentStreak = parseInt(localStorage.getItem('checkin_streak') || '1', 10);
+          localStorage.setItem('checkin_streak', Math.max(0, currentStreak - 1).toString());
+          localStorage.removeItem('checkin_last_date');
+          localStorage.removeItem('checkin_last_time');
+          localStorage.removeItem('checkin_earned_points');
+        } catch (e) {}
+
+        updatePoints(-earned);
+
+        checkinBtn.disabled = false;
+        checkinBtn.textContent = '立即签到';
+        checkinTitle.innerHTML = '📅 今日签到';
+        checkinStatus.textContent = `今日尚未签到（随机 ${CHECKIN_MIN_POINTS}-${CHECKIN_MAX_POINTS} 积分）`;
+        checkinStatus.style.color = 'var(--text-muted)';
+        showToast('已成功撤销今日签到，积分已同步扣减！');
+      }
+    });
+
+    // ================= 2. 动态日历生成 =================
+    function renderCalendar() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = now.getMonth();
+      const today = now.getDate();
+
+      document.getElementById('calendarTitle').textContent = `📅 ${year}年${month + 1}月`;
+      const calendarDays = document.getElementById('calendarDays');
+      calendarDays.innerHTML = '';
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const startOffset = (firstDay === 0 ? 6 : firstDay - 1);
+      const totalDays = new Date(year, month + 1, 0).getDate();
+
+      for (let i = 0; i < startOffset; i++) {
+        calendarDays.appendChild(document.createElement('span'));
+      }
+
+      for (let day = 1; day <= totalDays; day++) {
+        const daySpan = document.createElement('span');
+        daySpan.className = 'calendar-day';
+        daySpan.textContent = day;
+        if (day === today) daySpan.classList.add('today');
+        calendarDays.appendChild(daySpan);
+      }
+    }
+    renderCalendar();
+
+    // ================= 3. 天气获取逻辑 =================
+    const weatherIcon = document.getElementById('weatherIcon');
+    const weatherText = document.getElementById('weatherText');
+    const weatherSub = document.getElementById('weatherSub');
+
+    function getWeatherDesc(code) {
+      if (code === 0) return { desc: '晴天', icon: '☀️' };
+      if ([1, 2, 3].includes(code)) return { desc: '多云 / 阴', icon: '⛅' };
+      if ([45, 48].includes(code)) return { desc: '有雾', icon: '🌫️' };
+      if ([51, 53, 55, 61, 63, 65].includes(code)) return { desc: '小雨 / 中雨', icon: '🌧️' };
+      if ([71, 73, 75].includes(code)) return { desc: '下雪', icon: '❄️' };
+      if ([80, 81, 82].includes(code)) return { desc: '阵雨', icon: '🌦️' };
+      if ([95, 96, 99].includes(code)) return { desc: '雷阵雨', icon: '⛈️' };
+      return { desc: '阴天', icon: '☁️' };
+    }
+
+    async function fetchWeather(lat, lon, cityName = '本地') {
+      try {
+        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=temperature_2m,weather_code&timezone=auto`;
+        const res = await fetch(url);
+        const data = await res.json();
+        const temp = Math.round(data.current.temperature_2m);
+        const weather = getWeatherDesc(data.current.weather_code);
+
+        weatherIcon.textContent = weather.icon;
+        weatherText.textContent = `${weather.desc} · ${temp}℃`;
+        weatherSub.textContent = `📍 ${cityName}`;
+      } catch (err) {
+        weatherIcon.textContent = '🌤️';
+        weatherText.textContent = '天气数据加载失败';
+        weatherSub.textContent = '请检查网络连接';
+      }
+    }
+
+    async function initWeatherWithoutPrompt() {
+      let cachedLat = null, cachedLon = null, cachedCity = null;
+      try {
+        cachedLat = localStorage.getItem('weather_lat');
+        cachedLon = localStorage.getItem('weather_lon');
+        cachedCity = localStorage.getItem('weather_city');
+      } catch (e) {}
+
+      if (cachedLat && cachedLon) {
+        fetchWeather(cachedLat, cachedLon, cachedCity || '本地');
+        return;
+      }
+
+      try {
+        const ipRes = await fetch('https://ipwho.is/');
+        const ipData = await ipRes.json();
+        if (ipData && ipData.success) {
+          try {
+            localStorage.setItem('weather_lat', ipData.latitude);
+            localStorage.setItem('weather_lon', ipData.longitude);
+            localStorage.setItem('weather_city', ipData.city || '本地');
+          } catch (e) {}
+          fetchWeather(ipData.latitude, ipData.longitude, ipData.city || '本地');
+          return;
+        }
+      } catch (err) {
+        console.warn('IP 定位不可用，启用默认城市:', err);
+      }
+      fetchWeather(31.2304, 121.4737, '上海');
+    }
+    initWeatherWithoutPrompt();
+
+    // ================= 4. 游戏中心大厅与三栏导航 =================
+    let currentLobbyTab = 'classic';
+
+    function switchLobbyTab(tabName) {
+      currentLobbyTab = tabName;
+      document.querySelectorAll('.lobby-tab-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabName);
+      });
+
+      // 隐藏全部子视图与舞台
+      classicLobbyView.style.display = 'none';
+      stockComingSoonPanel.style.display = 'none';
+      sportsComingSoonPanel.style.display = 'none';
+      gameStageView.style.display = 'none';
+
+      if (tabName === 'classic') {
+        classicLobbyView.style.display = 'grid';
+      } else if (tabName === 'stock') {
+        stockComingSoonPanel.style.display = 'block';
+      } else if (tabName === 'sports') {
+        sportsComingSoonPanel.style.display = 'block';
+      }
+    }
+
+    document.querySelectorAll('.lobby-tab-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        switchLobbyTab(btn.getAttribute('data-tab'));
+      });
+    });
+
+    function showLobby() {
+      switchLobbyTab('classic');
+      wheelGameWrapper.style.display = 'none';
+      diceGameWrapper.style.display = 'none';
+      scratchGameWrapper.style.display = 'none';
+      slotGameWrapper.style.display = 'none';
+      const rWrap = document.getElementById('rouletteGameWrapper');
+      const iWrap = document.getElementById('idiomGameWrapper');
+      if (rWrap) rWrap.style.display = 'none';
+      if (iWrap) iWrap.style.display = 'none';
+      if (probPanel) probPanel.classList.remove('active');
+      updateDailyBadge();
+    }
+
+    function openGameModal() {
+      modalUserPoints.textContent = getPoints();
+      updateDailyBadge();
+      showLobby();
+      gameModal.classList.add('active');
+    }
+
+    function closeGameModal() {
+      gameModal.classList.remove('active');
+      showLobby();
+    }
+
+    openGameModalBtn.addEventListener('click', openGameModal);
+    closeGameModalBtn.addEventListener('click', closeGameModal);
+    backToLobbyBtn.addEventListener('click', showLobby);
+
+    // 经典娱乐游戏卡片点击
+    document.querySelectorAll('.game-item-card').forEach(card => {
+      card.querySelector('.game-item-play-btn').addEventListener('click', () => {
+        const gameType = card.getAttribute('data-game');
+        const gameName = card.querySelector('.game-item-name').textContent;
+
+        if (['showhand', 'blackjack'].includes(gameType)) {
+      showToast(`【${gameName}】正在紧锣密鼓开发中，下一版即可畅玩！`);
+      return;
+    }
+
+    // 进入对应的游戏舞台
+    classicLobbyView.style.display = 'none';
+    gameStageView.style.display = 'flex';
+    wheelGameWrapper.style.display = 'none';
+    diceGameWrapper.style.display = 'none';
+    scratchGameWrapper.style.display = 'none';
+    slotGameWrapper.style.display = 'none';
+    rouletteGameWrapper.style.display = 'none';
+    idiomGameWrapper.style.display = 'none';
+
+    if (gameType === 'wheel') {
+      currentStageGameName.textContent = '🎡 幸运大转盘';
+      wheelGameWrapper.style.display = 'flex';
+      initWheel();
+    } else if (gameType === 'dice') {
+      currentStageGameName.textContent = '🎲 摇骰子猜大小';
+      diceGameWrapper.style.display = 'flex';
+      initDiceGame();
+    } else if (gameType === 'scratch') {
+      currentStageGameName.textContent = '🎫 刮刮乐';
+      scratchGameWrapper.style.display = 'flex';
+      initScratchGame();
+    } else if (gameType === 'slot') {
+      currentStageGameName.textContent = '🎰 水果机';
+      slotGameWrapper.style.display = 'flex';
+      initSlotGame();
+    } else if (gameType === 'roulette') {
+      currentStageGameName.textContent = '🎯 数字轮盘';
+      rouletteGameWrapper.style.display = 'flex';
+      initRouletteGame();
+    } else if (gameType === 'idiom') {
+      currentStageGameName.textContent = '📜 成语抢答';
+      idiomGameWrapper.style.display = 'flex';
+      initIdiomGame();
+    }
+      });
+    });
+
+    // ================= 5. 【幸运大转盘】核心引擎 (5分/次) =================
+    const wheelCanvas = document.getElementById('wheelCanvas');
+    const spinWheelBtn = document.getElementById('spinWheelBtn');
+    const wheelResultMsg = document.getElementById('wheelResultMsg');
+    const toggleProbBtn = document.getElementById('toggleProbBtn');
+    const probPanel = document.getElementById('probPanel');
+    const probGrid = document.getElementById('probGrid');
+
+    // 5分/次，权重总和 100，各档位严格保持原有比例
+    const WHEEL_PRIZES = [
+      { text: '30 积分', points: 30, weight: 2,  color: '#fef3c7', textColor: '#b45309' },
+      { text: '谢谢参与', points: 0,  weight: 20, color: '#f1f5f9', textColor: '#64748b' },
+      { text: '8 积分',  points: 8,  weight: 10, color: '#dcfce7', textColor: '#15803d' },
+      { text: '2 积分',  points: 2,  weight: 20, color: '#f1f5f9', textColor: '#475569' },
+      { text: '20 积分', points: 20, weight: 5,  color: '#fef3c7', textColor: '#b45309' },
+      { text: '5 积分',  points: 5,  weight: 20, color: '#dcfce7', textColor: '#15803d' },
+      { text: '1 积分',  points: 1,  weight: 15, color: '#f1f5f9', textColor: '#475569' },
+      { text: '10 积分', points: 10, weight: 8,  color: '#dcfce7', textColor: '#15803d' }
+    ];
+
+    const WHEEL_COST = 5;
+    let isSpinning = false;
+    let currentWheelRotation = 0;
+
+    function getWeightedPrizeIndex() {
+      const totalWeight = WHEEL_PRIZES.reduce((sum, item) => sum + item.weight, 0);
+      let rand = Math.random() * totalWeight;
+      for (let i = 0; i < WHEEL_PRIZES.length; i++) {
+        if (rand < WHEEL_PRIZES[i].weight) return i;
+        rand -= WHEEL_PRIZES[i].weight;
+      }
+      return 0;
+    }
+
+    function renderProbTable() {
+      if (!probGrid) return;
+      const totalWeight = WHEEL_PRIZES.reduce((sum, item) => sum + item.weight, 0);
+      probGrid.innerHTML = '';
+      WHEEL_PRIZES.forEach(p => {
+        const percent = ((p.weight / totalWeight) * 100).toFixed(1);
+        const item = document.createElement('div');
+        item.className = 'prob-item';
+        item.innerHTML = `<span>${p.text}</span><b>${percent}%</b>`;
+        probGrid.appendChild(item);
+      });
+    }
+
+    toggleProbBtn.addEventListener('click', () => {
+      probPanel.classList.toggle('active');
+      renderProbTable();
+    });
+
+    function drawWheel() {
+      if (!wheelCanvas) return;
+      const ctx = wheelCanvas.getContext('2d');
+      const numSlices = WHEEL_PRIZES.length;
+      const sliceAngle = (2 * Math.PI) / numSlices;
+      const radius = wheelCanvas.width / 2;
+
+      ctx.clearRect(0, 0, wheelCanvas.width, wheelCanvas.height);
+
+      for (let i = 0; i < numSlices; i++) {
+        const startAngle = i * sliceAngle;
+        const endAngle = startAngle + sliceAngle;
+
+        ctx.beginPath();
+        ctx.moveTo(radius, radius);
+        ctx.arc(radius, radius, radius - 8, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = WHEEL_PRIZES[i].color;
+        ctx.fill();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = '#ffffff';
+        ctx.stroke();
+
+        ctx.save();
+        ctx.translate(radius, radius);
+        ctx.rotate(startAngle + sliceAngle / 2);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = WHEEL_PRIZES[i].textColor;
+        ctx.font = 'bold 28px -apple-system, sans-serif';
+        ctx.fillText(WHEEL_PRIZES[i].text, radius - 42, 10);
+        ctx.restore();
+      }
+
+      ctx.beginPath();
+      ctx.arc(radius, radius, radius - 4, 0, 2 * Math.PI);
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = '#facc15';
+      ctx.stroke();
+    }
+
+    function initWheel() {
+      wheelResultMsg.textContent = '单次 5 积分，祝你好运！';
+      wheelResultMsg.style.color = 'var(--text-muted)';
+      drawWheel();
+      renderProbTable();
+    }
+
+    spinWheelBtn.addEventListener('click', () => {
+      if (isSpinning) return;
+
+      const currentPoints = getPoints();
+      if (currentPoints < WHEEL_COST) {
+        showToast('您的积分不足 5 分，请先签到获取积分！');
+        return;
+      }
+      if (!canInvest(WHEEL_COST)) return;
+
+      updatePoints(-WHEEL_COST);
+      recordDailyInvest(WHEEL_COST);
+      isSpinning = true;
+      spinWheelBtn.disabled = true;
+      spinWheelBtn.textContent = '⏳ 转盘旋转中...';
+      wheelResultMsg.textContent = '正在抽取幸运奖励...';
+      wheelResultMsg.style.color = 'var(--text-muted)';
+
+      const winningIndex = getWeightedPrizeIndex();
+      const prize = WHEEL_PRIZES[winningIndex];
+
+      const numSlices = WHEEL_PRIZES.length;
+      const sliceDeg = 360 / numSlices;
+      const targetDeg = (270 - (winningIndex * sliceDeg + sliceDeg / 2) + 360) % 360;
+      const extraRounds = 5 * 360;
+      const currentMod = currentWheelRotation % 360;
+      const delta = (targetDeg - currentMod + 360) % 360;
+      
+      currentWheelRotation += extraRounds + delta;
+      wheelCanvas.style.transform = `rotate(${currentWheelRotation}deg)`;
+
+      setTimeout(() => {
+        isSpinning = false;
+        spinWheelBtn.disabled = false;
+        spinWheelBtn.textContent = '🎯 开始抽奖 (消耗 5 积分)';
+
+        if (prize.points > 0) {
+          updatePoints(prize.points);
+          wheelResultMsg.innerHTML = `🎉 恭喜获得 <span style="color: #f59e0b; font-size: 15px;">${prize.text}</span>！积分已到账。`;
+          if (prize.points >= 20 && typeof confetti === 'function') {
+            confetti({ particleCount: 100, spread: 75, origin: { y: 0.6 } });
+          }
+        } else {
+          wheelResultMsg.textContent = '差一点就中啦，换个手气再试试吧！';
+        }
+      }, 4000);
+    });
+
+    // ================= 6. 【摇骰子猜大小】核心引擎 (可选2/5/8/10分, 豹子12倍) =================
+    const diceTray = document.getElementById('diceTray');
+    const dice1El = document.getElementById('dice1');
+    const dice2El = document.getElementById('dice2');
+    const dice3El = document.getElementById('dice3');
+    const rollDiceBtn = document.getElementById('rollDiceBtn');
+    const diceResultMsg = document.getElementById('diceResultMsg');
+
+    let currentBetChip = 2;
+    let currentBetTarget = 'small';
+    let isDiceRolling = false;
+
+    function renderDiceFace(diceEl, val) {
+      diceEl.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const pip = document.createElement('div');
+        pip.className = 'pip';
+        diceEl.appendChild(pip);
+      }
+      const pips = diceEl.children;
+
+      if (val === 1) {
+        pips[4].style.visibility = 'visible';
+        pips[4].classList.add('red');
+        pips[4].style.transform = 'scale(1.4)';
+      } else if (val === 2) {
+        pips[2].style.visibility = 'visible';
+        pips[6].style.visibility = 'visible';
+      } else if (val === 3) {
+        pips[2].style.visibility = 'visible';
+        pips[4].style.visibility = 'visible';
+        pips[6].style.visibility = 'visible';
+      } else if (val === 4) {
+        pips[0].style.visibility = 'visible';
+        pips[2].style.visibility = 'visible';
+        pips[6].style.visibility = 'visible';
+        pips[8].style.visibility = 'visible';
+        pips[0].classList.add('red'); pips[2].classList.add('red');
+        pips[6].classList.add('red'); pips[8].classList.add('red');
+      } else if (val === 5) {
+        pips[0].style.visibility = 'visible';
+        pips[2].style.visibility = 'visible';
+        pips[4].style.visibility = 'visible';
+        pips[6].style.visibility = 'visible';
+        pips[8].style.visibility = 'visible';
+      } else if (val === 6) {
+        pips[0].style.visibility = 'visible'; pips[3].style.visibility = 'visible'; pips[6].style.visibility = 'visible';
+        pips[2].style.visibility = 'visible'; pips[5].style.visibility = 'visible'; pips[8].style.visibility = 'visible';
+      }
+    }
+
+    function initDiceGame() {
+      renderDiceFace(dice1El, 1);
+      renderDiceFace(dice2El, 2);
+      renderDiceFace(dice3El, 3);
+      diceResultMsg.textContent = '请鼠标选择筹码与目标后开摇！';
+      diceResultMsg.style.color = 'var(--text-muted)';
+      updateRollButtonText();
+    }
+
+    function updateRollButtonText() {
+      const targetText = currentBetTarget === 'small' ? '押小' : (currentBetTarget === 'big' ? '押大' : '押豹子(12倍)');
+      rollDiceBtn.textContent = `🎲 开始摇骰 (${targetText} · 下注 ${currentBetChip} 分)`;
+    }
+
+    document.querySelectorAll('.chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (isDiceRolling) return;
+        document.querySelectorAll('.chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentBetChip = parseInt(btn.getAttribute('data-chip'), 10);
+        updateRollButtonText();
+      });
+    });
+
+    document.querySelectorAll('.bet-box').forEach(box => {
+      box.addEventListener('click', () => {
+        if (isDiceRolling) return;
+        document.querySelectorAll('.bet-box').forEach(b => b.classList.remove('selected'));
+        box.classList.add('selected');
+        currentBetTarget = box.getAttribute('data-target');
+        updateRollButtonText();
+      });
+    });
+
+    rollDiceBtn.addEventListener('click', () => {
+      if (isDiceRolling) return;
+
+      const currentPoints = getPoints();
+      if (currentPoints < currentBetChip) {
+        showToast(`您的积分不足 ${currentBetChip} 分，请先签到获取积分或降低下注额！`);
+        return;
+      }
+      if (!canInvest(currentBetChip)) return;
+
+      updatePoints(-currentBetChip);
+      recordDailyInvest(currentBetChip);
+      isDiceRolling = true;
+      rollDiceBtn.disabled = true;
+      rollDiceBtn.textContent = '🎲 骰盅剧烈晃动中...';
+      diceResultMsg.textContent = '买定离手，正在摇骰...';
+      diceResultMsg.style.color = 'var(--text-muted)';
+
+      diceTray.classList.add('shaking');
+
+      const shakeInterval = setInterval(() => {
+        renderDiceFace(dice1El, Math.floor(Math.random() * 6) + 1);
+        renderDiceFace(dice2El, Math.floor(Math.random() * 6) + 1);
+        renderDiceFace(dice3El, Math.floor(Math.random() * 6) + 1);
+      }, 70);
+
+      setTimeout(() => {
+        clearInterval(shakeInterval);
+        diceTray.classList.remove('shaking');
+
+        const d1 = Math.floor(Math.random() * 6) + 1;
+        const d2 = Math.floor(Math.random() * 6) + 1;
+        const d3 = Math.floor(Math.random() * 6) + 1;
+        const sum = d1 + d2 + d3;
+        const isTriple = (d1 === d2 && d2 === d3);
+
+        renderDiceFace(dice1El, d1);
+        renderDiceFace(dice2El, d2);
+        renderDiceFace(dice3El, d3);
+
+        let win = false;
+        let winAmount = 0;
+        let resultTypeName = '';
+
+        if (isTriple) {
+          resultTypeName = `豹子 (${d1}-${d2}-${d3}，${sum}点 通杀大小)`;
+          if (currentBetTarget === 'triple') {
+            win = true;
+            winAmount = currentBetChip + (currentBetChip * 12); // 12倍赔率
+          }
+        } else if (sum >= 4 && sum <= 10) {
+          resultTypeName = `小 (${sum}点)`;
+          if (currentBetTarget === 'small') {
+            win = true;
+            winAmount = currentBetChip + (currentBetChip * 1);
+          }
+        } else {
+          resultTypeName = `大 (${sum}点)`;
+          if (currentBetTarget === 'big') {
+            win = true;
+            winAmount = currentBetChip + (currentBetChip * 1);
+          }
+        }
+
+        if (win) {
+          updatePoints(winAmount);
+          const netWin = winAmount - currentBetChip;
+          diceResultMsg.innerHTML = `🎉 开出【${resultTypeName}】！恭喜获胜，净赚 <span style="color: #f59e0b; font-size: 15px;">+${netWin}</span> 积分！`;
+          diceResultMsg.style.color = '#15803d';
+
+          if (currentBetTarget === 'triple' || netWin >= 20) {
+            if (typeof confetti === 'function') {
+              confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+            }
+          }
+        } else {
+          diceResultMsg.innerHTML = `开出【${resultTypeName}】，本局惜败 ${currentBetChip} 积分，再来一把！`;
+          diceResultMsg.style.color = '#dc2626';
+        }
+
+        isDiceRolling = false;
+        rollDiceBtn.disabled = false;
+        updateRollButtonText();
+      }, 1200);
+    });
+
+    // ================= 7. 【刮刮乐】核心引擎 (本次新增交付) =================
+    const scratchCanvas = document.getElementById('scratchCanvas');
+    const scratchGridUnder = document.getElementById('scratchGridUnder');
+    const buyScratchBtn = document.getElementById('buyScratchBtn');
+    const autoScratchBtn = document.getElementById('autoScratchBtn');
+    const scratchResultMsg = document.getElementById('scratchResultMsg');
+
+    const SCRATCH_COST = 10;
+    const SCRATCH_ICONS = ['💎', '👑', '💰', '🍒', '🍀', '⭐'];
+    let scratchCardActive = false;
+    let scratchSettled = false;
+    let scratchCurrentPrize = null;
+    let scratchGridValues = [];
+    let isScratchingMouse = false;
+
+    // 刮刮乐奖励配置 (总权重 1000)
+    const SCRATCH_PRIZE_TIERS = [
+      { name: '钻石特等奖', icon: '💎', points: 100, weight: 15 },
+      { name: '皇冠一等奖', icon: '👑', points: 50,  weight: 45 },
+      { name: '钱袋二等奖', icon: '💰', points: 30,  weight: 100 },
+      { name: '樱桃三等奖', icon: '🍒', points: 20,  weight: 180 },
+      { name: '幸运保本奖', icon: '🍀', points: 10,  weight: 260 },
+      { name: '未中奖',     icon: null, points: 0,   weight: 400 }
+    ];
+
+    function getScratchWinningTier() {
+      const totalWeight = SCRATCH_PRIZE_TIERS.reduce((s, t) => s + t.weight, 0);
+      let rand = Math.random() * totalWeight;
+      for (let i = 0; i < SCRATCH_PRIZE_TIERS.length; i++) {
+        if (rand < SCRATCH_PRIZE_TIERS[i].weight) return SCRATCH_PRIZE_TIERS[i];
+        rand -= SCRATCH_PRIZE_TIERS[i].weight;
+      }
+      return SCRATCH_PRIZE_TIERS[SCRATCH_PRIZE_TIERS.length - 1];
+    }
+
+    function initScratchCover() {
+      const ctx = scratchCanvas.getContext('2d');
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.fillStyle = '#94a3b8';
+      ctx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+      // 绘制金属质感文字与装饰
+      ctx.fillStyle = '#64748b';
+      ctx.font = 'bold 18px -apple-system, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('🪙 刮开涂层 赢好礼 🪙', scratchCanvas.width / 2, scratchCanvas.height / 2 - 12);
+      ctx.font = '13px -apple-system, sans-serif';
+      ctx.fillText('鼠标按住滑动 即可刮开', scratchCanvas.width / 2, scratchCanvas.height / 2 + 16);
+    }
+
+    function initScratchGame() {
+      scratchCardActive = false;
+      scratchSettled = false;
+      autoScratchBtn.disabled = true;
+      buyScratchBtn.disabled = false;
+      scratchResultMsg.textContent = '单张 10 积分，凑齐 3 个相同图标即可赢取大奖！';
+      scratchResultMsg.style.color = 'var(--text-muted)';
+      initScratchCover();
+
+      // 预先放置占位图案
+      scratchGridUnder.innerHTML = '';
+      for (let i = 0; i < 9; i++) {
+        const cell = document.createElement('div');
+        cell.className = 'scratch-cell';
+        cell.textContent = '❓';
+        scratchGridUnder.appendChild(cell);
+      }
+    }
+
+    function generateScratchGrid(winningTier) {
+      scratchGridUnder.innerHTML = '';
+      scratchGridValues = [];
+
+      if (winningTier.points > 0) {
+        // 中奖：随机选择 3 个位置放中奖图标
+        const targetIcon = winningTier.icon;
+        const indices = [0,1,2,3,4,5,6,7,8].sort(() => Math.random() - 0.5).slice(0, 3);
+        const otherIcons = SCRATCH_ICONS.filter(ic => ic !== targetIcon);
+
+        for (let i = 0; i < 9; i++) {
+          if (indices.includes(i)) {
+            scratchGridValues.push(targetIcon);
+          } else {
+            const randOther = otherIcons[Math.floor(Math.random() * otherIcons.length)];
+            scratchGridValues.push(randOther);
+          }
+        }
+      } else {
+        // 未中奖：保证没有任何图标出现 3 次
+        const pool = [...SCRATCH_ICONS, ...SCRATCH_ICONS];
+        pool.sort(() => Math.random() - 0.5);
+        scratchGridValues = pool.slice(0, 9);
+        
+        // 简易校验：如果碰巧某个图标出现 >=3 次，强制替换
+        const countMap = {};
+        for (let i = 0; i < 9; i++) {
+          const ic = scratchGridValues[i];
+          countMap[ic] = (countMap[ic] || 0) + 1;
+          if (countMap[ic] >= 3) {
+            scratchGridValues[i] = '⭐';
+          }
+        }
+      }
+
+      scratchGridValues.forEach((ic) => {
+        const cell = document.createElement('div');
+        cell.className = 'scratch-cell';
+        cell.textContent = ic;
+        scratchGridUnder.appendChild(cell);
+      });
+    }
+
+    buyScratchBtn.addEventListener('click', () => {
+      const currentPoints = getPoints();
+      if (currentPoints < SCRATCH_COST) {
+        showToast('您的积分不足 10 分，请先签到获取积分！');
+        return;
+      }
+      if (!canInvest(SCRATCH_COST)) return;
+
+      updatePoints(-SCRATCH_COST);
+      recordDailyInvest(SCRATCH_COST);
+
+      scratchCardActive = true;
+      scratchSettled = false;
+      buyScratchBtn.disabled = true;
+      autoScratchBtn.disabled = false;
+
+      scratchCurrentPrize = getScratchWinningTier();
+      generateScratchGrid(scratchCurrentPrize);
+      initScratchCover();
+
+      scratchResultMsg.textContent = '卡片已就绪！请用鼠标在上方涂抹，或点击一键刮开！';
+      scratchResultMsg.style.color = '#d97706';
+    });
+
+    function scratchAt(x, y) {
+      if (!scratchCardActive || scratchSettled) return;
+      const ctx = scratchCanvas.getContext('2d');
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 22, 0, Math.PI * 2);
+      ctx.fill();
+
+      checkScratchCompletion();
+    }
+
+    function checkScratchCompletion() {
+      if (scratchSettled) return;
+      const ctx = scratchCanvas.getContext('2d');
+      const imgData = ctx.getImageData(0, 0, scratchCanvas.width, scratchCanvas.height);
+      let transparentPixels = 0;
+      const totalPixels = imgData.data.length / 4;
+
+      for (let i = 3; i < imgData.data.length; i += 16) {
+        if (imgData.data[i] === 0) transparentPixels += 4;
+      }
+
+      if (transparentPixels / totalPixels > 0.45) {
+        settleScratch(true);
+      }
+    }
+
+    function settleScratch(cleared = false) {
+      if (scratchSettled) return;
+      scratchSettled = true;
+      scratchCardActive = false;
+      autoScratchBtn.disabled = true;
+      buyScratchBtn.disabled = false;
+
+      const ctx = scratchCanvas.getContext('2d');
+      ctx.clearRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+      if (scratchCurrentPrize && scratchCurrentPrize.points > 0) {
+        updatePoints(scratchCurrentPrize.points);
+        const net = scratchCurrentPrize.points - SCRATCH_COST;
+        const netStr = net >= 0 ? `+${net}` : `${net}`;
+        scratchResultMsg.innerHTML = `🎉 恭喜刮出【${scratchCurrentPrize.name}】！净赚 <span style="color: #f59e0b; font-size: 15px;">${netStr}</span> 积分！`;
+        scratchResultMsg.style.color = '#15803d';
+
+        // 高亮中奖图标
+        const targetIcon = scratchCurrentPrize.icon;
+        document.querySelectorAll('.scratch-cell').forEach(cell => {
+          if (cell.textContent === targetIcon) cell.classList.add('matched');
+        });
+
+        if (scratchCurrentPrize.points >= 30 && typeof confetti === 'function') {
+          confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+        }
+      } else {
+        scratchResultMsg.textContent = '很遗憾未凑齐 3 个相同图标，再来一张试试吧！';
+        scratchResultMsg.style.color = '#dc2626';
+      }
+    }
+
+    autoScratchBtn.addEventListener('click', () => {
+      if (!scratchCardActive || scratchSettled) return;
+      settleScratch(true);
+    });
+
+    scratchCanvas.addEventListener('mousedown', (e) => {
+      isScratchingMouse = true;
+      const rect = scratchCanvas.getBoundingClientRect();
+      scratchAt(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    window.addEventListener('mouseup', () => {
+      isScratchingMouse = false;
+    });
+
+    scratchCanvas.addEventListener('mousemove', (e) => {
+      if (!isScratchingMouse) return;
+      const rect = scratchCanvas.getBoundingClientRect();
+      scratchAt(e.clientX - rect.left, e.clientY - rect.top);
+    });
+
+    // ================= 8. 【水果机】核心引擎 (本次新增交付) =================
+    const slotReel1 = document.getElementById('slotReel1');
+    const slotReel2 = document.getElementById('slotReel2');
+    const slotReel3 = document.getElementById('slotReel3');
+    const spinSlotBtn = document.getElementById('spinSlotBtn');
+    const slotResultMsg = document.getElementById('slotResultMsg');
+
+    let currentSlotChip = 2;
+    let isSlotSpinning = false;
+    const SLOT_SYMBOLS = ['7️⃣', '💎', '🔔', '🍉', '🍊', '🍒'];
+
+    function initSlotGame() {
+      slotReel1.textContent = '7️⃣';
+      slotReel2.textContent = '🍒';
+      slotReel3.textContent = '💎';
+      slotResultMsg.textContent = '选择筹码，点击拉杆启动水果机！';
+      slotResultMsg.style.color = 'var(--text-muted)';
+      updateSlotButtonText();
+    }
+
+    function updateSlotButtonText() {
+      spinSlotBtn.textContent = `🕹️ 拉杆启动 (消耗 ${currentSlotChip} 积分)`;
+    }
+
+    document.querySelectorAll('.slot-chip-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (isSlotSpinning) return;
+        document.querySelectorAll('.slot-chip-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentSlotChip = parseInt(btn.getAttribute('data-chip'), 10);
+        updateSlotButtonText();
+      });
+    });
+
+    function getRandomSlotSymbol() {
+      // 符号权重：7最稀有，水果较多
+      const weights = [1, 2, 3, 5, 5, 5];
+      const total = weights.reduce((a, b) => a + b, 0);
+      let rand = Math.random() * total;
+      for (let i = 0; i < weights.length; i++) {
+        if (rand < weights[i]) return SLOT_SYMBOLS[i];
+        rand -= weights[i];
+      }
+      return SLOT_SYMBOLS[SLOT_SYMBOLS.length - 1];
+    }
+
+    spinSlotBtn.addEventListener('click', () => {
+      if (isSlotSpinning) return;
+
+      const currentPoints = getPoints();
+      if (currentPoints < currentSlotChip) {
+        showToast(`您的积分不足 ${currentSlotChip} 分，请先签到获取积分或降低投入额！`);
+        return;
+      }
+      if (!canInvest(currentSlotChip)) return;
+
+      updatePoints(-currentSlotChip);
+      recordDailyInvest(currentSlotChip);
+      isSlotSpinning = true;
+      spinSlotBtn.disabled = true;
+      spinSlotBtn.textContent = '🎰 滚轴飞速运转中...';
+      slotResultMsg.textContent = '滚轴正在飞速转动，祝你好运！';
+      slotResultMsg.style.color = 'var(--text-muted)';
+
+      slotReel1.classList.add('rolling');
+      slotReel2.classList.add('rolling');
+      slotReel3.classList.add('rolling');
+
+      const rollInt1 = setInterval(() => { slotReel1.textContent = getRandomSlotSymbol(); }, 70);
+      const rollInt2 = setInterval(() => { slotReel2.textContent = getRandomSlotSymbol(); }, 70);
+      const rollInt3 = setInterval(() => { slotReel3.textContent = getRandomSlotSymbol(); }, 70);
+
+      // 预先依据概率生成最终符号 (总权重 1000)
+      const randOutcome = Math.random() * 1000;
+      let targetSym1 = '', targetSym2 = '', targetSym3 = '';
+
+      if (randOutcome < 10) {
+        // 20倍 777 (1.0%)
+        targetSym1 = targetSym2 = targetSym3 = '7️⃣';
+      } else if (randOutcome < 35) {
+        // 10倍 💎💎💎 (2.5%)
+        targetSym1 = targetSym2 = targetSym3 = '💎';
+      } else if (randOutcome < 85) {
+        // 6倍 🔔🔔🔔 (5.0%)
+        targetSym1 = targetSym2 = targetSym3 = '🔔';
+      } else if (randOutcome < 180) {
+        // 4倍 任意三同水果 (9.5%)
+        const fruit = ['🍉', '🍊', '🍒'][Math.floor(Math.random() * 3)];
+        targetSym1 = targetSym2 = targetSym3 = fruit;
+      } else if (randOutcome < 500) {
+        // 1.5倍 双连 (32.0%)
+        const s = SLOT_SYMBOLS[Math.floor(Math.random() * SLOT_SYMBOLS.length)];
+        const other = SLOT_SYMBOLS.filter(x => x !== s)[Math.floor(Math.random() * (SLOT_SYMBOLS.length - 1))];
+        const arr = [s, s, other].sort(() => Math.random() - 0.5);
+        targetSym1 = arr[0]; targetSym2 = arr[1]; targetSym3 = arr[2];
+      } else {
+        // 0倍 各不相同 (50.0%)
+        const shuffled = [...SLOT_SYMBOLS].sort(() => Math.random() - 0.5);
+        targetSym1 = shuffled[0]; targetSym2 = shuffled[1]; targetSym3 = shuffled[2];
+      }
+
+      // 依次停下 1、2、3 滚轴
+      setTimeout(() => {
+        clearInterval(rollInt1);
+        slotReel1.classList.remove('rolling');
+        slotReel1.textContent = targetSym1;
+      }, 900);
+
+      setTimeout(() => {
+        clearInterval(rollInt2);
+        slotReel2.classList.remove('rolling');
+        slotReel2.textContent = targetSym2;
+      }, 1500);
+
+      setTimeout(() => {
+        clearInterval(rollInt3);
+        slotReel3.classList.remove('rolling');
+        slotReel3.textContent = targetSym3;
+
+        // 结算胜负与奖项
+        let winMultiplier = 0;
+        let winTitle = '';
+
+        if (targetSym1 === targetSym2 && targetSym2 === targetSym3) {
+          if (targetSym1 === '7️⃣') { winMultiplier = 20; winTitle = '超级大奖 777 (20倍)'; }
+          else if (targetSym1 === '💎') { winMultiplier = 10; winTitle = '钻石头奖 (10倍)'; }
+          else if (targetSym1 === '🔔') { winMultiplier = 6;  winTitle = '金铃好运 (6倍)'; }
+          else { winMultiplier = 4; winTitle = '水果大满贯 (4倍)'; }
+        } else if (targetSym1 === targetSym2 || targetSym2 === targetSym3 || targetSym1 === targetSym3) {
+          winMultiplier = 1.5;
+          winTitle = '幸运双连 (1.5倍)';
+        }
+
+        if (winMultiplier > 0) {
+          const winPoints = Math.round(currentSlotChip * winMultiplier);
+          updatePoints(winPoints);
+          const net = winPoints - currentSlotChip;
+          slotResultMsg.innerHTML = `🎉 开出【${winTitle}】！返还 ${winPoints} 分，净赚 <span style="color: #f59e0b; font-size: 15px;">+${net}</span> 积分！`;
+          slotResultMsg.style.color = '#15803d';
+
+          if (winMultiplier >= 4 && typeof confetti === 'function') {
+            confetti({ particleCount: 100, spread: 80, origin: { y: 0.6 } });
+          }
+        } else {
+          slotResultMsg.textContent = `三个图案各不相同，本局惜败 ${currentSlotChip} 分，再拉一次！`;
+          slotResultMsg.style.color = '#dc2626';
+        }
+
+        isSlotSpinning = false;
+        spinSlotBtn.disabled = false;
+        updateSlotButtonText();
+      }, 2100);
+    });
+    // 注册新舞台节点引用
+    const rouletteGameWrapper = document.getElementById('rouletteGameWrapper');
+    const idiomGameWrapper = document.getElementById('idiomGameWrapper');
+
+    // ================= 9. 【数字轮盘】核心引擎 =================
+    const rouletteCanvas = document.getElementById('rouletteCanvas');
+    const spinRouletteBtn = document.getElementById('spinRouletteBtn');
+    const rouletteResultMsg = document.getElementById('rouletteResultMsg');
+    const rouletteNumbersRow = document.getElementById('rouletteNumbersRow');
+    const rouletteCenterPin = document.getElementById('rouletteCenterPin');
+
+    const ROULETTE_NUMS = [
+      { num: 0,  color: '#15803d', type: 'green' },
+      { num: 1,  color: '#dc2626', type: 'red' },
+      { num: 2,  color: '#1e293b', type: 'black' },
+      { num: 3,  color: '#dc2626', type: 'red' },
+      { num: 4,  color: '#1e293b', type: 'black' },
+      { num: 5,  color: '#dc2626', type: 'red' },
+      { num: 6,  color: '#1e293b', type: 'black' },
+      { num: 7,  color: '#dc2626', type: 'red' },
+      { num: 8,  color: '#1e293b', type: 'black' },
+      { num: 9,  color: '#dc2626', type: 'red' },
+      { num: 10, color: '#1e293b', type: 'black' },
+      { num: 11, color: '#1e293b', type: 'black' },
+      { num: 12, color: '#dc2626', type: 'red' }
+    ];
+
+    let currentRChip = 2, currentRTarget = 'red', isRSpinning = false, currentRRotation = 0;
+
+    function drawRouletteWheel() {
+      if (!rouletteCanvas) return;
+      const ctx = rouletteCanvas.getContext('2d');
+      const count = ROULETTE_NUMS.length, slice = (2 * Math.PI) / count, radius = rouletteCanvas.width / 2;
+      ctx.clearRect(0, 0, rouletteCanvas.width, rouletteCanvas.height);
+      for (let i = 0; i < count; i++) {
+        const start = i * slice, end = start + slice;
+        ctx.beginPath(); ctx.moveTo(radius, radius); ctx.arc(radius, radius, radius - 6, start, end); ctx.closePath();
+        ctx.fillStyle = ROULETTE_NUMS[i].color; ctx.fill();
+        ctx.lineWidth = 2; ctx.strokeStyle = '#ffffff'; ctx.stroke();
+        ctx.save(); ctx.translate(radius, radius); ctx.rotate(start + slice / 2);
+        ctx.textAlign = 'right'; ctx.fillStyle = '#ffffff'; ctx.font = 'bold 24px -apple-system, sans-serif';
+        ctx.fillText(ROULETTE_NUMS[i].num.toString(), radius - 30, 8); ctx.restore();
+      }
+      ctx.beginPath(); ctx.arc(radius, radius, radius - 4, 0, 2 * Math.PI); ctx.lineWidth = 6; ctx.strokeStyle = '#facc15'; ctx.stroke();
+    }
+
+    function initRouletteGame() {
+      drawRouletteWheel(); rouletteCenterPin.textContent = '🎯'; rouletteNumbersRow.innerHTML = '';
+      ROULETTE_NUMS.forEach(item => {
+        const btn = document.createElement('button');
+        btn.className = `r-btn ${item.type === 'green' ? 'r-green' : (item.type === 'red' ? 'r-red' : 'r-black')}`;
+        btn.textContent = item.num;
+        btn.addEventListener('click', () => {
+          if (isRSpinning) return;
+          document.querySelectorAll('.r-btn, .r-outside-btn').forEach(b => b.classList.remove('selected'));
+          btn.classList.add('selected'); currentRTarget = `num_${item.num}`; updateRouletteBtnText();
+        });
+        rouletteNumbersRow.appendChild(btn);
+      });
+      updateRouletteBtnText();
+    }
+
+    function updateRouletteBtnText() {
+      let desc = currentRTarget.startsWith('num_') ? `单号 ${currentRTarget.replace('num_', '')} (1:10)` :
+        ({ red: '押红', black: '押黑', odd: '押单数', even: '押双数', low: '押小(1-6)', high: '押大(7-12)' }[currentRTarget] || currentRTarget) + ' (1:1)';
+      spinRouletteBtn.textContent = `🎯 旋转轮盘 (${desc} · 下注 ${currentRChip} 分)`;
+    }
+
+    document.querySelectorAll('.roulette-stage-wrapper [data-rchip]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (isRSpinning) return;
+        document.querySelectorAll('.roulette-stage-wrapper [data-rchip]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active'); currentRChip = parseInt(btn.getAttribute('data-rchip'), 10); updateRouletteBtnText();
+      });
+    });
+
+    document.querySelectorAll('.r-outside-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (isRSpinning) return;
+        document.querySelectorAll('.r-btn, .r-outside-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected'); currentRTarget = btn.getAttribute('data-rtarget'); updateRouletteBtnText();
+      });
+    });
+
+    spinRouletteBtn.addEventListener('click', () => {
+      if (isRSpinning) return;
+      if (getPoints() < currentRChip) { showToast(`积分不足 ${currentRChip} 分！`); return; }
+      if (!canInvest(currentRChip)) return;
+      updatePoints(-currentRChip); recordDailyInvest(currentRChip);
+      isRSpinning = true; spinRouletteBtn.disabled = true;
+      rouletteResultMsg.textContent = '小球在轮盘中飞速滚动中...'; rouletteResultMsg.style.color = 'var(--text-muted)';
+
+      const winIdx = Math.floor(Math.random() * ROULETTE_NUMS.length), outcome = ROULETTE_NUMS[winIdx];
+      const sliceDeg = 360 / ROULETTE_NUMS.length, targetDeg = (270 - (winIdx * sliceDeg + sliceDeg / 2) + 360) % 360;
+      currentRRotation += 5 * 360 + ((targetDeg - (currentRRotation % 360) + 360) % 360);
+      rouletteCanvas.style.transform = `rotate(${currentRRotation}deg)`;
+
+      setTimeout(() => {
+        isRSpinning = false; spinRouletteBtn.disabled = false; rouletteCenterPin.textContent = outcome.num;
+        let won = false, winMultiplier = 0;
+        if (currentRTarget === `num_${outcome.num}`) { won = true; winMultiplier = 10; }
+        else if (outcome.num !== 0) {
+          if (currentRTarget === 'red' && outcome.type === 'red') won = true;
+          else if (currentRTarget === 'black' && outcome.type === 'black') won = true;
+          else if (currentRTarget === 'odd' && outcome.num % 2 === 1) won = true;
+          else if (currentRTarget === 'even' && outcome.num % 2 === 0) won = true;
+          else if (currentRTarget === 'low' && outcome.num >= 1 && outcome.num <= 6) won = true;
+          else if (currentRTarget === 'high' && outcome.num >= 7 && outcome.num <= 12) won = true;
+          if (won) winMultiplier = 1;
+        }
+        const colorName = outcome.type === 'green' ? '绿' : (outcome.type === 'red' ? '红' : '黑');
+        if (won) {
+          const winPoints = currentRChip + (currentRChip * winMultiplier); updatePoints(winPoints);
+          rouletteResultMsg.innerHTML = `🎉 开出【${outcome.num}号 ${colorName}】！恭喜获胜，净赚 <span style="color:#f59e0b;">+${winPoints - currentRChip}</span> 积分！`;
+          rouletteResultMsg.style.color = '#15803d';
+          if (typeof confetti === 'function') confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+        } else {
+          rouletteResultMsg.textContent = `开出【${outcome.num}号 ${colorName}】，本局惜败 ${currentRChip} 积分，再来一把！`;
+          rouletteResultMsg.style.color = '#dc2626';
+        }
+      }, 4500);
+    });
+
+    // ================= 10. 【成语抢答】核心引擎 =================
+    const idiomDailyRoundsEl = document.getElementById('idiomDailyRounds');
+    const idiomStreakBadge = document.getElementById('idiomStreakBadge');
+    const startIdiomBtn = document.getElementById('startIdiomBtn');
+    const idiomLobbyBox = document.getElementById('idiomLobbyBox');
+    const idiomQuizBox = document.getElementById('idiomQuizBox');
+    const idiomCurrentIndexEl = document.getElementById('idiomCurrentIndex');
+    const idiomTimerText = document.getElementById('idiomTimerText');
+    const idiomTimerBar = document.getElementById('idiomTimerBar');
+    const idiomExpression = document.getElementById('idiomExpression');
+    const idiomExplanation = document.getElementById('idiomExplanation');
+    const idiomOptionsGrid = document.getElementById('idiomOptionsGrid');
+    const idiomResultMsg = document.getElementById('idiomResultMsg');
+
+    const IDIOM_BANK = [
+      { text: '画龙点【？】', answer: '睛', options: ['睛', '金', '精', '晶'], exp: '比喻在关键处点缀，使内容更加生动有力。' },
+      { text: '卧薪尝【？】', answer: '胆', options: ['胆', '蛋', '淡', '惮'], exp: '形容一个人忍辱负重，发愤图强。' },
+      { text: '破釜沉【？】', answer: '舟', options: ['舟', '州', '周', '洲'], exp: '比喻下定决心，不顾一切干到底。' },
+      { text: '守株待【？】', answer: '兔', options: ['兔', '吐', '图', '涂'], exp: '比喻不知变通，死守狭隘经验。' },
+      { text: '杯弓蛇【？】', answer: '影', options: ['影', '映', '营', '迎'], exp: '比喻因疑虑而引起的虚惊与恐惧。' },
+      { text: '亡羊补【？】', answer: '牢', options: ['牢', '劳', '落', '捞'], exp: '比喻受损失后及时补救，免受更大损失。' },
+      { text: '掩耳盗【？】', answer: '铃', options: ['铃', '零', '灵', '领'], exp: '比喻自欺欺人，自己骗自己。' },
+      { text: '井底之【？】', answer: '蛙', options: ['蛙', '娃', '袜', '挖'], exp: '指见识狭隘短浅的人。' },
+      { text: '愚公移【？】', answer: '山', options: ['山', '石', '海', '水'], exp: '比喻做事有恒心有毅力，不怕困难。' },
+      { text: '狐假虎【？】', answer: '威', options: ['威', '微', '巍', '危'], exp: '比喻依仗别人的势力欺压恐吓他人。' },
+      { text: '拔苗助【？】', answer: '长', options: ['长', '常', '昌', '畅'], exp: '比喻急于求成，反而把事情弄糟。' },
+      { text: '刻舟求【？】', answer: '剑', options: ['剑', '箭', '舰', '践'], exp: '比喻拘泥成例，不知随客观情况变化。' }
+    ];
+
+    let currentRoundQuestions = [], currentQIdx = 0, correctCount = 0, qTimer = null, timeLeft = 8;
+
+    function getIdiomDailyData() {
+      const today = getTodayKey();
+      try {
+        if (localStorage.getItem('idiom_date') !== today) {
+          localStorage.setItem('idiom_date', today); localStorage.setItem('idiom_rounds_left', '5'); localStorage.setItem('idiom_streak_perfect', '0');
+          return { roundsLeft: 5, streak: 0 };
+        }
+        return { roundsLeft: parseInt(localStorage.getItem('idiom_rounds_left') || '5', 10), streak: parseInt(localStorage.getItem('idiom_streak_perfect') || '0', 10) };
+      } catch (e) { return { roundsLeft: 5, streak: 0 }; }
+    }
+
+    function initIdiomGame() {
+      const data = getIdiomDailyData();
+      idiomDailyRoundsEl.textContent = `今日剩余局数: ${data.roundsLeft} / 5 局`;
+      idiomStreakBadge.textContent = `满分连胜: ${data.streak} 局 (每次额外+${data.streak >= 2 ? 2 : 0}分)`;
+      idiomLobbyBox.style.display = 'block'; idiomQuizBox.style.display = 'none';
+      idiomResultMsg.textContent = '门票 5 积分，考验你的成语底蕴！'; idiomResultMsg.style.color = 'var(--text-muted)';
+      clearInterval(qTimer);
+    }
+
+    startIdiomBtn.addEventListener('click', () => {
+      const data = getIdiomDailyData();
+      if (data.roundsLeft <= 0) { showToast('今日 5 局挑战已用尽，请明日再来！'); return; }
+      if (getPoints() < 5) { showToast('积分不足 5 分！'); return; }
+      if (!canInvest(5)) return;
+      updatePoints(-5); recordDailyInvest(5);
+      try { localStorage.setItem('idiom_rounds_left', (data.roundsLeft - 1).toString()); } catch (e) {}
+      idiomDailyRoundsEl.textContent = `今日剩余局数: ${data.roundsLeft - 1} / 5 局`;
+      idiomLobbyBox.style.display = 'none'; idiomQuizBox.style.display = 'flex';
+      currentRoundQuestions = [...IDIOM_BANK].sort(() => Math.random() - 0.5).slice(0, 10);
+      currentQIdx = 0; correctCount = 0; loadNextQuestion();
+    });
+
+    function loadNextQuestion() {
+      if (currentQIdx >= currentRoundQuestions.length) { settleIdiomRound(); return; }
+      const q = currentRoundQuestions[currentQIdx];
+      idiomCurrentIndexEl.textContent = `第 ${currentQIdx + 1} / 10 题 (已对 ${correctCount} 题)`;
+      idiomExpression.textContent = q.text; idiomExplanation.textContent = q.exp; idiomOptionsGrid.innerHTML = '';
+      q.options.forEach(opt => {
+        const btn = document.createElement('button'); btn.className = 'idiom-opt-btn'; btn.textContent = opt;
+        btn.addEventListener('click', () => handleAnswer(opt, btn)); idiomOptionsGrid.appendChild(btn);
+      });
+      clearInterval(qTimer); timeLeft = 8; idiomTimerText.textContent = `${timeLeft} 秒`; idiomTimerBar.style.width = '100%';
+      qTimer = setInterval(() => {
+        timeLeft--; idiomTimerText.textContent = `${timeLeft} 秒`; idiomTimerBar.style.width = `${(timeLeft / 8) * 100}%`;
+        if (timeLeft <= 0) { clearInterval(qTimer); handleAnswer(null, null); }
+      }, 1000);
+    }
+
+    function handleAnswer(selectedOpt, btnEl) {
+      clearInterval(qTimer);
+      const q = currentRoundQuestions[currentQIdx];
+      document.querySelectorAll('.idiom-opt-btn').forEach(b => b.disabled = true);
+      if (selectedOpt === q.answer) {
+        correctCount++; if (btnEl) btnEl.classList.add('correct');
+      } else {
+        if (btnEl) btnEl.classList.add('wrong');
+        document.querySelectorAll('.idiom-opt-btn').forEach(b => { if (b.textContent === q.answer) b.classList.add('correct'); });
+      }
+      setTimeout(() => { currentQIdx++; loadNextQuestion(); }, 900);
+    }
+
+    function settleIdiomRound() {
+      idiomQuizBox.style.display = 'none'; idiomLobbyBox.style.display = 'block';
+      let payout = 0, net = -5; const data = getIdiomDailyData(); let newStreak = data.streak;
+      if (correctCount <= 3) { payout = 0; net = -5; newStreak = 0; }
+      else if (correctCount <= 5) { payout = 5; net = 0; newStreak = 0; }
+      else if (correctCount <= 7) { payout = 8; net = 3; newStreak = 0; }
+      else if (correctCount <= 9) { payout = 10; net = 5; newStreak = 0; }
+      else if (correctCount === 10) { payout = 13; newStreak++; if (newStreak >= 2) payout += 2; net = payout - 5; }
+      try { localStorage.setItem('idiom_streak_perfect', newStreak.toString()); } catch (e) {}
+      idiomStreakBadge.textContent = `满分连胜: ${newStreak} 局 (每次额外+${newStreak >= 2 ? 2 : 0}分)`;
+      if (payout > 0) updatePoints(payout);
+      if (net > 0) {
+        idiomResultMsg.innerHTML = `🎉 答对 ${correctCount}/10 题！发放 ${payout} 积分，净赚 <span style="color:#f59e0b;">+${net}</span> 积分！`;
+        idiomResultMsg.style.color = '#15803d';
+        if (correctCount === 10 && typeof confetti === 'function') confetti({ particleCount: 110, spread: 80, origin: { y: 0.6 } });
+      } else if (net === 0) {
+        idiomResultMsg.textContent = `答对 ${correctCount}/10 题，发放 5 积分，保本不赚不赔！`; idiomResultMsg.style.color = 'var(--text-main)';
+      } else {
+        idiomResultMsg.textContent = `答对 ${correctCount}/10 题，未能回本，再接再厉！`; idiomResultMsg.style.color = '#dc2626';
+      }
+    }
+  </script>
+</body>
+</html>

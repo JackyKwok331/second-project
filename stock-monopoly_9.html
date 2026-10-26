@@ -1,0 +1,1114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>行情交易终端 · 模拟炒股操盘台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#06110f;--bg1:#06110f;--bg2:#040907;
+    --card:#0b201a;--card2:#0e2821;--soft:#142a21;
+    --text:#f4f8f6;--muted:#8da9a0;--muted2:#648178;
+    --border:rgba(126,231,183,.14);--border2:rgba(126,231,183,.26);
+    --primary:#6ee7b7;--green:#34d399;--blue:#67a9ff;
+    --gold:#fbbf24;--gold-soft:#fde68a;
+    --up:#ff7b72;--down:#4ade80;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+    font-size:13px;color:var(--text);min-height:100vh;
+    background:
+      radial-gradient(52% 65% at 88% 0%,rgba(52,211,153,.13),transparent 64%),
+      radial-gradient(46% 48% at 0% 92%,rgba(251,191,36,.07),transparent 64%),
+      radial-gradient(1200px 620px at 50% -12%,#0d3322 0%,var(--bg1) 42%,var(--bg2) 100%),
+      repeating-linear-gradient(0deg,transparent,transparent 38px,rgba(110,231,183,.018) 39px),
+      repeating-linear-gradient(90deg,transparent,transparent 38px,rgba(110,231,183,.018) 39px);}
+  .wrap{max-width:1480px;margin:0 auto;padding:0 14px 14px;}
+  .num{font-family:ui-monospace,'Cascadia Mono',Consolas,'Courier New',monospace;font-variant-numeric:tabular-nums;}
+  .up{color:var(--up)!important;}
+  .down{color:var(--down)!important;}
+
+  /* ===== 滚动行情条 ===== */
+  .tape{overflow:hidden;background:#080f0b;border-bottom:1px solid var(--border);height:34px;display:flex;align-items:center;position:relative;}
+  .tape::before,.tape::after{content:"";position:absolute;top:0;bottom:0;width:40px;z-index:2;pointer-events:none;}
+  .tape::before{left:0;background:linear-gradient(90deg,#080f0b,transparent);}
+  .tape::after{right:0;background:linear-gradient(-90deg,#080f0b,transparent);}
+  .tape-track{display:inline-flex;gap:30px;white-space:nowrap;padding-left:20px;animation:tape 320s linear infinite;will-change:transform;}
+  .tape:hover .tape-track{animation-play-state:paused;}
+  @keyframes tape{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .ti{display:inline-flex;gap:7px;align-items:baseline;font-size:12px;}
+  .ti b{color:#b6c9c0;font-weight:700;}
+  .ti .tp{color:#fff;font-weight:700;}
+
+  /* ===== 大盘指数条 ===== */
+  .idxbar{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:12px 0;}
+  .idx{background:linear-gradient(180deg,rgba(16,29,22,.7),rgba(13,23,18,.9));border:1px solid var(--border2);
+    border-radius:12px;padding:9px 12px;position:relative;overflow:hidden;}
+  .idx h3{font-size:11.5px;color:var(--muted);font-weight:700;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .idx h3 .dot{width:6px;height:6px;border-radius:50%;background:var(--primary);opacity:.8;}
+  .idx .iv{font-size:18px;font-weight:800;font-family:"Bricolage Grotesque",sans-serif;}
+  .idx .ic{font-size:12px;font-weight:800;}
+  @media(max-width:1180px){.idxbar{grid-template-columns:repeat(4,1fr);}}
+  @media(max-width:620px){.idxbar{grid-template-columns:repeat(2,1fr);}}
+
+  /* ===== 顶栏 ===== */
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;
+    background:linear-gradient(180deg,rgba(16,29,22,.9),rgba(13,23,18,.92));
+    border:1px solid var(--border2);border-radius:16px;padding:12px 18px;
+    box-shadow:0 16px 40px -18px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.05);
+    position:relative;overflow:hidden;}
+  .topbar::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.45;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .brand .logo{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--primary),#7ee36a);color:#04130d;font-size:21px;box-shadow:0 8px 20px -6px rgba(62,232,138,.6);}
+  .brand h1{font-family:"Bricolage Grotesque",sans-serif;font-size:19px;letter-spacing:.3px;
+    background:linear-gradient(90deg,#fff,#c8f0d8);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .brand p{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .topinfo{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .pill{background:rgba(255,255,255,.06);color:var(--muted);font-size:12px;padding:5px 11px;border-radius:999px;font-weight:700;border:1px solid var(--border);}
+  .pill.open{background:rgba(62,232,138,.14);color:var(--primary);border-color:rgba(62,232,138,.3);}
+  .players-tab{display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+  .players-tab .av{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#04130d;font-size:11px;font-weight:800;}
+  .players-tab select{background:#080f0b;color:#eaf5ee;border:1px solid var(--border);font-size:12px;font-weight:700;padding:5px 10px;border-radius:999px;cursor:pointer;}
+  .players-tab select:focus{outline:none;border-color:var(--primary);}
+
+  /* ===== 主网格（左右两栏：左数据展示 / 右模拟交易） ===== */
+  .layout{display:grid;grid-template-columns:1.75fr 1fr;gap:14px;align-items:start;}
+  @media(max-width:1180px){.layout{grid-template-columns:1fr;}}
+  #tradeCol{position:sticky;top:14px;}
+  .col{display:flex;flex-direction:column;gap:12px;}
+  .panel{background:linear-gradient(180deg,rgba(16,29,22,.55),rgba(13,23,18,.85));
+    border:1px solid var(--border2);border-radius:14px;
+    box-shadow:0 16px 40px -20px rgba(0,0,0,.7),inset 0 1px 0 rgba(255,255,255,.04);}
+  .panel-h{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);}
+  .panel-h h2{font-size:13.5px;font-family:"Bricolage Grotesque",sans-serif;color:#fff;display:flex;align-items:center;gap:7px;}
+  .panel-h h2::before{content:"";width:3px;height:13px;border-radius:2px;background:linear-gradient(180deg,var(--primary),var(--gold));}
+  .panel-h .sub{font-size:11.5px;color:var(--muted);}
+  .duo{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+
+  /* ===== 表格（操盘密度） ===== */
+  table{width:100%;border-collapse:collapse;}
+  thead th{font-size:10.5px;color:var(--muted);font-weight:700;text-align:right;padding:7px 10px;border-bottom:1px solid var(--border);letter-spacing:.4px;white-space:nowrap;}
+  thead th:first-child{text-align:left;}
+  tbody td{padding:6px 10px;border-bottom:1px solid rgba(255,255,255,.05);font-size:12px;text-align:right;white-space:nowrap;}
+  tbody td:first-child{text-align:left;}
+  tbody tr{cursor:pointer;transition:background .1s;}
+  tbody tr:hover{background:rgba(255,255,255,.045);}
+  tbody tr.sel{background:rgba(62,232,138,.12);box-shadow:inset 3px 0 0 var(--primary);}
+  .sname b{font-size:12.5px;color:#eaf5ee;}
+  .sname small{display:block;color:var(--muted);font-size:10px;}
+  .spark{width:58px;height:22px;vertical-align:middle;}
+  .seg{display:flex;gap:5px;flex-wrap:wrap;}
+  .seg button{appearance:none;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:11px;padding:3px 9px;border-radius:999px;cursor:pointer;transition:.12s;}
+  .seg button.on{background:var(--primary);color:#04130d;border-color:transparent;font-weight:700;}
+
+  /* ===== 搜索框 / 列表底部 ===== */
+  .search{padding:8px 12px 4px;}
+  .search input{width:100%;border:1px solid var(--border2);border-radius:9px;padding:8px 12px;font-size:13px;
+    outline:none;background:#080f0b;color:#fff;}
+  .search input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(62,232,138,.15);}
+  .search input::placeholder{color:#5f7568;}
+  .mfoot{display:flex;justify-content:space-between;padding:6px 14px 10px;font-size:11px;color:var(--muted);}
+  .mtbl-scroll{max-height:560px;overflow:auto;border-radius:0 0 14px 14px;}
+  #mtbody thead th{position:sticky;top:0;background:#0c211a;z-index:1;}
+  .histbox{padding:4px 0 10px;max-height:300px;overflow:auto;}
+  .histbox table thead th{position:sticky;top:0;background:#0c211a;z-index:1;}
+
+  /* ===== 市场概览 ===== */
+  .breadth{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:12px 14px;}
+  .bcell{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:9px 11px;}
+  .bcell .bk{font-size:11px;color:var(--muted);}
+  .bcell .bv{font-size:17px;font-weight:800;margin-top:3px;font-family:"Bricolage Grotesque",sans-serif;}
+  .barcell{grid-column:1/-1;background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;padding:10px 12px;}
+  .barcell .bk{font-size:11px;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;}
+  .breadbar{display:flex;height:16px;border-radius:6px;overflow:hidden;font-size:10px;font-weight:800;color:#04130d;}
+  .breadbar i{display:flex;align-items:center;justify-content:center;}
+
+  /* ===== 板块轮动 ===== */
+  .heat{padding:6px 6px 10px;}
+  .heatrow{display:grid;grid-template-columns:64px 1fr 64px;align-items:center;gap:8px;padding:5px 8px;font-size:12px;}
+  .heatrow .hn{color:#eaf5ee;font-weight:700;}
+  .heatbar{height:14px;border-radius:5px;background:rgba(255,255,255,.04);overflow:hidden;position:relative;}
+  .heatbar i{display:block;height:100%;border-radius:5px;}
+  .heatrow .hp{text-align:right;font-weight:800;}
+
+  /* ===== 个股区 ===== */
+  .mtype{display:inline-block;padding:1px 7px;border-radius:5px;font-size:10.5px;font-weight:700;border:1px solid var(--border2);}
+  .mtype.mint{color:var(--primary);background:rgba(110,231,183,.08);}
+  .mtype.us{color:#9dc7ff;border-color:rgba(103,169,255,.28);background:rgba(103,169,255,.08);}
+  .mtype.idx{color:var(--gold-soft);border-color:rgba(251,191,36,.28);background:rgba(251,191,36,.06);}
+  .quote{display:flex;align-items:baseline;gap:14px;padding:8px 14px 0;flex-wrap:wrap;}
+  .quote .big{font-size:28px;font-weight:800;font-family:"Bricolage Grotesque",sans-serif;}
+  .quote .chgbig{font-size:14px;font-weight:800;}
+  .quote .meta{font-size:11.5px;color:var(--muted);display:flex;gap:12px;flex-wrap:wrap;}
+  .chartbox{padding:8px 8px 2px;}
+  .chart{width:100%;height:225px;display:block;}
+  .kline-tabs{display:flex;gap:4px;}
+
+  /* ===== 五档盘口 / 逐笔 ===== */
+  .ob{padding:8px 12px 12px;}
+  .ob-stats{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);padding:2px 2px 8px;}
+  .ob-stats b{font-weight:800;}
+  .obrow{display:grid;grid-template-columns:30px 1fr 74px 52px;align-items:center;gap:8px;padding:2.5px 2px;font-size:12px;}
+  .obrow .lb{color:var(--muted);font-size:11px;}
+  .obrow .p{font-weight:700;}
+  .obrow .bar{height:12px;border-radius:3px;background:rgba(255,255,255,.05);overflow:hidden;}
+  .obrow .bar i{display:block;height:100%;border-radius:3px;}
+  .obrow .bar i.b{background:linear-gradient(90deg,rgba(246,70,93,.7),rgba(246,70,93,.25));}
+  .obrow .bar i.s{background:linear-gradient(90deg,rgba(14,203,129,.7),rgba(14,203,129,.25));}
+  .obrow .v{color:var(--muted);text-align:right;}
+  .ob-divider{height:1px;background:var(--border);margin:6px 0;}
+  .ticks{padding:8px 12px 12px;}
+  .tick{display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:6px;font-size:11.5px;padding:2.5px 2px;color:var(--muted);}
+  .tick b{color:#fff;font-weight:700;}
+  .tick .side{font-weight:800;}
+
+  /* ===== 下单台 ===== */
+  .trade{padding:8px 14px 14px;}
+  .field{display:flex;align-items:center;gap:10px;margin:8px 0;}
+  .field label{font-size:12px;color:var(--muted);width:52px;}
+  .field input{flex:1;border:1px solid var(--border2);border-radius:9px;padding:9px 11px;font-size:14px;font-weight:700;
+    outline:none;background:#080f0b;color:#fff;font-family:ui-monospace,Consolas,monospace;}
+  .field input:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(62,232,138,.15);}
+  .qrow{display:flex;gap:7px;margin:4px 0 10px;}
+  .qrow button{flex:1;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:11.5px;padding:5px;border-radius:8px;cursor:pointer;transition:.12s;}
+  .qrow button:hover{border-color:var(--primary);color:var(--primary);}
+  .est{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:10px;}
+  .est b{color:#fff;font-size:14px;}
+  .acts{display:flex;gap:9px;}
+  .btn{flex:1;appearance:none;border:none;cursor:pointer;font-weight:800;font-size:14px;padding:11px;border-radius:11px;color:#fff;transition:transform .1s,filter .1s;}
+  .btn:active{transform:scale(.97);}
+  .btn:hover{filter:brightness(1.06);}
+
+  /* ===== 模拟下单（增强版） ===== */
+  .trade .dir{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:2px 0 11px;}
+  .trade .dir button{appearance:none;border:1px solid var(--border2);background:rgba(255,255,255,.04);color:var(--muted);
+    font-size:13.5px;font-weight:800;padding:11px;border-radius:11px;cursor:pointer;transition:.12s;}
+  .trade .dir button[data-dir="buy"].on{background:linear-gradient(135deg,#fde68a,#fbbf24);color:#2a1c02;border-color:transparent;box-shadow:0 8px 18px -8px rgba(251,191,36,.7);}
+  .trade .dir button[data-dir="sell"].on{background:linear-gradient(135deg,#ff7b72,#ff9a92);color:#fff;border-color:transparent;box-shadow:0 8px 18px -8px rgba(255,123,114,.7);}
+  .tk{display:flex;justify-content:space-between;align-items:center;padding:10px 12px;margin:0 0 6px;
+    background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:11px;}
+  .tk-l b{font-size:14px;color:#fff;}
+  .tk-l small{display:block;color:var(--muted);font-size:10.5px;margin-top:2px;}
+  .tk-r{text-align:right;}
+  .tk-price{font-size:17px;font-weight:800;color:#fff;}
+  .tk-chg{font-size:12px;font-weight:800;margin-left:6px;}
+  .pctrow{display:flex;gap:6px;margin:2px 0 9px;}
+  .pctrow button{flex:1;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--muted);font-size:11px;padding:6px;border-radius:8px;cursor:pointer;transition:.12s;}
+  .pctrow button:hover{border-color:var(--gold);color:var(--gold);}
+  .fee{display:flex;justify-content:space-between;font-size:11.5px;color:var(--muted);margin-bottom:12px;}
+  .fee span:last-child{color:#b6c9c0;font-weight:700;}
+  .btn.confirm{padding:13px;font-size:15px;border-radius:12px;}
+  .btn.confirm.buy{background:linear-gradient(135deg,#fde68a,#fbbf24);color:#2a1c02;box-shadow:0 12px 26px -10px rgba(251,191,36,.7);}
+  .btn.confirm.sell{background:linear-gradient(135deg,#ff7b72,#ff9a92);color:#fff;box-shadow:0 12px 26px -10px rgba(255,123,114,.75);}
+
+  /* ===== 账户 / 持仓 / 委托 / 龙虎榜 ===== */
+  .acct{padding:10px 14px 13px;}
+  .arow{display:flex;justify-content:space-between;align-items:center;padding:5px 0;font-size:12.5px;border-bottom:1px dashed rgba(255,255,255,.05);}
+  .arow:last-child{border-bottom:none;}
+  .arow .k{color:var(--muted);}
+  .arow .v{font-weight:800;color:#fff;}
+  .posbar{height:8px;border-radius:4px;background:rgba(255,255,255,.06);overflow:hidden;margin-top:6px;}
+  .posbar i{display:block;height:100%;border-radius:4px;background:linear-gradient(90deg,var(--primary),var(--gold));transition:width .3s;}
+  .status{display:inline-block;font-size:10.5px;padding:1px 7px;border-radius:6px;font-weight:700;}
+  .status.ok{background:rgba(62,232,138,.15);color:var(--primary);}
+  .status.wait{background:rgba(251,191,36,.15);color:var(--gold);}
+  .log{padding:8px 14px 14px;max-height:170px;overflow:auto;font-size:12px;color:var(--muted);line-height:1.8;}
+  .log .t{color:var(--primary);font-weight:700;}
+  .empty{color:var(--muted);font-size:12px;padding:8px 2px;}
+
+  /* ===== 底部状态条 ===== */
+  .statusbar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;align-items:center;
+    margin-top:12px;padding:9px 16px;border:1px solid var(--border);border-radius:12px;
+    background:rgba(6,12,9,.8);font-size:11.5px;color:var(--muted);}
+  .statusbar .dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--primary);box-shadow:0 0 8px var(--primary);margin-right:6px;}
+  .statusbar b{color:#b6c9c0;}
+</style>
+</head>
+<body>
+
+<!-- 滚动行情条 -->
+<div class="tape"><div class="tape-track" id="tapeTrack"></div></div>
+
+<div class="wrap">
+  <!-- 顶栏 -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">📈</div>
+      <div>
+        <h1>行情交易终端 · 模拟炒股操盘台</h1>
+        <p>Jacky &amp; Tina House · 界面原型（模拟数据）</p>
+      </div>
+    </div>
+    <div class="topinfo">
+      <span class="pill open">● 开市中</span>
+      <span class="pill num" id="clock">--:--:--</span>
+      <span class="pill" id="cashPill">可用 ¥0</span>
+      <div class="players-tab" id="ptab"></div>
+    </div>
+  </div>
+
+  <!-- 大盘指数条 -->
+  <div class="idxbar" id="idxBar"></div>
+
+  <div class="layout">
+    <!-- ====== 左列：数据展示区 ====== -->
+    <div class="col" id="dataCol">
+      <div class="panel">
+        <div class="panel-h"><h2>市场概览</h2><span class="sub">实时盘面</span></div>
+        <div class="breadth">
+          <div class="bcell"><div class="bk">上涨家数</div><div class="bv up" id="upCount">—</div></div>
+          <div class="bcell"><div class="bk">下跌家数</div><div class="bv down" id="dnCount">—</div></div>
+          <div class="bcell"><div class="bk">涨停 / 跌停</div><div class="bv"><span class="up" id="ztCount">—</span> / <span class="down" id="dtCount">—</span></div></div>
+          <div class="barcell">
+            <div class="bk"><span>涨跌家数分布</span><span id="breadPct" class="num">—</span></div>
+            <div class="breadbar"><i id="breadUp" style="background:var(--up)"></i><i id="breadDn" style="background:var(--down)"></i></div>
+          </div>
+          <div class="bcell"><div class="bk">两市成交额</div><div class="bv" id="amount">¥1.24万亿</div></div>
+          <div class="bcell"><div class="bk">北向资金</div><div class="bv up" id="north">+32.5亿</div></div>
+          <div class="bcell"><div class="bk">赚钱效应</div><div class="bv" id="effect">中等</div></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>自选行情</h2>
+          <div class="seg" id="seg">
+            <button data-f="all" class="on">全部</button>
+            <button data-f="指数">指数</button>
+            <button data-f="ETF">ETF</button>
+            <button data-f="全球ETF">全球ETF</button>
+            <button data-f="A股">A股</button>
+            <button data-f="创业·科创">创业·科创</button>
+            <button data-f="美股">美股</button>
+          </div>
+        </div>
+        <div class="search"><input id="search" type="text" placeholder="搜代码 / 首字母 / 名称，如 gzmt、600519、茅台" autocomplete="off"></div>
+        <div class="mtbl-scroll">
+        <table>
+          <thead><tr><th>名称</th><th>最新</th><th>涨跌幅</th><th>振幅</th><th>最高</th><th>最低</th><th>走势</th></tr></thead>
+          <tbody id="mtbody"></tbody>
+        </table>
+        </div>
+        <div class="mfoot"><span class="num" id="mCount">显示 10 / 20</span><span>点击行选中</span></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h">
+          <h2 id="dName">个股分时</h2>
+          <div class="kline-tabs seg" id="kseg">
+            <button data-k="min" class="on">分时</button>
+            <button data-k="day">日K</button>
+          </div>
+        </div>
+        <div class="quote">
+          <span class="big num" id="dPrice">--</span>
+          <span class="chgbig num" id="dChg">--</span>
+          <span class="meta" id="dMeta"></span>
+        </div>
+        <div class="chartbox"><svg class="chart" id="chart" viewBox="0 0 640 225" preserveAspectRatio="none"></svg></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>📜 历史下单记录</h2><span class="sub" id="histSub"></span></div>
+        <div class="histbox">
+          <table>
+            <thead><tr><th>时间</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>金额</th><th>状态</th></tr></thead>
+            <tbody id="histBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ====== 右列：模拟交易区 ====== -->
+    <div class="col" id="tradeCol">
+      <div class="panel">
+        <div class="panel-h"><h2>资金账户</h2><span class="sub" id="acctName"></span></div>
+        <div class="acct">
+          <div class="arow"><span class="k">总资产</span><span class="v num" id="aTotal">¥0</span></div>
+          <div class="arow"><span class="k">可用资金</span><span class="v num" id="aCash">¥0</span></div>
+          <div class="arow"><span class="k">持仓市值</span><span class="v num" id="aHold">¥0</span></div>
+          <div class="arow"><span class="k">浮动盈亏</span><span class="v num" id="aPnl">¥0</span></div>
+          <div class="arow"><span class="k">仓位比例</span><span class="v num" id="aPos">0%</span></div>
+          <div class="posbar"><i id="posFill" style="width:0%"></i></div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>模拟下单</h2><span class="sub" id="tradeSub"></span></div>
+        <div class="trade">
+          <div class="dir" id="dir">
+            <button data-dir="buy" class="on">买入</button>
+            <button data-dir="sell">卖出</button>
+          </div>
+          <div class="tk">
+            <div class="tk-l"><b id="tkName">—</b><small id="tkCode">—</small></div>
+            <div class="tk-r"><span class="tk-price num" id="tkPrice">—</span><span class="tk-chg num" id="tkChg">—</span></div>
+          </div>
+          <div class="field"><label>数量</label><input id="qty" type="number" min="0" value="100"><span style="font-size:11.5px;color:var(--muted)">股</span></div>
+          <div class="qrow" id="qrow">
+            <button data-q="100">100</button><button data-q="500">500</button>
+            <button data-q="1000">1000</button><button data-q="max">全仓</button>
+          </div>
+          <div class="pctrow" id="pctrow">
+            <button data-p="0.25">25%</button><button data-p="0.5">50%</button>
+            <button data-p="0.75">75%</button><button data-p="1">满仓</button>
+          </div>
+          <div class="est"><span>预计金额</span><b class="num" id="estAmt">¥0</b></div>
+          <div class="fee"><span>模拟手续费</span><span class="num" id="feeAmt">¥0</span></div>
+          <div class="acts">
+            <button class="btn confirm buy" id="confirmBtn">确认买入</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>持仓明细</h2><span class="sub" id="holdSub"></span></div>
+        <table>
+          <thead><tr><th>名称</th><th>持仓</th><th>现价</th><th>市值</th><th>盈亏</th></tr></thead>
+          <tbody id="holdBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>今日委托</h2><span class="sub">模拟</span></div>
+        <table>
+          <thead><tr><th>时间</th><th>名称</th><th>方向</th><th>价格</th><th>数量</th><th>状态</th></tr></thead>
+          <tbody id="orderBody"></tbody>
+        </table>
+      </div>
+
+      <div class="panel">
+        <div class="panel-h"><h2>成交回报</h2></div>
+        <div class="log" id="log"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部状态条 -->
+  <div class="statusbar">
+    <span><span class="dot"></span>行情连接正常 · 数据源：<b>模拟</b> · 延迟 <b class="num">23ms</b></span>
+    <span>快捷操作：点击行情行选中 · 点击持仓行定位</span>
+    <span>© Jacky &amp; Tina House · 红涨绿跌 · 仅内网娱乐使用</span>
+  </div>
+</div>
+
+<script>
+/* ================= 模拟行情数据 ================= */
+const stocks=[
+  {code:'sh000001',name:'上证指数',py:'szzs',type:'指数',cur:'',tradable:false,price:3241.5,chg:-0.62},
+  {code:'sz399001',name:'深证成指',py:'szcz',type:'指数',cur:'',tradable:false,price:10234.8,chg:0.71},
+  {code:'sh000300',name:'沪深300',py:'hs',type:'指数',cur:'',tradable:false,price:3948.2,chg:-0.01},
+  {code:'sz399006',name:'创业板指',py:'cybz',type:'指数',cur:'',tradable:false,price:2067.4,chg:-0.57},
+  {code:'sh000688',name:'科创50',py:'kc',type:'指数',cur:'',tradable:false,price:985.6,chg:0.04},
+  {code:'sh000016',name:'上证50',py:'sz',type:'指数',cur:'',tradable:false,price:2642.1,chg:0.61},
+  {code:'sh000905',name:'中证500',py:'zz',type:'指数',cur:'',tradable:false,price:5789.3,chg:0.89},
+  {code:'sz399330',name:'深证100',py:'sz',type:'指数',cur:'',tradable:false,price:4712.6,chg:-0.75},
+  {code:'bj899050',name:'北证50',py:'bz',type:'指数',cur:'',tradable:false,price:1123.4,chg:-1.08},
+  {code:'hkHSI',name:'恒生指数',py:'hszs',type:'指数',cur:'',tradable:false,price:18456.2,chg:0.72},
+  {code:'sh000852',name:'中证1000',py:'zz',type:'指数',cur:'',tradable:false,price:6234.8,chg:0.72},
+  {code:'518880',name:'黄金ETF',py:'hjetf',type:'ETF',cur:'¥',tradable:true,price:8.24,chg:-2.43},
+  {code:'159980',name:'有色ETF',py:'ysetf',type:'ETF',cur:'¥',tradable:true,price:0.82,chg:-0.37},
+  {code:'159985',name:'豆粕ETF',py:'dpetf',type:'ETF',cur:'¥',tradable:true,price:2.93,chg:1.68},
+  {code:'159981',name:'能源化工ETF',py:'nyhgetf',type:'ETF',cur:'¥',tradable:true,price:3.38,chg:-3.2},
+  {code:'161226',name:'白银LOF',py:'bylof',type:'ETF',cur:'¥',tradable:true,price:2.21,chg:0.74},
+  {code:'515050',name:'5G通信ETF',py:'gtxetf',type:'ETF',cur:'¥',tradable:true,price:5.43,chg:-1.27},
+  {code:'512480',name:'半导体ETF',py:'bdtetf',type:'ETF',cur:'¥',tradable:true,price:1.6,chg:3.26},
+  {code:'159995',name:'芯片ETF',py:'xpetf',type:'ETF',cur:'¥',tradable:true,price:5.01,chg:-2.65},
+  {code:'515980',name:'人工智能ETF',py:'rgznetf',type:'ETF',cur:'¥',tradable:true,price:1.98,chg:-0.06},
+  {code:'515000',name:'科技ETF',py:'kjetf',type:'ETF',cur:'¥',tradable:true,price:2.44,chg:3},
+  {code:'515030',name:'新能源车ETF',py:'xnycetf',type:'ETF',cur:'¥',tradable:true,price:8.47,chg:3.03},
+  {code:'159819',name:'AI智能ETF',py:'aiznetf',type:'ETF',cur:'¥',tradable:true,price:6.76,chg:-0.18},
+  {code:'562500',name:'机器人ETF',py:'jqretf',type:'ETF',cur:'¥',tradable:true,price:4.17,chg:-2.4},
+  {code:'512880',name:'证券ETF',py:'zqetf',type:'ETF',cur:'¥',tradable:true,price:8.63,chg:0.18},
+  {code:'512800',name:'银行ETF',py:'yhetf',type:'ETF',cur:'¥',tradable:true,price:5.53,chg:2.78},
+  {code:'512070',name:'保险ETF',py:'bxetf',type:'ETF',cur:'¥',tradable:true,price:7.14,chg:-3.04},
+  {code:'510230',name:'金融ETF',py:'jretf',type:'ETF',cur:'¥',tradable:true,price:8.46,chg:3.4},
+  {code:'512900',name:'券商ETF',py:'qsetf',type:'ETF',cur:'¥',tradable:true,price:2.8,chg:2.15},
+  {code:'159928',name:'消费ETF',py:'xfetf',type:'ETF',cur:'¥',tradable:true,price:8.74,chg:-1.92},
+  {code:'512690',name:'酒ETF',py:'jetf',type:'ETF',cur:'¥',tradable:true,price:6.58,chg:-1.36},
+  {code:'515170',name:'食品饮料ETF',py:'spyletf',type:'ETF',cur:'¥',tradable:true,price:5.15,chg:2.87},
+  {code:'159996',name:'家电ETF',py:'jdetf',type:'ETF',cur:'¥',tradable:true,price:1.83,chg:-3.05},
+  {code:'159865',name:'养殖ETF',py:'yzetf',type:'ETF',cur:'¥',tradable:true,price:7.67,chg:-2.33},
+  {code:'510300',name:'沪深300ETF',py:'hsetf',type:'ETF',cur:'¥',tradable:true,price:0.92,chg:0.15},
+  {code:'510050',name:'上证50ETF',py:'szetf',type:'ETF',cur:'¥',tradable:true,price:6.29,chg:2.99},
+  {code:'510500',name:'中证500ETF',py:'zzetf',type:'ETF',cur:'¥',tradable:true,price:4.14,chg:0.29},
+  {code:'159915',name:'创业板ETF',py:'cybetf',type:'ETF',cur:'¥',tradable:true,price:2.84,chg:0.71},
+  {code:'588000',name:'科创50ETF',py:'kcetf',type:'ETF',cur:'¥',tradable:true,price:0.8,chg:3.43},
+  {code:'512100',name:'中证1000ETF',py:'zzetf',type:'ETF',cur:'¥',tradable:true,price:2.29,chg:-2.24},
+  {code:'159919',name:'沪深300ETF',py:'hsetf',type:'ETF',cur:'¥',tradable:true,price:1.56,chg:3.27},
+  {code:'513100',name:'纳指ETF',py:'nzetf',type:'全球ETF',cur:'¥',tradable:true,price:5.47,chg:-1.14},
+  {code:'513500',name:'标普500ETF',py:'bpetf',type:'全球ETF',cur:'¥',tradable:true,price:5.49,chg:2.22},
+  {code:'513300',name:'纳指100ETF',py:'nzetf',type:'全球ETF',cur:'¥',tradable:true,price:2.66,chg:-2.41},
+  {code:'159941',name:'纳指ETF',py:'nzetf',type:'全球ETF',cur:'¥',tradable:true,price:3.4,chg:-2.97},
+  {code:'513050',name:'中概互联网ETF',py:'zghlwetf',type:'全球ETF',cur:'¥',tradable:true,price:5.92,chg:1.91},
+  {code:'513180',name:'恒生科技ETF',py:'hskjetf',type:'全球ETF',cur:'¥',tradable:true,price:4.18,chg:-0.39},
+  {code:'513660',name:'恒生ETF',py:'hsetf',type:'全球ETF',cur:'¥',tradable:true,price:3.08,chg:-2.35},
+  {code:'510900',name:'恒生ETF',py:'hsetf',type:'全球ETF',cur:'¥',tradable:true,price:3.84,chg:-1.77},
+  {code:'159920',name:'恒生ETF',py:'hsetf',type:'全球ETF',cur:'¥',tradable:true,price:3.19,chg:-1.2},
+  {code:'513030',name:'德国30ETF',py:'dgetf',type:'全球ETF',cur:'¥',tradable:true,price:2.3,chg:2.93},
+  {code:'513520',name:'日经225ETF',py:'rjetf',type:'全球ETF',cur:'¥',tradable:true,price:2.97,chg:-2.87},
+  {code:'513080',name:'法国CAC40ETF',py:'fgcacetf',type:'全球ETF',cur:'¥',tradable:true,price:0.93,chg:1.6},
+  {code:'sh600519',name:'贵州茅台',py:'gzmt',type:'A股',cur:'¥',tradable:true,price:1335,chg:-1.86},
+  {code:'sh601318',name:'中国平安',py:'zgpa',type:'A股',cur:'¥',tradable:true,price:56,chg:0.14},
+  {code:'sh600036',name:'招商银行',py:'zsyh',type:'A股',cur:'¥',tradable:true,price:42,chg:-4.13},
+  {code:'sh601166',name:'兴业银行',py:'xyyh',type:'A股',cur:'¥',tradable:true,price:174.68,chg:1.3},
+  {code:'sh600276',name:'恒瑞医药',py:'hryy',type:'A股',cur:'¥',tradable:true,price:161.86,chg:-0.69},
+  {code:'sh601398',name:'工商银行',py:'gsyh',type:'A股',cur:'¥',tradable:true,price:272.57,chg:-4},
+  {code:'sh601939',name:'建设银行',py:'jsyh',type:'A股',cur:'¥',tradable:true,price:156.8,chg:-0.68},
+  {code:'sh601288',name:'农业银行',py:'nyyh',type:'A股',cur:'¥',tradable:true,price:295.44,chg:4.43},
+  {code:'sh601988',name:'中国银行',py:'zgyh',type:'A股',cur:'¥',tradable:true,price:182.76,chg:1.9},
+  {code:'sh600900',name:'长江电力',py:'cjdl',type:'A股',cur:'¥',tradable:true,price:289.84,chg:0.17},
+  {code:'sh600030',name:'中信证券',py:'zxzq',type:'A股',cur:'¥',tradable:true,price:75.55,chg:0.78},
+  {code:'sh600887',name:'伊利股份',py:'ylgf',type:'A股',cur:'¥',tradable:true,price:132.76,chg:0.37},
+  {code:'sh601012',name:'隆基绿能',py:'ljln',type:'A股',cur:'¥',tradable:true,price:18.8,chg:1.99},
+  {code:'sh600309',name:'万华化学',py:'whhx',type:'A股',cur:'¥',tradable:true,price:285.03,chg:2.91},
+  {code:'sh601857',name:'中国石油',py:'zgsy',type:'A股',cur:'¥',tradable:true,price:202.2,chg:-3.12},
+  {code:'sh600028',name:'中国石化',py:'zgsh',type:'A股',cur:'¥',tradable:true,price:275.28,chg:-1.66},
+  {code:'sh601628',name:'中国人寿',py:'zgrs',type:'A股',cur:'¥',tradable:true,price:207.27,chg:3.96},
+  {code:'sh600585',name:'海螺水泥',py:'hlsn',type:'A股',cur:'¥',tradable:true,price:126.4,chg:1},
+  {code:'sh601668',name:'中国建筑',py:'zgjz',type:'A股',cur:'¥',tradable:true,price:272.5,chg:-1.17},
+  {code:'sh600048',name:'保利发展',py:'blfz',type:'A股',cur:'¥',tradable:true,price:299.6,chg:-0.28},
+  {code:'sh601888',name:'中国中免',py:'zgzm',type:'A股',cur:'¥',tradable:true,price:245.46,chg:2.47},
+  {code:'sh600104',name:'上汽集团',py:'sqjt',type:'A股',cur:'¥',tradable:true,price:41.82,chg:2.94},
+  {code:'sh601658',name:'邮储银行',py:'ycyh',type:'A股',cur:'¥',tradable:true,price:43.8,chg:-3.8},
+  {code:'sh600000',name:'浦发银行',py:'pfyh',type:'A股',cur:'¥',tradable:true,price:273.43,chg:-1.6},
+  {code:'sh601328',name:'交通银行',py:'jtyh',type:'A股',cur:'¥',tradable:true,price:52.68,chg:3.61},
+  {code:'sh600016',name:'民生银行',py:'msyh',type:'A股',cur:'¥',tradable:true,price:253.4,chg:-2.44},
+  {code:'sh601169',name:'北京银行',py:'bjyh',type:'A股',cur:'¥',tradable:true,price:226.88,chg:-2.38},
+  {code:'sh600009',name:'上海机场',py:'shjc',type:'A股',cur:'¥',tradable:true,price:185.23,chg:-2.06},
+  {code:'sh600660',name:'福耀玻璃',py:'fybl',type:'A股',cur:'¥',tradable:true,price:126.84,chg:-1.8},
+  {code:'sh603288',name:'海天味业',py:'htwy',type:'A股',cur:'¥',tradable:true,price:220.9,chg:-1.66},
+  {code:'sh603259',name:'药明康德',py:'ymkd',type:'A股',cur:'¥',tradable:true,price:72.81,chg:-0.6},
+  {code:'sh603501',name:'韦尔股份',py:'wegf',type:'A股',cur:'¥',tradable:true,price:20.79,chg:0.42},
+  {code:'sh601899',name:'紫金矿业',py:'zjky',type:'A股',cur:'¥',tradable:true,price:158.25,chg:-1.78},
+  {code:'sh600031',name:'三一重工',py:'syzg',type:'A股',cur:'¥',tradable:true,price:128.47,chg:-3.4},
+  {code:'sh600741',name:'华域汽车',py:'hyqc',type:'A股',cur:'¥',tradable:true,price:186.65,chg:-3.16},
+  {code:'sh600050',name:'中国联通',py:'zglt',type:'A股',cur:'¥',tradable:true,price:15.96,chg:-1.39},
+  {code:'sh601728',name:'中国电信',py:'zgdx',type:'A股',cur:'¥',tradable:true,price:55.12,chg:-4.38},
+  {code:'sh601390',name:'中国中铁',py:'zgzt',type:'A股',cur:'¥',tradable:true,price:252.53,chg:2.36},
+  {code:'sh601186',name:'中国铁建',py:'zgtj',type:'A股',cur:'¥',tradable:true,price:62.89,chg:2.75},
+  {code:'sh601800',name:'中国交建',py:'zgjj',type:'A股',cur:'¥',tradable:true,price:150.16,chg:-4.3},
+  {code:'sh600019',name:'宝钢股份',py:'bggf',type:'A股',cur:'¥',tradable:true,price:11.13,chg:-1.99},
+  {code:'sh601600',name:'中国铝业',py:'zgly',type:'A股',cur:'¥',tradable:true,price:301.39,chg:1.44},
+  {code:'sh600089',name:'特变电工',py:'tbdg',type:'A股',cur:'¥',tradable:true,price:38.64,chg:-4.21},
+  {code:'sh600406',name:'国电南瑞',py:'gdnr',type:'A股',cur:'¥',tradable:true,price:165.14,chg:3.97},
+  {code:'sh601225',name:'陕西煤业',py:'sxmy',type:'A股',cur:'¥',tradable:true,price:247.62,chg:1.82},
+  {code:'sh600438',name:'通威股份',py:'twgf',type:'A股',cur:'¥',tradable:true,price:227.99,chg:1.36},
+  {code:'sh601633',name:'长城汽车',py:'ccqc',type:'A股',cur:'¥',tradable:true,price:210.32,chg:2.91},
+  {code:'sh600690',name:'海尔智家',py:'hezj',type:'A股',cur:'¥',tradable:true,price:166.23,chg:-1.94},
+  {code:'sh603993',name:'洛阳钼业',py:'lymy',type:'A股',cur:'¥',tradable:true,price:120.03,chg:3.22},
+  {code:'sh601088',name:'中国神华',py:'zgsh',type:'A股',cur:'¥',tradable:true,price:130.23,chg:2.69},
+  {code:'sh601985',name:'中国核电',py:'zghd',type:'A股',cur:'¥',tradable:true,price:86.42,chg:-1.44},
+  {code:'sh600905',name:'三峡能源',py:'sxny',type:'A股',cur:'¥',tradable:true,price:16.33,chg:3.27},
+  {code:'sh601138',name:'工业富联',py:'gyfl',type:'A股',cur:'¥',tradable:true,price:273.05,chg:2.64},
+  {code:'sh603195',name:'公牛集团',py:'gnjt',type:'A股',cur:'¥',tradable:true,price:298.53,chg:-2.73},
+  {code:'sh605499',name:'东鹏饮料',py:'dpyl',type:'A股',cur:'¥',tradable:true,price:257.79,chg:-4.44},
+  {code:'sh600809',name:'山西汾酒',py:'sxfj',type:'A股',cur:'¥',tradable:true,price:205.45,chg:2.17},
+  {code:'sh600779',name:'水井坊',py:'sjf',type:'A股',cur:'¥',tradable:true,price:150.98,chg:1.08},
+  {code:'sh603369',name:'今世缘',py:'jsy',type:'A股',cur:'¥',tradable:true,price:276.42,chg:-3.24},
+  {code:'sh600702',name:'舍得酒业',py:'sdjy',type:'A股',cur:'¥',tradable:true,price:194.54,chg:-0.87},
+  {code:'sh600872',name:'中炬高新',py:'zjgx',type:'A股',cur:'¥',tradable:true,price:234.73,chg:-3.7},
+  {code:'sh603027',name:'千禾味业',py:'qhwy',type:'A股',cur:'¥',tradable:true,price:102.11,chg:0.61},
+  {code:'sh600132',name:'重庆啤酒',py:'cqpj',type:'A股',cur:'¥',tradable:true,price:307.99,chg:-0.24},
+  {code:'sh600298',name:'安琪酵母',py:'aqjm',type:'A股',cur:'¥',tradable:true,price:94.91,chg:2.47},
+  {code:'sh600362',name:'江西铜业',py:'jxty',type:'A股',cur:'¥',tradable:true,price:215.91,chg:-2.73},
+  {code:'sh600111',name:'北方稀土',py:'bfxt',type:'A股',cur:'¥',tradable:true,price:292.9,chg:-4.31},
+  {code:'sh600549',name:'厦门钨业',py:'xmwy',type:'A股',cur:'¥',tradable:true,price:148.13,chg:-1.98},
+  {code:'sh600884',name:'杉杉股份',py:'ssgf',type:'A股',cur:'¥',tradable:true,price:96.43,chg:0.74},
+  {code:'sh600745',name:'闻泰科技',py:'wtkj',type:'A股',cur:'¥',tradable:true,price:38.82,chg:-4.49},
+  {code:'sh603986',name:'兆易创新',py:'zycx',type:'A股',cur:'¥',tradable:true,price:90.78,chg:0.09},
+  {code:'sh603160',name:'汇顶科技',py:'hdkj',type:'A股',cur:'¥',tradable:true,price:19.01,chg:-3.9},
+  {code:'sh600460',name:'士兰微',py:'slw',type:'A股',cur:'¥',tradable:true,price:296.7,chg:4.14},
+  {code:'sh600584',name:'长电科技',py:'cdkj',type:'A股',cur:'¥',tradable:true,price:219.27,chg:2.67},
+  {code:'sh600703',name:'三安光电',py:'sagd',type:'A股',cur:'¥',tradable:true,price:237.73,chg:1.07},
+  {code:'sh601689',name:'拓普集团',py:'tpjt',type:'A股',cur:'¥',tradable:true,price:271.9,chg:-0.03},
+  {code:'sh600418',name:'江淮汽车',py:'jhqc',type:'A股',cur:'¥',tradable:true,price:297.33,chg:1.26},
+  {code:'sh601127',name:'赛力斯',py:'sls',type:'A股',cur:'¥',tradable:true,price:70.9,chg:1.84},
+  {code:'sh600733',name:'北汽蓝谷',py:'bqlg',type:'A股',cur:'¥',tradable:true,price:128.23,chg:1.1},
+  {code:'sh601919',name:'中远海控',py:'zyhk',type:'A股',cur:'¥',tradable:true,price:118.33,chg:-2.95},
+  {code:'sh601872',name:'招商轮船',py:'zslc',type:'A股',cur:'¥',tradable:true,price:294.25,chg:2.59},
+  {code:'sh600026',name:'中远海能',py:'zyhn',type:'A股',cur:'¥',tradable:true,price:274.63,chg:2.55},
+  {code:'sh601111',name:'中国国航',py:'zggh',type:'A股',cur:'¥',tradable:true,price:14.41,chg:-4.41},
+  {code:'sh600115',name:'中国东航',py:'zgdh',type:'A股',cur:'¥',tradable:true,price:100.88,chg:-1.54},
+  {code:'sh600221',name:'海航控股',py:'hhkg',type:'A股',cur:'¥',tradable:true,price:106.82,chg:-2.18},
+  {code:'sh600029',name:'南方航空',py:'nfhk',type:'A股',cur:'¥',tradable:true,price:203.88,chg:1.48},
+  {code:'sh601021',name:'春秋航空',py:'cqhk',type:'A股',cur:'¥',tradable:true,price:51.68,chg:-3.01},
+  {code:'sh600233',name:'圆通速递',py:'ytsd',type:'A股',cur:'¥',tradable:true,price:99.7,chg:0.77},
+  {code:'sh601933',name:'永辉超市',py:'yhcs',type:'A股',cur:'¥',tradable:true,price:160.5,chg:2.38},
+  {code:'sh600859',name:'王府井',py:'wfj',type:'A股',cur:'¥',tradable:true,price:14.62,chg:-0.82},
+  {code:'sh601098',name:'中南传媒',py:'zncm',type:'A股',cur:'¥',tradable:true,price:313.94,chg:-0.01},
+  {code:'sh600373',name:'中文传媒',py:'zwcm',type:'A股',cur:'¥',tradable:true,price:308.82,chg:-1.33},
+  {code:'sh601928',name:'凤凰传媒',py:'fhcm',type:'A股',cur:'¥',tradable:true,price:308.8,chg:0.02},
+  {code:'sh600637',name:'东方明珠',py:'dfmz',type:'A股',cur:'¥',tradable:true,price:153.88,chg:-3.33},
+  {code:'sh600588',name:'用友网络',py:'yywl',type:'A股',cur:'¥',tradable:true,price:315.02,chg:-3},
+  {code:'sh600570',name:'恒生电子',py:'hsdz',type:'A股',cur:'¥',tradable:true,price:49.47,chg:-0.84},
+  {code:'sh600845',name:'宝信软件',py:'bxrj',type:'A股',cur:'¥',tradable:true,price:172.58,chg:-3.14},
+  {code:'sh600718',name:'东软集团',py:'drjt',type:'A股',cur:'¥',tradable:true,price:257.57,chg:3.78},
+  {code:'sh603019',name:'中科曙光',py:'zksg',type:'A股',cur:'¥',tradable:true,price:215.03,chg:-2.09},
+  {code:'sh601360',name:'三六零',py:'sll',type:'A股',cur:'¥',tradable:true,price:32.43,chg:0.63},
+  {code:'sh600196',name:'复星医药',py:'fxyy',type:'A股',cur:'¥',tradable:true,price:122.68,chg:-3.03},
+  {code:'sh600380',name:'健康元',py:'jky',type:'A股',cur:'¥',tradable:true,price:98.06,chg:-0.62},
+  {code:'sh601607',name:'上海医药',py:'shyy',type:'A股',cur:'¥',tradable:true,price:228.9,chg:3.95},
+  {code:'sh600332',name:'白云山',py:'bys',type:'A股',cur:'¥',tradable:true,price:258.3,chg:1.82},
+  {code:'sh600535',name:'天士力',py:'tsl',type:'A股',cur:'¥',tradable:true,price:52.31,chg:4.11},
+  {code:'sh600085',name:'同仁堂',py:'trt',type:'A股',cur:'¥',tradable:true,price:160.82,chg:-0.05},
+  {code:'sh600436',name:'片仔癀',py:'pzh',type:'A股',cur:'¥',tradable:true,price:312.94,chg:-1.43},
+  {code:'sh600867',name:'通化东宝',py:'thdb',type:'A股',cur:'¥',tradable:true,price:48.13,chg:-0.3},
+  {code:'sh601009',name:'南京银行',py:'njyh',type:'A股',cur:'¥',tradable:true,price:213.16,chg:3.24},
+  {code:'sh600015',name:'华夏银行',py:'hxyh',type:'A股',cur:'¥',tradable:true,price:246.56,chg:4.48},
+  {code:'sh601577',name:'长沙银行',py:'csyh',type:'A股',cur:'¥',tradable:true,price:171.01,chg:-1.21},
+  {code:'sh600928',name:'西安银行',py:'xayh',type:'A股',cur:'¥',tradable:true,price:30.29,chg:-3.38},
+  {code:'sh601818',name:'光大银行',py:'gdyh',type:'A股',cur:'¥',tradable:true,price:31.76,chg:-0.55},
+  {code:'sh600999',name:'招商证券',py:'zszq',type:'A股',cur:'¥',tradable:true,price:308.08,chg:-3.8},
+  {code:'sh601211',name:'国泰君安',py:'gtja',type:'A股',cur:'¥',tradable:true,price:80.46,chg:0.91},
+  {code:'sh600837',name:'海通证券',py:'htzq',type:'A股',cur:'¥',tradable:true,price:272.35,chg:2.99},
+  {code:'sh601688',name:'华泰证券',py:'htzq',type:'A股',cur:'¥',tradable:true,price:289.28,chg:2.73},
+  {code:'sh601901',name:'方正证券',py:'fzzq',type:'A股',cur:'¥',tradable:true,price:206.38,chg:-2.9},
+  {code:'sh601995',name:'中金公司',py:'zjgs',type:'A股',cur:'¥',tradable:true,price:94.98,chg:3.72},
+  {code:'sh600958',name:'东方证券',py:'dfzq',type:'A股',cur:'¥',tradable:true,price:94.57,chg:-3.05},
+  {code:'sh601236',name:'红塔证券',py:'htzq',type:'A股',cur:'¥',tradable:true,price:58.3,chg:1.5},
+  {code:'sh600109',name:'国金证券',py:'gjzq',type:'A股',cur:'¥',tradable:true,price:153.43,chg:-2.62},
+  {code:'sh601878',name:'浙商证券',py:'zszq',type:'A股',cur:'¥',tradable:true,price:304.23,chg:3.96},
+  {code:'sh601375',name:'中原证券',py:'zyzq',type:'A股',cur:'¥',tradable:true,price:120.27,chg:-1.06},
+  {code:'sh600621',name:'华鑫股份',py:'hxgf',type:'A股',cur:'¥',tradable:true,price:256.14,chg:2.68},
+  {code:'sh600061',name:'国投资本',py:'gtzb',type:'A股',cur:'¥',tradable:true,price:62.77,chg:0.94},
+  {code:'sh601216',name:'君正集团',py:'jzjt',type:'A股',cur:'¥',tradable:true,price:268.82,chg:4.34},
+  {code:'sh600118',name:'中国卫星',py:'zgwx',type:'A股',cur:'¥',tradable:true,price:134.69,chg:3.34},
+  {code:'sh600435',name:'北方导航',py:'bfdh',type:'A股',cur:'¥',tradable:true,price:153.53,chg:4.24},
+  {code:'sh600893',name:'航发动力',py:'hfdl',type:'A股',cur:'¥',tradable:true,price:17.9,chg:-3.22},
+  {code:'sh600760',name:'中航沈飞',py:'zhsf',type:'A股',cur:'¥',tradable:true,price:119.43,chg:0.39},
+  {code:'sh600862',name:'中航高科',py:'zhgk',type:'A股',cur:'¥',tradable:true,price:225.83,chg:-2.59},
+  {code:'sh600456',name:'宝钛股份',py:'btgf',type:'A股',cur:'¥',tradable:true,price:75.5,chg:-0.9},
+  {code:'sh601618',name:'中国中冶',py:'zgzy',type:'A股',cur:'¥',tradable:true,price:168.51,chg:-0.38},
+  {code:'sh601117',name:'中国化学',py:'zghx',type:'A股',cur:'¥',tradable:true,price:49.77,chg:3.81},
+  {code:'sh600528',name:'中铁工业',py:'ztgy',type:'A股',cur:'¥',tradable:true,price:86.57,chg:-4.06},
+  {code:'sh600495',name:'晋西车轴',py:'jxcz',type:'A股',cur:'¥',tradable:true,price:120.92,chg:2.54},
+  {code:'sh600808',name:'马钢股份',py:'mggf',type:'A股',cur:'¥',tradable:true,price:163.33,chg:2.89},
+  {code:'sh601005',name:'重庆钢铁',py:'cqgt',type:'A股',cur:'¥',tradable:true,price:181.04,chg:-1.79},
+  {code:'sh600022',name:'山东钢铁',py:'sdgt',type:'A股',cur:'¥',tradable:true,price:161.34,chg:-1.82},
+  {code:'sh601003',name:'柳钢股份',py:'lggf',type:'A股',cur:'¥',tradable:true,price:234.11,chg:-3.57},
+  {code:'sh600010',name:'包钢股份',py:'bggf',type:'A股',cur:'¥',tradable:true,price:51.1,chg:4.07},
+  {code:'sh600839',name:'四川长虹',py:'scch',type:'A股',cur:'¥',tradable:true,price:246.18,chg:-2.51},
+  {code:'sh600170',name:'上海建工',py:'shjg',type:'A股',cur:'¥',tradable:true,price:216.73,chg:-3.08},
+  {code:'sh600820',name:'隧道股份',py:'sdgf',type:'A股',cur:'¥',tradable:true,price:221.76,chg:-3.38},
+  {code:'sh601333',name:'广深铁路',py:'gstl',type:'A股',cur:'¥',tradable:true,price:150.03,chg:-3.82},
+  {code:'sh601006',name:'大秦铁路',py:'dqtl',type:'A股',cur:'¥',tradable:true,price:110.84,chg:1.11},
+  {code:'sh600023',name:'浙能电力',py:'zndl',type:'A股',cur:'¥',tradable:true,price:154.84,chg:-3.51},
+  {code:'sh600011',name:'华能国际',py:'hngj',type:'A股',cur:'¥',tradable:true,price:174.79,chg:-3.15},
+  {code:'sh600886',name:'国投电力',py:'gtdl',type:'A股',cur:'¥',tradable:true,price:130.93,chg:-3.11},
+  {code:'sh600674',name:'川投能源',py:'ctny',type:'A股',cur:'¥',tradable:true,price:44.73,chg:2.57},
+  {code:'sh600027',name:'华电国际',py:'hdgj',type:'A股',cur:'¥',tradable:true,price:283.89,chg:-3.73},
+  {code:'sz300750',name:'宁德时代',py:'ndsd',type:'创业·科创',cur:'¥',tradable:true,price:268,chg:-4.09},
+  {code:'sz300059',name:'东方财富',py:'dfcf',type:'创业·科创',cur:'¥',tradable:true,price:23.4,chg:-1.45},
+  {code:'sz300760',name:'迈瑞医疗',py:'mryl',type:'创业·科创',cur:'¥',tradable:true,price:303.43,chg:-2.1},
+  {code:'sz300124',name:'汇川技术',py:'hcjs',type:'创业·科创',cur:'¥',tradable:true,price:290.06,chg:-1.83},
+  {code:'sz300015',name:'爱尔眼科',py:'aeyk',type:'创业·科创',cur:'¥',tradable:true,price:128.19,chg:2.09},
+  {code:'sz300014',name:'亿纬锂能',py:'ywln',type:'创业·科创',cur:'¥',tradable:true,price:32.73,chg:-0.32},
+  {code:'sz300274',name:'阳光电源',py:'ygdy',type:'创业·科创',cur:'¥',tradable:true,price:300.21,chg:-3.56},
+  {code:'sz300316',name:'晶盛机电',py:'jsjd',type:'创业·科创',cur:'¥',tradable:true,price:285.6,chg:-2.76},
+  {code:'sz300122',name:'智飞生物',py:'zfsw',type:'创业·科创',cur:'¥',tradable:true,price:98.45,chg:2.8},
+  {code:'sz300498',name:'温氏股份',py:'wsgf',type:'创业·科创',cur:'¥',tradable:true,price:256.52,chg:-3.09},
+  {code:'sz300308',name:'中际旭创',py:'zjxc',type:'创业·科创',cur:'¥',tradable:true,price:313.13,chg:3.6},
+  {code:'sz300502',name:'新易盛',py:'xys',type:'创业·科创',cur:'¥',tradable:true,price:117.08,chg:-1.98},
+  {code:'sz300433',name:'蓝思科技',py:'lskj',type:'创业·科创',cur:'¥',tradable:true,price:162.51,chg:-4.36},
+  {code:'sz300136',name:'信维通信',py:'xwtx',type:'创业·科创',cur:'¥',tradable:true,price:76.2,chg:-0.18},
+  {code:'sz300782',name:'卓胜微',py:'zsw',type:'创业·科创',cur:'¥',tradable:true,price:48.16,chg:-0.85},
+  {code:'sz300661',name:'圣邦股份',py:'sbgf',type:'创业·科创',cur:'¥',tradable:true,price:334.51,chg:-2.82},
+  {code:'sz300454',name:'深信服',py:'sxf',type:'创业·科创',cur:'¥',tradable:true,price:121.75,chg:-0.54},
+  {code:'sz300033',name:'同花顺',py:'ths',type:'创业·科创',cur:'¥',tradable:true,price:18.87,chg:-2.31},
+  {code:'sz300253',name:'卫宁健康',py:'wnjk',type:'创业·科创',cur:'¥',tradable:true,price:226.81,chg:-2.69},
+  {code:'sz300347',name:'泰格医药',py:'tgyy',type:'创业·科创',cur:'¥',tradable:true,price:166.31,chg:-2.56},
+  {code:'sz300601',name:'康泰生物',py:'ktsw',type:'创业·科创',cur:'¥',tradable:true,price:182.35,chg:-4.57},
+  {code:'sz300769',name:'德方纳米',py:'dfnm',type:'创业·科创',cur:'¥',tradable:true,price:336.67,chg:4.2},
+  {code:'sz300751',name:'迈为股份',py:'mwgf',type:'创业·科创',cur:'¥',tradable:true,price:180.18,chg:-0.87},
+  {code:'sz300450',name:'先导智能',py:'xdzn',type:'创业·科创',cur:'¥',tradable:true,price:334.56,chg:-0.07},
+  {code:'sz300496',name:'中科创达',py:'zkcd',type:'创业·科创',cur:'¥',tradable:true,price:140.75,chg:-1.54},
+  {code:'sz300628',name:'亿联网络',py:'ylwl',type:'创业·科创',cur:'¥',tradable:true,price:249.46,chg:0.01},
+  {code:'sz300759',name:'康龙化成',py:'klhc',type:'创业·科创',cur:'¥',tradable:true,price:303.53,chg:-4.45},
+  {code:'sz300832',name:'新产业',py:'xcy',type:'创业·科创',cur:'¥',tradable:true,price:329.78,chg:-4.95},
+  {code:'sz300999',name:'金龙鱼',py:'jly',type:'创业·科创',cur:'¥',tradable:true,price:200.91,chg:-2.37},
+  {code:'sz300408',name:'三环集团',py:'shjt',type:'创业·科创',cur:'¥',tradable:true,price:230.94,chg:4.1},
+  {code:'sz300285',name:'国瓷材料',py:'gccl',type:'创业·科创',cur:'¥',tradable:true,price:96.11,chg:2.42},
+  {code:'sz300763',name:'锦浪科技',py:'jlkj',type:'创业·科创',cur:'¥',tradable:true,price:291.36,chg:3},
+  {code:'sz300390',name:'天华新能',py:'thxn',type:'创业·科创',cur:'¥',tradable:true,price:290.86,chg:-0.89},
+  {code:'sz300624',name:'万兴科技',py:'wxkj',type:'创业·科创',cur:'¥',tradable:true,price:89.67,chg:-1.69},
+  {code:'sz300418',name:'昆仑万维',py:'klww',type:'创业·科创',cur:'¥',tradable:true,price:93.02,chg:-3.35},
+  {code:'sz300229',name:'拓尔思',py:'tes',type:'创业·科创',cur:'¥',tradable:true,price:181,chg:0.03},
+  {code:'sz300024',name:'机器人',py:'jqr',type:'创业·科创',cur:'¥',tradable:true,price:122.25,chg:-1.96},
+  {code:'sz300456',name:'赛微电子',py:'swdz',type:'创业·科创',cur:'¥',tradable:true,price:51.66,chg:2.41},
+  {code:'sz300567',name:'精测电子',py:'jcdz',type:'创业·科创',cur:'¥',tradable:true,price:96.18,chg:0.77},
+  {code:'sz300604',name:'长川科技',py:'cckj',type:'创业·科创',cur:'¥',tradable:true,price:66.89,chg:2.62},
+  {code:'sh688981',name:'中芯国际',py:'zxgj',type:'创业·科创',cur:'¥',tradable:true,price:144,chg:2.31},
+  {code:'sh688041',name:'海光信息',py:'hgxx',type:'创业·科创',cur:'¥',tradable:true,price:172.58,chg:2.84},
+  {code:'sh688256',name:'寒武纪',py:'hwj',type:'创业·科创',cur:'¥',tradable:true,price:313.53,chg:0.42},
+  {code:'sh688599',name:'天合光能',py:'thgn',type:'创业·科创',cur:'¥',tradable:true,price:106.87,chg:-1.39},
+  {code:'sh688111',name:'金山办公',py:'jsbg',type:'创业·科创',cur:'¥',tradable:true,price:114.96,chg:2.54},
+  {code:'sh688012',name:'中微公司',py:'zwgs',type:'创业·科创',cur:'¥',tradable:true,price:226.36,chg:0.6},
+  {code:'sh688008',name:'澜起科技',py:'lqkj',type:'创业·科创',cur:'¥',tradable:true,price:347.16,chg:-2.33},
+  {code:'sh688036',name:'传音控股',py:'cykg',type:'创业·科创',cur:'¥',tradable:true,price:97.92,chg:2.27},
+  {code:'sh688169',name:'石头科技',py:'stkj',type:'创业·科创',cur:'¥',tradable:true,price:177.76,chg:3.09},
+  {code:'sh688396',name:'华润微',py:'hrw',type:'创业·科创',cur:'¥',tradable:true,price:233.46,chg:1.06},
+  {code:'usAAPL',name:'苹果',py:'pg',type:'美股',cur:'$',tradable:true,price:347.7,chg:1.15},
+  {code:'usMSFT',name:'微软',py:'wr',type:'美股',cur:'$',tradable:true,price:432,chg:1.23},
+  {code:'usNVDA',name:'英伟达',py:'ywd',type:'美股',cur:'$',tradable:true,price:178.9,chg:2.3},
+  {code:'usAMZN',name:'亚马逊',py:'ymx',type:'美股',cur:'$',tradable:true,price:218.7,chg:-1.36},
+  {code:'usGOOGL',name:'谷歌A',py:'gga',type:'美股',cur:'$',tradable:true,price:214.25,chg:1.46},
+  {code:'usGOOG',name:'谷歌C',py:'ggc',type:'美股',cur:'$',tradable:true,price:451.54,chg:2.03},
+  {code:'usMETA',name:'Meta',py:'meta',type:'美股',cur:'$',tradable:true,price:102.65,chg:-1.78},
+  {code:'usTSLA',name:'特斯拉',py:'tsl',type:'美股',cur:'$',tradable:true,price:421.5,chg:1.56},
+  {code:'usBRK.B',name:'伯克希尔B',py:'bkxeb',type:'美股',cur:'$',tradable:true,price:241.06,chg:2.35},
+  {code:'usJPM',name:'摩根大通',py:'mgdt',type:'美股',cur:'$',tradable:true,price:264.98,chg:2.11},
+  {code:'usV',name:'维萨',py:'ws',type:'美股',cur:'$',tradable:true,price:76.39,chg:-1.98},
+  {code:'usJNJ',name:'强生',py:'qs',type:'美股',cur:'$',tradable:true,price:321.55,chg:-1.61},
+  {code:'usWMT',name:'沃尔玛',py:'wem',type:'美股',cur:'$',tradable:true,price:104.37,chg:-0.48},
+  {code:'usMA',name:'万事达',py:'wsd',type:'美股',cur:'$',tradable:true,price:68.08,chg:1.14},
+  {code:'usPG',name:'宝洁',py:'bj',type:'美股',cur:'$',tradable:true,price:207.21,chg:2.4},
+  {code:'usUNH',name:'联合健康',py:'lhjk',type:'美股',cur:'$',tradable:true,price:133.53,chg:1.68},
+  {code:'usHD',name:'家得宝',py:'jdb',type:'美股',cur:'$',tradable:true,price:196.04,chg:0.94},
+  {code:'usXOM',name:'埃克森美孚',py:'aksmf',type:'美股',cur:'$',tradable:true,price:350.92,chg:-1.65},
+  {code:'usBAC',name:'美国银行',py:'mgyh',type:'美股',cur:'$',tradable:true,price:457.41,chg:-1.41},
+  {code:'usKO',name:'可口可乐',py:'kkkl',type:'美股',cur:'$',tradable:true,price:267.42,chg:2.2},
+  {code:'usPEP',name:'百事',py:'bs',type:'美股',cur:'$',tradable:true,price:67.47,chg:-0.92},
+  {code:'usCOST',name:'好市多',py:'hsd',type:'美股',cur:'$',tradable:true,price:83.98,chg:1.25},
+  {code:'usAVGO',name:'博通',py:'bt',type:'美股',cur:'$',tradable:true,price:509.6,chg:2.89},
+  {code:'usLLY',name:'礼来',py:'ll',type:'美股',cur:'$',tradable:true,price:470.54,chg:-1},
+  {code:'usADBE',name:'Adobe',py:'adobe',type:'美股',cur:'$',tradable:true,price:457.39,chg:-1.05},
+  {code:'usNFLX',name:'奈飞',py:'nf',type:'美股',cur:'$',tradable:true,price:238.44,chg:-2.11},
+  {code:'usCRM',name:'赛富时',py:'sfs',type:'美股',cur:'$',tradable:true,price:441.47,chg:-2.81},
+  {code:'usAMD',name:'AMD',py:'amd',type:'美股',cur:'$',tradable:true,price:134.9,chg:-1.01},
+  {code:'usINTC',name:'英特尔',py:'yte',type:'美股',cur:'$',tradable:true,price:469.12,chg:1.73},
+  {code:'usQCOM',name:'高通',py:'gt',type:'美股',cur:'$',tradable:true,price:453.35,chg:2.08},
+  {code:'usTXN',name:'德州仪器',py:'dzyq',type:'美股',cur:'$',tradable:true,price:422.48,chg:-1.76},
+  {code:'usORCL',name:'甲骨文',py:'jgw',type:'美股',cur:'$',tradable:true,price:438.21,chg:1.26},
+  {code:'usCSCO',name:'思科',py:'sk',type:'美股',cur:'$',tradable:true,price:35.33,chg:2.14},
+  {code:'usIBM',name:'IBM',py:'ibm',type:'美股',cur:'$',tradable:true,price:512.03,chg:0.8},
+  {code:'usUBER',name:'Uber',py:'uber',type:'美股',cur:'$',tradable:true,price:204.19,chg:0.64},
+  {code:'usPYPL',name:'PayPal',py:'paypal',type:'美股',cur:'$',tradable:true,price:217.85,chg:0.58},
+  {code:'usNKE',name:'耐克',py:'nk',type:'美股',cur:'$',tradable:true,price:476.63,chg:-1.07},
+  {code:'usMCD',name:'麦当劳',py:'mdl',type:'美股',cur:'$',tradable:true,price:450.81,chg:-2.56},
+  {code:'usSBUX',name:'星巴克',py:'xbk',type:'美股',cur:'$',tradable:true,price:256.11,chg:-0.78},
+  {code:'usDIS',name:'迪士尼',py:'dsn',type:'美股',cur:'$',tradable:true,price:56.43,chg:-1.39},
+  {code:'usBA',name:'波音',py:'by',type:'美股',cur:'$',tradable:true,price:365.61,chg:2.48},
+  {code:'usGE',name:'通用电气',py:'tydq',type:'美股',cur:'$',tradable:true,price:297.16,chg:-1.75},
+  {code:'usCAT',name:'卡特彼勒',py:'ktbl',type:'美股',cur:'$',tradable:true,price:365,chg:-2.26},
+  {code:'usGS',name:'高盛',py:'gs',type:'美股',cur:'$',tradable:true,price:371.48,chg:0.43},
+  {code:'usMS',name:'摩根士丹利',py:'mgsdl',type:'美股',cur:'$',tradable:true,price:371.41,chg:-0.36},
+  {code:'usPFE',name:'辉瑞',py:'hr',type:'美股',cur:'$',tradable:true,price:244.39,chg:-1.04},
+  {code:'usT',name:'美国电话电报',py:'mgdhdb',type:'美股',cur:'$',tradable:true,price:477.14,chg:-1.22},
+  {code:'usVZ',name:'威瑞森',py:'wrs',type:'美股',cur:'$',tradable:true,price:357.7,chg:2.72},
+  {code:'usBABA',name:'阿里巴巴',py:'albb',type:'美股',cur:'$',tradable:true,price:416.15,chg:2.71},
+  {code:'usPDD',name:'拼多多',py:'pdd',type:'美股',cur:'$',tradable:true,price:506.9,chg:1.61},
+];
+const byCode=c=>stocks.find(s=>s.code===c);
+
+function rw(n,start,vol){let a=[start];for(let i=1;i<n;i++){a.push(Math.max(0.01,a[i-1]*(1+(Math.random()-0.5)*vol)));}return a;}
+function genCandles(start){
+  let c=start,arr=[];
+  for(let i=0;i<42;i++){
+    const o=c;const drift=(Math.random()-0.48)*0.03;c=Math.max(0.01,c*(1+drift));
+    const h=Math.max(o,c)*(1+Math.random()*0.012);const l=Math.min(o,c)*(1-Math.random()*0.012);
+    arr.push({o,h,l,c});
+  }
+  return arr;
+}
+function nowTime(){const d=new Date();return d.toTimeString().slice(0,8);}
+
+/* 初始化衍生数据：昨收 / 分时 / 日K(蜡烛) / 成交量 / 逐笔 / 振幅 */
+stocks.forEach(s=>{
+  s.close=s.price/(1+s.chg/100);
+  s.series=rw(60,s.close,0.012);s.series[s.series.length-1]=s.price;
+  s.spark=rw(20,s.price,0.02);
+  s.candles=genCandles(s.close*0.9);s.candles[s.candles.length-1].c=s.price;
+  s.vols=Array.from({length:60},()=>4+Math.random()*20);
+  s.high=Math.max(...s.series,s.price);s.low=Math.min(...s.series,s.price);
+  s.amp=(s.high-s.low)/s.close*100;
+  s.ticks=Array.from({length:10},(_,i)=>({t:nowTime(),p:s.price*(1+(Math.random()-0.5)*0.002),v:Math.round(1+Math.random()*80),b:Math.random()>0.5}));
+});
+function refreshHL(s){s.high=Math.max(...s.series,s.price);s.low=Math.min(...s.series,s.price);s.amp=(s.high-s.low)/s.close*100;}
+
+/* ================= 大盘指数（顶部条） ================= */
+const indices=[
+  {name:'上证指数',price:3285.12,chg:+0.62},
+  {name:'深证成指',price:10456.78,chg:+0.91},
+  {name:'创业板指',price:2187.34,chg:+1.45},
+  {name:'沪深300',price:3972.56,chg:+0.55},
+  {name:'科创50', price:892.34, chg:-0.32},
+  {name:'恒生指数',price:18234.56,chg:+1.12},
+  {name:'纳斯达克',price:18456.78,chg:+0.87},
+  {name:'标普500',price:5612.34, chg:+0.42},
+];
+function renderIdx(){
+  const bar=document.getElementById('idxBar');bar.innerHTML='';
+  indices.forEach(x=>{
+    const up=x.chg>=0;const d=document.createElement('div');d.className='idx';
+    d.innerHTML=`<h3><span class="dot"></span>${x.name}</h3>
+      <div class="iv num ${up?'up':'down'}">${x.price.toLocaleString('en-US',{minimumFractionDigits:2})}</div>
+      <div class="ic num ${up?'up':'down'}">${up?'+':''}${x.chg.toFixed(2)}%</div>`;
+    bar.appendChild(d);
+  });
+}
+function tickIdx2(){
+  indices.forEach(x=>{
+    const drift=(Math.random()-0.5)*0.0015;
+    x.price=Math.max(0.01,x.price*(1+drift));
+    x.chg=(x.price/(x.price/(1+x.chg/100))-1)*100;
+  });
+  renderIdx();
+}
+
+/* ================= 市场概览 ================= */
+function renderBreadth(){
+  const up=1280+Math.round((Math.random()-0.5)*40),dn=860+Math.round((Math.random()-0.5)*40);
+  const zt=42+Math.round((Math.random()-0.5)*6),dt=12+Math.round((Math.random()-0.5)*4);
+  document.getElementById('upCount').textContent=up;
+  document.getElementById('dnCount').textContent=dn;
+  document.getElementById('ztCount').textContent=zt;
+  document.getElementById('dtCount').textContent=dt;
+  const tot=up+dn,pct=up/tot*100;
+  document.getElementById('breadPct').textContent='上涨 '+pct.toFixed(1)+'%';
+  document.getElementById('breadUp').style.width=pct+'%';
+  document.getElementById('breadDn').style.width=(100-pct)+'%';
+  document.getElementById('amount').textContent='¥'+(1.18+Math.random()*0.12).toFixed(2)+'万亿';
+  const nf=+(28+Math.random()*12).toFixed(1);
+  const ne=document.getElementById('north');ne.textContent=(nf>=0?'+':'')+nf+'亿';ne.className='bv '+(nf>=0?'up':'down');
+  document.getElementById('effect').textContent=pct>60?'极强':pct>52?'中等偏强':pct>48?'中等':'偏弱';
+}
+
+/* ================= 玩家 ================= */
+const INIT_CASH=200000;
+const players={
+  Jacky:{color:'#6ee7b7',cash:123400,hold:[{code:'sh600519',qty:100,cost:1300},{code:'usAAPL',qty:50,cost:330},{code:'sh510300',qty:5000,cost:4.0}],orders:[]},
+  Tina :{color:'#ff7b72',cash:88000, hold:[{code:'sz300750',qty:200,cost:260},{code:'usNVDA',qty:30,cost:170},{code:'usSPY',qty:100,cost:600}],orders:[]},
+  小明  :{color:'#fbbf24',cash:210000,hold:[{code:'sz002594',qty:300,cost:300}],orders:[]},
+  阿强  :{color:'#4ec9b0',cash:52000, hold:[{code:'usTSLA',qty:20,cost:400},{code:'usHSI',qty:2000,cost:29},{code:'sh600036',qty:1000,cost:40}],orders:[]},
+};
+let curPlayer='Jacky';
+
+/* ================= 工具 ================= */
+const fmt=(v,c='¥')=>c+v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:3});
+const fmtN=v=>v.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:3});
+const holdValue=p=>p.hold.reduce((s,h)=>s+byCode(h.code).price*h.qty,0);
+const totalAsset=p=>p.cash+holdValue(p);
+const pnlOf=h=>{const s=byCode(h.code);return s.price*h.qty-h.cost*h.qty;};
+
+/* ================= 时钟 ================= */
+setInterval(()=>{document.getElementById('clock').textContent=nowTime();},1000);
+document.getElementById('clock').textContent=nowTime();
+
+/* ================= 滚动行情条（仅精选热门股） ================= */
+const HOT_CODES=['sh600519','sh601318','sh600036','sh600900','sh600030','sh600887','sh601012','sh601899','sh600031','sh601138','sh601127','sz300750','sz300059','sz300308','sz300502','sh688981','sh688041','sh688256','sh688111','518880','512480','512880','510300','588000','513100','513500','usAAPL','usMSFT','usNVDA','usAMZN','usTSLA','usBABA','usPDD'];
+const tapeList=HOT_CODES.map(c=>stocks.find(s=>s.code===c)).filter(Boolean);
+function buildTape(){
+  const tr=document.getElementById('tapeTrack');tr.innerHTML='';
+  for(let copy=0;copy<2;copy++){
+    tapeList.forEach((s)=>{
+      const sp=document.createElement('span');sp.className='ti';sp.dataset.code=s.code;
+      sp.innerHTML=`<b>${s.name}</b><span class="tp num">${fmtN(s.price)}</span><span class="tc num"></span>`;
+      tr.appendChild(sp);
+    });
+  }
+  updateTape();
+}
+function updateTape(){
+  tapeList.forEach(s=>{
+    const up=s.chg>=0;
+    document.querySelectorAll(`.ti[data-code="${s.code}"] .tc`).forEach(el=>{
+      el.className='tc num '+(up?'up':'down');
+      el.textContent=`${up?'+':''}${s.chg.toFixed(2)}%`;
+    });
+  });
+}
+buildTape();
+
+/* ================= 玩家切换（标题栏仅显示当前用户，其余收进下拉） ================= */
+const ptab=document.getElementById('ptab');
+ptab.innerHTML='';
+const pAv=document.createElement('span');pAv.className='av';pAv.style.background=players[curPlayer].color;pAv.textContent=curPlayer[0];
+const pSel=document.createElement('select');pSel.id='pSel';
+Object.keys(players).forEach(n=>{const o=document.createElement('option');o.value=n;o.textContent=n;if(n===curPlayer)o.selected=true;pSel.appendChild(o);});
+pSel.onchange=()=>{curPlayer=pSel.value;pAv.style.background=players[curPlayer].color;pAv.textContent=curPlayer[0];renderAccount();renderHoldings();renderOrders();renderHistory();};
+ptab.appendChild(pAv);ptab.appendChild(pSel);
+
+/* ================= 自选行情 ================= */
+const mtbody=document.getElementById('mtbody');
+let filter='all',selCode=stocks[0].code,kMode='min',searchTerm='';
+function sparkSVG(arr,up){
+  const w=58,h=22,min=Math.min(...arr),max=Math.max(...arr),rng=(max-min)||1;
+  const pts=arr.map((v,i)=>`${(i/(arr.length-1))*w},${h-((v-min)/rng)*h}`).join(' ');
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}"><polyline points="${pts}" fill="none" stroke="${up?'var(--up)':'var(--down)'}" stroke-width="1.5"/></svg>`;
+}
+function renderMarket(){
+  mtbody.innerHTML='';
+  const t=searchTerm.toLowerCase();
+  const list=stocks.filter(s=>{
+    if(filter!=='all'&&s.type!==filter)return false;
+    if(t&&!(s.code.toLowerCase().includes(t)||s.name.toLowerCase().includes(t)||s.py.includes(t)))return false;
+    return true;
+  });
+  list.forEach(s=>{
+    const up=s.chg>=0;
+    const tr=document.createElement('tr');if(s.code===selCode)tr.classList.add('sel');
+    tr.innerHTML=`<td class="sname"><b>${s.name}</b><small>${s.code}</small></td>
+      <td class="num" style="font-weight:800;color:#fff">${fmtN(s.price)}</td>
+      <td class="num ${up?'up':'down'}" style="font-weight:800">${up?'+':''}${s.chg.toFixed(2)}%</td>
+      <td class="num" style="color:#b6c9c0">${s.amp.toFixed(2)}%</td>
+      <td class="num" style="color:#b6c9c0">${fmtN(s.high)}</td>
+      <td class="num" style="color:#b6c9c0">${fmtN(s.low)}</td>
+      <td>${sparkSVG(s.spark,up)}</td>`;
+    tr.onclick=()=>{selCode=s.code;renderMarket();renderDetail();};
+    mtbody.appendChild(tr);
+  });
+  document.getElementById('mCount').textContent=`显示 ${list.length} / ${stocks.length}`;
+}
+document.getElementById('search').addEventListener('input',e=>{searchTerm=e.target.value.trim();renderMarket();});
+document.getElementById('seg').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  document.querySelectorAll('#seg button').forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on');filter=e.target.dataset.f;renderMarket();
+});
+
+/* ================= 分时 / 日K(蜡烛) 主图 ================= */
+function chartSVG(s){
+  if(kMode==='day')return candleSVG(s);
+  const arr=s.series;
+  const w=640,h=225,padT=8,padB=42,padR=48,padL=6;
+  const plotW=w-padL-padR,plotH=h-padT-padB;
+  const mn0=Math.min(...arr,s.close),mx0=Math.max(...arr,s.close);
+  const rng0=(mx0-mn0)||1;const mn=mn0-rng0*0.06,mx=mx0+rng0*0.06;
+  const y=v=>padT+(1-(v-mn)/(mx-mn))*plotH;
+  const x=i=>padL+(i/(arr.length-1))*plotW;
+  const col=s.chg>=0?'#ff7b72':'#4ade80';
+  const gid='g'+Math.random().toString(36).slice(2,7);
+  let g='';
+  for(let k=0;k<=4;k++){
+    const v=mn+(mx-mn)*k/4,yy=y(v);
+    g+=`<line x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}" stroke="rgba(255,255,255,.06)"/>`;
+    g+=`<text x="${w-padR+6}" y="${yy+3}" font-size="9.5" fill="#648178" class="num">${fmtN(v)}</text>`;
+  }
+  const times=['09:30','10:30','11:30/13:00','14:00','15:00'];
+  times.forEach((t,k)=>{const xx=padL+(k/(times.length-1))*plotW;
+    g+=`<text x="${xx}" y="${h-4}" font-size="9.5" fill="#648178" text-anchor="${k===0?'start':k===times.length-1?'end':'middle'}">${t}</text>`;});
+  g+=`<line x1="${padL}" y1="${y(s.close)}" x2="${w-padR}" y2="${y(s.close)}" stroke="#648178" stroke-dasharray="4 3" opacity=".55"/>`;
+  const pts=arr.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+  let vb='';
+  for(let i=0;i<arr.length;i++){
+    const upv=i?arr[i]>=arr[i-1]:true;const bh=s.vols[i%60]*0.9;
+    vb+=`<rect x="${x(i)-1.4}" y="${h-padB+6}" width="2.8" height="${Math.min(bh,20)}" fill="${upv?'#ff7b72':'#4ade80'}" opacity=".5"/>`;
+  }
+  return `<defs><linearGradient id="${gid}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="${col}" stop-opacity=".3"/><stop offset="100%" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+    ${g}<polygon points="${padL},${padT+plotH} ${pts} ${w-padR},${padT+plotH}" fill="url(#${gid})"/>
+    <polyline points="${pts}" fill="none" stroke="${col}" stroke-width="1.8"/>${vb}`;
+}
+function candleSVG(s){
+  const arr=s.candles;
+  const w=640,h=225,padT=8,padB=42,padR=48,padL=6;
+  const plotW=w-padL-padR,plotH=h-padT-padB;
+  let mn=Math.min(...arr.map(d=>d.l)),mx=Math.max(...arr.map(d=>d.h));
+  const rng=(mx-mn)||1;mn-=rng*0.05;mx+=rng*0.05;
+  const y=v=>padT+(1-(v-mn)/(mx-mn))*plotH;
+  const cw=plotW/arr.length;
+  const xc=i=>padL+cw*i+cw/2;
+  let g='';
+  for(let k=0;k<=4;k++){
+    const v=mn+(mx-mn)*k/4,yy=y(v);
+    g+=`<line x1="${padL}" y1="${yy}" x2="${w-padR}" y2="${yy}" stroke="rgba(255,255,255,.06)"/>`;
+    g+=`<text x="${w-padR+6}" y="${yy+3}" font-size="9.5" fill="#648178" class="num">${fmtN(v)}</text>`;
+  }
+  const labels=['9-21','9-25','9-29','10-13','10-17','10-21','10-23','今'];
+  const n=labels.length;
+  for(let k=0;k<n;k++){const xx=padL+(k/(n-1))*plotW;
+    g+=`<text x="${xx}" y="${h-4}" font-size="9.5" fill="#648178" text-anchor="${k===0?'start':k===n-1?'end':'middle'}">${labels[k]}</text>`;}
+  let body='';
+  arr.forEach((d,i)=>{
+    const up=d.c>=d.o;const col=up?'#ff7b72':'#4ade80';const cx=xc(i);
+    const yo=y(d.o),yc=y(d.c);const top=Math.min(yo,yc),bh=Math.max(2,Math.abs(yc-yo));
+    body+=`<rect x="${cx-cw*0.34}" y="${top}" width="${cw*0.68}" height="${bh}" fill="${col}"/>`;
+    body+=`<line x1="${cx}" y1="${y(d.h)}" x2="${cx}" y2="${y(d.l)}" stroke="${col}" stroke-width="1"/>`;
+  });
+  return `${g}${body}`;
+}
+document.getElementById('kseg').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  document.querySelectorAll('#kseg button').forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on');kMode=e.target.dataset.k;
+  document.querySelector('#dName').textContent=kMode==='min'?'个股分时':'个股日K';
+  renderDetail();
+});
+
+function renderDetail(){
+  const s=byCode(selCode),up=s.chg>=0;
+  document.getElementById('dPrice').textContent=fmt(s.price,s.cur);
+  document.getElementById('dPrice').className='big num '+(up?'up':'down');
+  document.getElementById('dChg').textContent=`${up?'+':''}${(s.price-s.close).toFixed(2)}  ${up?'+':''}${s.chg.toFixed(2)}%`;
+  document.getElementById('dChg').className='chgbig num '+(up?'up':'down');
+  const tcls=s.type==='美股'||s.type==='全球'?'us':s.type==='指数'?'idx':'mint';
+  document.getElementById('dMeta').innerHTML=`<span>昨收 ${fmtN(s.close)}</span><span>最高 <b class="up">${fmtN(s.high)}</b></span><span>最低 <b class="down">${fmtN(s.low)}</b></span><span>振幅 ${s.amp.toFixed(2)}%</span><span class="mtype ${tcls}">${s.type}</span>`;
+  document.getElementById('chart').innerHTML=chartSVG(s);
+  document.getElementById('tkName').textContent=s.name;
+  document.getElementById('tkCode').textContent=s.code;
+  document.getElementById('tkPrice').textContent=fmt(s.price,s.cur);
+  const tc=document.getElementById('tkChg');tc.textContent=`${up?'+':''}${s.chg.toFixed(2)}%`;tc.className='tk-chg num '+(up?'up':'down');
+  const cb=document.getElementById('confirmBtn');
+  if(!s.tradable){cb.disabled=true;cb.style.opacity=.4;cb.textContent='指数不可交易';}
+  else{cb.disabled=false;cb.style.opacity=1;updateConfirm();}
+  updateEst();
+}
+
+/* ================= 模拟下单（增强版） ================= */
+let tradeDir='buy';
+function updateEst(){
+  const s=byCode(selCode);const q=Math.max(0,parseInt(document.getElementById('qty').value||0));
+  const amount=s.price*q;const fee=Math.max(amount*0.0003,0.1);
+  document.getElementById('estAmt').textContent=fmt(amount,s.cur);
+  document.getElementById('feeAmt').textContent=fmt(fee,s.cur);
+}
+function updateConfirm(){
+  const btn=document.getElementById('confirmBtn');const isBuy=tradeDir==='buy';
+  btn.textContent='确认'+(isBuy?'买入':'卖出');
+  btn.className='btn confirm '+(isBuy?'buy':'sell');
+}
+document.getElementById('qty').addEventListener('input',updateEst);
+document.getElementById('qrow').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  const s=byCode(selCode),p=players[curPlayer];
+  document.getElementById('qty').value=e.target.dataset.q==='max'?Math.floor(p.cash/s.price):e.target.dataset.q;
+  updateEst();
+});
+document.getElementById('pctrow').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  const s=byCode(selCode),p=players[curPlayer];
+  const maxSh=Math.floor(p.cash/s.price);
+  document.getElementById('qty').value=Math.floor(maxSh*parseFloat(e.target.dataset.p));
+  updateEst();
+});
+document.getElementById('dir').addEventListener('click',e=>{
+  if(e.target.tagName!=='BUTTON')return;
+  document.querySelectorAll('#dir button').forEach(b=>b.classList.remove('on'));
+  e.target.classList.add('on');tradeDir=e.target.dataset.dir;updateConfirm();
+});
+function doTrade(side){
+  const s=byCode(selCode),p=players[curPlayer];if(!s.tradable){log('<b>'+curPlayer+'</b> 操作失败：该指数为展示标的，不可交易');return;}let q=Math.max(0,parseInt(document.getElementById('qty').value||0));
+  if(!q)return;
+  if(side==='buy'){
+    const amount=s.price*q;const fee=Math.max(amount*0.0003,0.1);
+    if(amount+fee>p.cash){log(`<b>${curPlayer}</b> 买入 ${s.name} 失败：现金不足（含手续费）`);return;}
+    p.cash-=amount+fee;const h=p.hold.find(x=>x.code===s.code);
+    if(h){h.cost=(h.cost*h.qty+s.price*q)/(h.qty+q);h.qty+=q;}else p.hold.push({code:s.code,qty:q,cost:s.price});
+    p.orders.unshift({t:nowTime(),code:s.code,name:s.name,side:'买入',price:s.price,qty:q,st:'ok'});
+    log(`<b>${curPlayer}</b> 买入 ${q}股 <b>${s.name}</b> @${fmtN(s.price)}（手续费 ${fmt(fee,s.cur)}）`);
+  }else{
+    const h=p.hold.find(x=>x.code===s.code);if(!h||h.qty<q){log(`<b>${curPlayer}</b> 卖出 ${s.name} 失败：持仓不足`);return;}
+    const amount=s.price*q;const fee=Math.max(amount*0.0003,0.1);
+    p.cash+=amount-fee;h.qty-=q;if(h.qty===0)p.hold=p.hold.filter(x=>x!==h);
+    p.orders.unshift({t:nowTime(),code:s.code,name:s.name,side:'卖出',price:s.price,qty:q,st:'ok'});
+    log(`<b>${curPlayer}</b> 卖出 ${q}股 <b>${s.name}</b> @${fmtN(s.price)}（手续费 ${fmt(fee,s.cur)}）`);
+  }
+  renderAccount();renderHoldings();renderOrders();renderHistory();
+}
+document.getElementById('confirmBtn').onclick=()=>doTrade(tradeDir);
+updateConfirm();
+
+/* ================= 账户 ================= */
+function renderAccount(){
+  const p=players[curPlayer];
+  const hv=holdValue(p),ta=totalAsset(p),pnl=p.hold.reduce((s,h)=>s+pnlOf(h),0);
+  document.getElementById('cashPill').textContent='可用 '+fmt(p.cash);
+  document.getElementById('acctName').textContent=curPlayer+' 的账户';
+  document.getElementById('aTotal').textContent=fmt(ta);
+  document.getElementById('aCash').textContent=fmt(p.cash);
+  document.getElementById('aHold').textContent=fmt(hv);
+  const pe=document.getElementById('aPnl');pe.textContent=(pnl>=0?'+':'')+fmt(pnl);pe.className='v num '+(pnl>=0?'up':'down');
+  const pos=ta?hv/ta*100:0;
+  document.getElementById('aPos').textContent=pos.toFixed(1)+'%';
+  document.getElementById('posFill').style.width=Math.min(100,pos)+'%';
+  document.getElementById('tradeSub').textContent=`当前选中：${byCode(selCode).name} · 可用 ${fmt(p.cash)}`;
+}
+
+/* ================= 持仓明细 ================= */
+function renderHoldings(){
+  const p=players[curPlayer];
+  document.getElementById('holdSub').textContent=`${p.hold.length} 支持仓`;
+  const tb=document.getElementById('holdBody');tb.innerHTML='';
+  if(!p.hold.length){tb.innerHTML='<tr><td colspan="5" class="empty">暂无持仓，去左侧选股买入</td></tr>';return;}
+  p.hold.forEach(h=>{
+    const s=byCode(h.code),pnl=pnlOf(h),up=pnl>=0,rate=(s.price/h.cost-1)*100;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="sname"><b>${s.name}</b><small>${h.qty}股 · 成本 ${fmtN(h.cost)}</small></td>
+      <td class="num" style="color:#b6c9c0">${fmtN(s.price)}</td>
+      <td class="num" style="color:#fff;font-weight:700">${fmt(s.price*h.qty,s.cur)}</td>
+      <td class="num ${up?'up':'down'}" style="font-weight:800">${up?'+':''}${fmtN(pnl)}<br><span style="font-size:10.5px">${up?'+':''}${rate.toFixed(2)}%</span></td>`;
+    tr.onclick=()=>{selCode=s.code;renderMarket();renderDetail();};
+    tb.appendChild(tr);
+  });
+}
+
+/* ================= 今日委托 ================= */
+function renderOrders(){
+  const p=players[curPlayer];
+  const tb=document.getElementById('orderBody');tb.innerHTML='';
+  if(!p.orders.length){tb.innerHTML='<tr><td colspan="6" class="empty">今日暂无委托</td></tr>';return;}
+  p.orders.slice(0,8).forEach(o=>{
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="num" style="color:#b6c9c0">${o.t}</td>
+      <td style="color:#eaf5ee">${o.name}</td>
+      <td class="${o.side==='买入'?'up':'down'}" style="font-weight:800">${o.side}</td>
+      <td class="num">${fmtN(o.price)}</td>
+      <td class="num">${o.qty}</td>
+      <td><span class="status ok">已成交</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* ================= 历史下单记录 ================= */
+function renderHistory(){
+  const p=players[curPlayer];
+  document.getElementById('histSub').textContent=`${p.orders.length} 笔`;
+  const tb=document.getElementById('histBody');tb.innerHTML='';
+  if(!p.orders.length){tb.innerHTML='<tr><td colspan="7" class="empty">暂无下单记录，去上方模拟下单</td></tr>';return;}
+  p.orders.forEach(o=>{
+    const cur=byCode(o.code)?byCode(o.code).cur:'¥';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td class="num" style="color:#b6c9c0">${o.t}</td>
+      <td style="color:#eaf5ee">${o.name}</td>
+      <td class="${o.side==='买入'?'up':'down'}" style="font-weight:800">${o.side}</td>
+      <td class="num">${fmtN(o.price)}</td>
+      <td class="num">${o.qty}</td>
+      <td class="num" style="color:#fff;font-weight:700">${fmt(o.price*o.qty,cur)}</td>
+      <td><span class="status ok">已成交</span></td>`;
+    tb.appendChild(tr);
+  });
+}
+
+/* ================= 成交回报 ================= */
+const logEl=document.getElementById('log');
+function log(html){const d=document.createElement('div');d.innerHTML=`<span class="t">›</span> ${html}`;logEl.prepend(d);}
+
+/* ================= 实时跳动（模拟行情刷新） ================= */
+setInterval(()=>{
+  stocks.forEach(s=>{
+    const old=s.price;
+    s.price=Math.max(0.01,s.price*(1+(Math.random()-0.5)*0.004));
+    s.chg=(s.price/s.close-1)*100;
+    s.series[s.series.length-1]=s.price;
+    s.spark[s.spark.length-1]=s.price;
+    s.candles[s.candles.length-1].c=s.price;
+    refreshHL(s);
+    s.ticks.unshift({t:nowTime(),p:s.price,v:Math.round(1+Math.random()*80),b:s.price>=old});
+    if(s.ticks.length>10)s.ticks.pop();
+  });
+  updateTape();renderMarket();renderDetail();renderAccount();renderHoldings();
+},2500);
+setInterval(()=>{tickIdx2();renderBreadth();},3500);
+
+/* ================= 初始化 ================= */
+['系统就绪：行情通道已连接（模拟数据）。','每位玩家初始虚拟资金 ¥200,000。'].forEach(log);
+log('已载入 '+stocks.length+' 支标的：核心指数仅展示不可交易，其余可模拟交易。');
+renderIdx();buildTape();renderBreadth();renderMarket();renderDetail();renderAccount();renderHoldings();renderOrders();renderHistory();
+</script>
+</body>
+</html>

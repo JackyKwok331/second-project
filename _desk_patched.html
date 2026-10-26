@@ -1,0 +1,316 @@
+    <main class="dashboard" id="ttViewDesk" data-view="desk">
+    <!-- 左侧 -->
+    <aside class="column left-column">
+      <section class="panel player-card tt-account-card">
+        <div class="player-head">
+          <div class="player-avatar">J</div>
+          <div>
+            <div class="player-name">Jacky <span class="level-badge" id="ttLevel">LV.12</span></div>
+            <div class="player-sub" id="ttAccSub">积分账户 · 模拟盘</div>
+          </div>
+          <span class="online">在线</span>
+        </div>
+
+        <div class="wealth-label">总资产 / NET ASSETS</div>
+        <div class="wealth-value"><span id="ttTotalAssets">0.0</span><small> 积分</small></div>
+        <div class="wealth-delta" id="ttPnlLine"><span>持仓盈亏 +0.0（+0.00%）</span></div>
+
+        <div class="acc-split">
+          <div class="acc-row"><span>个人积分（可提现）</span><b id="ttPersonal">0.0</b></div>
+          <div class="acc-row gift"><span>赠送积分（不可提现）</span><b id="ttGift">0.0</b></div>
+          <div class="acc-row total"><span>可用积分合计</span><b id="ttAvail">0.0</b></div>
+        </div>
+
+        <div class="acc-actions">
+          <button type="button" class="acc-btn primary" id="ttOpenTransfer">博客积分转入</button>
+          <button type="button" class="acc-btn" id="ttOpenWithdraw">提现到博客</button>
+        </div>
+
+        <div class="player-stats">
+          <div class="player-stat"><span>持仓市值</span><b class="num" id="ttHoldValue">0.0</b></div>
+          <div class="player-stat"><span>总收益率</span><b class="num" id="ttRoi">0.00%</b></div>
+          <div class="player-stat"><span>今日成交</span><b class="num" id="ttTodayTrades">0 笔</b></div>
+        </div>
+      </section>
+
+      <section class="panel holdings-panel book-panel">
+        <div class="panel-inner">
+          <div class="panel-head">
+            <div class="panel-title">我的持仓 <small id="posCount">0</small></div>
+            <button class="panel-action" id="holdingsMore" type="button">全部 →</button>
+          </div>
+          <div class="holdings-list" id="holdingsList"></div>
+
+          <div class="book-split">
+            <span class="book-split-title">今日委托</span>
+            <span class="book-split-count" id="ordCount">0 笔</span>
+          </div>
+
+          <div class="order-list" id="orderList"></div>
+        </div>
+      </section>
+
+      <section class="panel watchlist-panel">
+        <div class="panel-inner">
+          <div class="panel-head">
+            <div class="panel-title">我的自选 <small id="wlCount">0</small></div>
+            <button class="panel-action" id="wlGoMarket" type="button">添加 →</button>
+          </div>
+          <div class="wl-list" id="wlList"></div>
+        </div>
+      </section>
+
+    </aside>
+
+    <!-- 中间 -->
+    <section class="column center-column">
+      <div class="market-overview">
+        <div class="market-strip" aria-label="主要指数">
+        <div class="index-card">
+          <div class="index-top"><span>上证指数</span><span>000001.SH</span></div>
+          <div class="index-value num">3,690.48</div>
+          <div class="index-bottom">
+            <span class="index-change up">+0.89%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 18 L8 17 L16 19 L24 14 L32 15 L40 12 L48 13 L56 9 L64 11 L72 8 L80 9" fill="none" stroke="#ff7b72" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+        <div class="index-card">
+          <div class="index-top"><span>深证成指</span><span>399001.SZ</span></div>
+          <div class="index-value num">11,673.83</div>
+          <div class="index-bottom">
+            <span class="index-change up">+2.79%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 21 L8 18 L16 19 L24 16 L32 14 L40 15 L48 10 L56 11 L64 7 L72 6 L80 4" fill="none" stroke="#ff7b72" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+        <div class="index-card">
+          <div class="index-top"><span>沪深 300</span><span>000300.SH</span></div>
+          <div class="index-value num">4,105.33</div>
+          <div class="index-bottom">
+            <span class="index-change up">+1.71%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 19 L8 16 L16 17 L24 15 L32 14 L40 11 L48 12 L56 9 L64 10 L72 7 L80 8" fill="none" stroke="#ff7b72" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+        <div class="index-card">
+          <div class="index-top"><span>恒生指数</span><span>HSI.HK</span></div>
+          <div class="index-value num">23,093.37</div>
+          <div class="index-bottom">
+            <span class="index-change up">+0.69%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 17 L8 18 L16 15 L24 16 L32 13 L40 14 L48 11 L56 12 L64 10 L72 11 L80 8" fill="none" stroke="#ff7b72" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+        <div class="index-card">
+          <div class="index-top"><span>纳斯达克</span><span>IXIC.US</span></div>
+          <div class="index-value num">25,955.34</div>
+          <div class="index-bottom">
+            <span class="index-change down">-0.21%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 8 L8 7 L16 9 L24 6 L32 8 L40 10 L48 9 L56 12 L64 11 L72 14 L80 15" fill="none" stroke="#4ade80" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+        <div class="index-card">
+          <div class="index-top"><span>标普 500</span><span>SPX.US</span></div>
+          <div class="index-value num">7,596.30</div>
+          <div class="index-bottom">
+            <span class="index-change down">-0.52%</span>
+            <span class="index-spark"><svg viewBox="0 0 80 24" preserveAspectRatio="none"><path d="M0 7 L8 9 L16 8 L24 11 L32 10 L40 12 L48 11 L56 14 L64 13 L72 16 L80 17" fill="none" stroke="#4ade80" stroke-width="1.5" vector-effect="non-scaling-stroke"/></svg></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="market-status-row">
+        <div class="market-legend"><span class="up-dot"></span> 红涨 <span class="down-dot" style="margin-left:7px"></span> 绿跌</div>
+        <span class="refresh-chip">行情每 2 分钟刷新 · <b id="refreshCountdown">01:58</b></span>
+        </div>
+      </div>
+
+      <section class="panel stock-panel">
+        <div class="stock-head">
+          <div class="stock-id">
+            <div class="stock-logo" id="stockLogo">茅</div>
+            <div>
+              <div class="stock-name">
+                <span id="stockName">贵州茅台</span>
+                <span class="market-tag" id="stockMarketTag">沪市主板</span>
+              </div>
+              <div class="stock-meta"><span id="stockCode">600519.SH</span> · <span id="stockSector">食品饮料</span> · <span id="stockSession">09:30 – 15:00</span></div>
+            </div>
+          </div>
+
+          <div class="stock-price">
+            <div class="price-row">
+              <span class="price-currency" id="priceCurrency">¥</span>
+              <span class="price-main" id="priceMain">1,335.00</span>
+            </div>
+            <div class="price-change up"><span id="priceChange">+16.51</span><span id="pricePct">+1.25%</span></div>
+          </div>
+
+          <div class="stock-actions">
+            <button class="action-btn ghost" id="watchBtn">☆ 自选</button>
+            <button class="action-btn buy" id="quickBuyBtn">买入</button>
+            <button class="action-btn sell" id="quickSellBtn">卖出</button>
+          </div>
+        </div>
+
+        <div class="stock-subbar">
+          <div class="range-tabs" role="tablist" aria-label="时间区间">
+            <button class="range-btn active" data-range="1D">1D</button>
+            <button class="range-btn" data-range="5D">5D</button>
+            <button class="range-btn" data-range="1M">1M</button>
+            <button class="range-btn" data-range="3M">3M</button>
+            <button class="range-btn" data-range="1Y">1Y</button>
+          </div>
+          <span class="chart-note">分时 · 模拟数据</span>
+        </div>
+
+        <div class="chart-wrap">
+          <div class="chart-shell">
+            <div class="chart-plot" id="chartPlot">
+              <svg id="priceChart" viewBox="0 0 1000 240" preserveAspectRatio="none" aria-hidden="true">
+                <defs>
+                  <linearGradient id="areaUp" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#ff7b72" stop-opacity="0.22"/>
+                    <stop offset="100%" stop-color="#ff7b72" stop-opacity="0"/>
+                  </linearGradient>
+                  <linearGradient id="areaDown" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#4ade80" stop-opacity="0.2"/>
+                    <stop offset="100%" stop-color="#4ade80" stop-opacity="0"/>
+                  </linearGradient>
+                </defs>
+                <g id="volumeBars"></g>
+                <path id="areaPath" fill="url(#areaUp)" d=""></path>
+                <path id="linePath" fill="none" stroke="#ff7b72" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" vector-effect="non-scaling-stroke" d=""></path>
+              </svg>
+              <span class="chart-dot" id="chartDot" style="top: 37%;"></span>
+            </div>
+            <div class="chart-y">
+              <span id="chartYHigh">1,343.88</span>
+              <span id="chartYMid">1,326.94</span>
+              <span id="chartYLow">1,310.00</span>
+            </div>
+          </div>
+          <div class="chart-x" id="chartX">
+            <span>09:30</span><span>10:30</span><span>11:30</span><span>13:00</span><span>14:00</span><span>15:00</span>
+          </div>
+        </div>
+
+        <div class="quote-stats">
+          <div class="quote-stat"><span>今开</span><b class="num" id="statOpen">1,311.84</b></div>
+          <div class="quote-stat"><span>最高</span><b class="num up" id="statHigh">1,343.88</b></div>
+          <div class="quote-stat"><span>最低</span><b class="num down" id="statLow">1,310.00</b></div>
+          <div class="quote-stat"><span>成交额</span><b class="num" id="statAmount">76.8 亿</b></div>
+          <div class="quote-stat"><span>换手率</span><b class="num" id="statTurnover">0.46%</b></div>
+          <div class="quote-stat"><span>昨收</span><b class="num" id="statPrev">1,318.49</b></div>
+        </div>
+      </section>
+
+      <section class="panel watch-panel">
+        <div class="watch-head">
+          <div class="watch-title">行情列表 <span>294 个标的</span></div>
+          <div class="watch-tools">
+            <label class="search-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+              <input id="searchInput" type="search" placeholder="搜索名称 / 代码" autocomplete="off">
+            </label>
+          </div>
+        </div>
+
+        <div class="watch-tabs" id="watchTabs">
+          <button class="watch-tab active" data-category="全部">全部 <small>294</small></button>
+          <button class="watch-tab" data-category="A股">A 股 <small>200</small></button>
+          <button class="watch-tab" data-category="ETF">ETF <small>36</small></button>
+          <button class="watch-tab" data-category="美股">美股 <small>50</small></button>
+          <button class="watch-tab" data-category="指数">指数 <small>8</small></button>
+        </div>
+
+        <div class="table-wrap">
+          <table class="market-table">
+            <thead>
+              <tr>
+                <th>标的</th>
+                <th>最新价</th>
+                <th>涨跌幅</th>
+                <th>今开</th>
+                <th>最高</th>
+                <th>最低</th>
+                <th>成交额</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="marketRows"></tbody>
+          </table>
+        </div>
+
+        <div class="table-foot">
+          <span id="tableCount">显示 9 个标的 · 模拟数据</span>
+          <span>点击行查看 · 点「交易」带入下单</span>
+        </div>
+      </section>
+    </section>
+
+    <!-- 右侧 -->
+    <aside class="column right-column">
+      <section class="panel order-panel">
+        <div class="order-head">
+          <div>
+            <span class="panel-kicker">ORDER TICKET</span>
+            <h3>模拟下单</h3>
+          </div>
+          <span class="order-mode">市价</span>
+        </div>
+
+        <div class="order-stock">
+          <div class="order-stock-logo" id="orderLogo">茅</div>
+          <div class="order-stock-info">
+            <div class="order-stock-name" id="orderName">贵州茅台</div>
+            <div class="order-stock-code" id="orderCode">600519.SH</div>
+          </div>
+          <div class="order-quote">
+            <b id="orderPrice">1,335.00</b>
+            <span class="up" id="orderPct">+1.25%</span>
+          </div>
+        </div>
+
+        <div class="side-toggle" role="tablist" aria-label="买入或卖出">
+          <button class="side-btn buy active" data-side="buy">买入</button>
+          <button class="side-btn sell" data-side="sell">卖出</button>
+        </div>
+
+        <div class="order-fields">
+          <div class="field-label">
+            <label for="qtyInput">数量</label>
+            <span id="lotHint">100 股 / 手</span>
+          </div>
+          <div class="qty-stepper">
+            <button type="button" id="qtyMinus" aria-label="减少数量">−</button>
+            <input id="qtyInput" type="number" min="0" step="100" value="100" inputmode="numeric">
+            <button type="button" id="qtyPlus" aria-label="增加数量">+</button>
+          </div>
+          <div class="quick-qty" id="quickQty"></div>
+        </div>
+
+        <div class="order-summary">
+          <div class="summary-row"><span>预估金额</span><b id="orderEstimate">0.0</b></div>
+          <div class="summary-row"><span>手续费 0.03%<i class="tt-mini">最低 1 分</i></span><b id="orderFee">1.0</b></div>
+          <div class="summary-row"><span>可用积分</span><b id="orderBalance">0.0</b></div>
+          <div class="summary-row main"><span>提交后剩余</span><b id="orderTotal">0.0</b></div>
+        </div>
+
+        <div class="order-warn tt-hidden" id="orderWarn">可用积分低于 2,000，暂不可买入</div>
+
+        <button class="submit-order" id="submitOrder">确认买入</button>
+
+        <!-- 交易规则说明区：后续直接在这里追加文字即可，超出高度会自动内部滚动 -->
+        <section class="order-rules" aria-label="交易规则说明">
+          <div class="rules-head"><span>交易规则</span><span class="micro">RULES</span></div>
+          <div class="rules-body" id="rulesBody">
+            <p>· 全部标的 T+1：当日买入，次一交易日才可卖出。</p>
+            <p>· 100 股 = 1 手，最低 1 手；按当前市价即时成交。</p>
+            <p>· 手续费 0.03%，不足 1 积分按 1 积分收取。</p>
+            <p>· 可用积分低于 2,000 时禁止买入，卖出不受限。</p>
+            <p>· 赠送积分不可提现；卖出所得计入个人积分，可提现。</p>
+          </div>
+        </section>
+      </section>
+
+      <div class="trade-tip">行情按 2 分钟快照更新；全部为虚拟积分交易，不涉及真实资金。</div>
+    </aside>
+  </main>

@@ -1,0 +1,3958 @@
+
+    .tt-app {
+      --bg: #06110f;
+      --panel: rgba(11, 32, 26, 0.92);
+      --panel-soft: rgba(14, 40, 33, 0.72);
+      --line: rgba(126, 231, 183, 0.14);
+      --line-strong: rgba(126, 231, 183, 0.26);
+      --text: #f4f8f6;
+      --muted: #8da9a0;
+      --muted-2: #648178;
+      --mint: #6ee7b7;
+      --green: #34d399;
+      --gold: #fbbf24;
+      --gold-soft: #fde68a;
+      --up: #ff7b72;
+      --down: #4ade80;
+      --blue: #67a9ff;
+      --shadow: 0 24px 55px -32px rgba(0, 0, 0, 0.95);
+    }
+
+    .tt-app * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    .tt-app {
+      color-scheme: dark;
+    }
+
+    .tt-app {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background:
+        radial-gradient(52% 65% at 88% 0%, rgba(52, 211, 153, 0.13), transparent 64%),
+        radial-gradient(46% 48% at 0% 92%, rgba(251, 191, 36, 0.07), transparent 64%),
+        var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .tt-app::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(110, 231, 183, 0.032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110, 231, 183, 0.032) 1px, transparent 1px);
+      background-size: 48px 48px;
+      -webkit-mask-image: radial-gradient(circle at 50% 16%, #000 0%, transparent 78%);
+      mask-image: radial-gradient(circle at 50% 16%, #000 0%, transparent 78%);
+      pointer-events: none;
+    }
+
+    .tt-app button {
+      border: 0;
+      background: none;
+      color: inherit;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    .tt-app button:focus-visible, .tt-app input:focus-visible {
+      outline: 2px solid var(--mint);
+      outline-offset: 2px;
+    }
+
+    .tt-app input {
+      font: inherit;
+    }
+
+    .tt-app ::selection {
+      background: rgba(110, 231, 183, 0.3);
+      color: #fff;
+    }
+
+    .tt-app ::-webkit-scrollbar {
+      width: 9px;
+      height: 9px;
+    }
+
+    .tt-app ::-webkit-scrollbar-track {
+      background: #06110f;
+    }
+
+    .tt-app ::-webkit-scrollbar-thumb {
+      border: 2px solid #06110f;
+      border-radius: 99px;
+      background: #1f4a3d;
+    }
+
+    .tt-app .num {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tt-app .micro {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--mint);
+    }
+
+    .tt-app .up { color: var(--up); }
+    .tt-app .down { color: var(--down); }
+    .tt-app .muted { color: var(--muted); }
+
+    
+    .tt-app .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid var(--line);
+      background: rgba(4, 16, 13, 0.84);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+
+    .tt-app .topbar-inner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 13px 24px;
+    }
+
+    .tt-app .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      flex-shrink: 0;
+    }
+
+    .tt-app .brand-mark {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border: 1px solid rgba(253, 230, 138, 0.32);
+      border-radius: 13px;
+      color: #07241d;
+      background:
+        radial-gradient(120% 120% at 18% 0%, #fef3c7 0%, transparent 45%),
+        linear-gradient(145deg, #a7f3d0, #34d399 58%, #fbbf24 150%);
+      box-shadow:
+        0 8px 20px -12px rgba(52, 211, 153, 0.8),
+        inset 0 1px rgba(255, 255, 255, 0.6);
+    }
+
+    .tt-app .brand-mark svg {
+      width: 23px;
+      height: 23px;
+    }
+
+    .tt-app .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 9px rgba(251, 191, 36, 0.9);
+    }
+
+    .tt-app .brand-kicker {
+      display: block;
+      margin-bottom: 2px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--muted);
+    }
+
+    .tt-app .brand-title {
+      display: flex;
+      align-items: baseline;
+      gap: 7px;
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: -0.35px;
+      white-space: nowrap;
+    }
+
+    .tt-app .brand-title em {
+      font-size: 8px;
+      font-style: normal;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      opacity: 0.7;
+    }
+
+    .tt-app .nav {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      margin-left: 8px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .tt-app .nav-btn {
+      padding: 7px 12px;
+      border-radius: 7px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tt-app .nav-btn:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tt-app .nav-btn.active {
+      color: var(--mint);
+      background: rgba(110, 231, 183, 0.1);
+      box-shadow: inset 0 0 0 1px rgba(110, 231, 183, 0.1);
+    }
+
+    .tt-app .top-right {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin-left: auto;
+      min-width: 0;
+    }
+
+    .tt-app .prototype-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border: 1px solid rgba(251, 191, 36, 0.24);
+      border-radius: 999px;
+      background: rgba(251, 191, 36, 0.06);
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--gold-soft);
+      white-space: nowrap;
+    }
+
+    .tt-app .prototype-pill::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--gold);
+      box-shadow: 0 0 8px rgba(251, 191, 36, 0.9);
+    }
+
+    .tt-app .market-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .tt-app .market-chip .live-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.9);
+    }
+
+    .tt-app .market-chip b {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .tt-app .market-chip span {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+    }
+
+    .tt-app .wallet {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 11px 5px 6px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.035);
+      white-space: nowrap;
+    }
+
+    .tt-app .wallet-coin {
+      display: grid;
+      place-items: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold));
+      color: #422006;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 10px;
+      font-weight: 800;
+    }
+
+    .tt-app .wallet small {
+      display: block;
+      color: var(--muted-2);
+      font-size: 7px;
+      line-height: 1;
+    }
+
+    .tt-app .wallet b {
+      display: block;
+      margin-top: 2px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .tt-app .user-avatar {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(253, 230, 138, 0.55);
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 25%, #67a9ff, #172554 70%);
+      color: #fff;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 0 0 3px rgba(103, 169, 255, 0.08);
+    }
+
+    
+    .tt-app .dashboard {
+      display: grid;
+      grid-template-columns: 270px minmax(0, 1fr) 350px;
+      grid-template-areas:
+        "left indices order"
+        "left stock order"
+        "left watch order";
+      gap: 18px;
+      align-items: start;
+      width: 100%;
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px 24px 24px;
+    }
+
+    .tt-app .column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      min-width: 0;
+    }
+
+    .tt-app .center-column {
+      display: contents;
+    }
+
+    .tt-app .left-column {
+      grid-area: left;
+    }
+
+    .tt-app .right-column {
+      grid-area: order;
+    }
+
+    .tt-app .market-overview {
+      display: flex;
+      grid-area: indices;
+      flex-direction: column;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .tt-app .stock-panel {
+      grid-area: stock;
+      min-width: 0;
+    }
+
+    .tt-app .watch-panel {
+      grid-area: watch;
+      min-width: 0;
+    }
+
+    .tt-app .panel {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background:
+        linear-gradient(145deg, rgba(15, 42, 34, 0.88), rgba(7, 24, 19, 0.94));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .tt-app .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, rgba(255, 255, 255, 0.035), transparent 24%);
+      pointer-events: none;
+    }
+
+    .tt-app .panel-inner {
+      position: relative;
+      z-index: 1;
+      padding: 16px;
+    }
+
+    .tt-app .panel-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 13px;
+    }
+
+    .tt-app .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.01em;
+    }
+
+    .tt-app .panel-title small {
+      color: var(--muted-2);
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .tt-app .panel-kicker {
+      display: block;
+      margin-bottom: 3px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      color: var(--muted-2);
+    }
+
+    .tt-app .panel-action {
+      color: var(--muted);
+      font-size: 10px;
+      font-weight: 600;
+      transition: color 0.15s;
+    }
+
+    .tt-app .panel-action:hover {
+      color: var(--mint);
+    }
+
+    
+    .tt-app .player-card {
+      position: relative;
+      padding: 17px;
+      overflow: hidden;
+    }
+
+    .tt-app .player-card::after {
+      content: "";
+      position: absolute;
+      right: -52px;
+      top: -62px;
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110, 231, 183, 0.15), transparent 68%);
+      filter: blur(8px);
+      pointer-events: none;
+    }
+
+    .tt-app .player-head {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tt-app .player-avatar {
+      position: relative;
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border: 1px solid rgba(253, 230, 138, 0.5);
+      border-radius: 50%;
+      background: radial-gradient(circle at 32% 25%, #67a9ff, #172554 70%);
+      color: #fff;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 18px;
+      font-weight: 800;
+      box-shadow: 0 0 0 4px rgba(103, 169, 255, 0.07);
+    }
+
+    .tt-app .player-avatar::after {
+      content: "";
+      position: absolute;
+      right: -1px;
+      bottom: 2px;
+      width: 9px;
+      height: 9px;
+      border: 2px solid #0b201a;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    .tt-app .player-name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .tt-app .level-badge {
+      padding: 2px 5px;
+      border: 1px solid rgba(251, 191, 36, 0.25);
+      border-radius: 4px;
+      color: var(--gold-soft);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .tt-app .player-sub {
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .tt-app .online {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+      color: var(--mint);
+      font-size: 8px;
+    }
+
+    .tt-app .online::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--mint);
+      box-shadow: 0 0 8px rgba(110, 231, 183, 0.9);
+    }
+
+    .tt-app .wealth-label {
+      margin-top: 19px;
+      color: var(--muted-2);
+      font-size: 9px;
+    }
+
+    .tt-app .wealth-value {
+      margin-top: 2px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -1.4px;
+      line-height: 1.1;
+    }
+
+    .tt-app .wealth-value small {
+      color: var(--muted-2);
+      font-size: 13px;
+      letter-spacing: 0;
+    }
+
+    .tt-app .wealth-delta {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-top: 4px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tt-app .wealth-delta span {
+      color: var(--muted);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .tt-app .equity-curve {
+      width: 100%;
+      height: 43px;
+      margin-top: 11px;
+      overflow: hidden;
+      opacity: 0.9;
+    }
+
+    .tt-app .equity-curve svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .tt-app .player-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1px;
+      margin-top: 12px;
+      border: 1px solid rgba(110, 231, 183, 0.09);
+      border-radius: 10px;
+      background: rgba(110, 231, 183, 0.09);
+      overflow: hidden;
+    }
+
+    .tt-app .player-stat {
+      padding: 9px 8px;
+      background: rgba(6, 22, 17, 0.8);
+    }
+
+    .tt-app .player-stat span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    .tt-app .player-stat b {
+      display: block;
+      margin-top: 4px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    
+    .tt-app .holdings-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tt-app .holding-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(110, 231, 183, 0.08);
+    }
+
+    .tt-app .holding-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 2px;
+    }
+
+    .tt-app .holding-logo {
+      display: grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      flex: 0 0 30px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .tt-app .holding-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tt-app .holding-name {
+      font-size: 10.5px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tt-app .holding-code {
+      margin-top: 2px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .tt-app .holding-value {
+      flex: 0 0 76px;
+      text-align: right;
+    }
+
+    .tt-app .holding-value b {
+      display: block;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    .tt-app .holding-value span {
+      display: block;
+      margin-top: 2px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .tt-app .alloc-bar {
+      display: flex;
+      gap: 2px;
+      height: 7px;
+      margin: 2px 0 13px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+    }
+
+    .tt-app .alloc-bar i {
+      display: block;
+      height: 100%;
+    }
+
+    .tt-app .alloc-bar i:nth-child(1) { width: 35%; background: #34d399; }
+    .tt-app .alloc-bar i:nth-child(2) { width: 16%; background: #fbbf24; }
+    .tt-app .alloc-bar i:nth-child(3) { width: 26%; background: #67a9ff; }
+    .tt-app .alloc-bar i:nth-child(4) { width: 23%; background: #405c52; }
+
+    .tt-app .alloc-legend {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px 10px;
+    }
+
+    .tt-app .alloc-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .tt-app .alloc-item i {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .tt-app .alloc-item b {
+      margin-left: auto;
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    
+    .tt-app .rank-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .tt-app .rank-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.018);
+    }
+
+    .tt-app .rank-row.you {
+      border: 1px solid rgba(110, 231, 183, 0.16);
+      background: rgba(110, 231, 183, 0.055);
+    }
+
+    .tt-app .rank-no {
+      width: 13px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .tt-app .rank-no.gold { color: var(--gold); }
+    .tt-app .rank-no.silver { color: #d5e1dd; }
+    .tt-app .rank-no.bronze { color: #d59b76; }
+
+    .tt-app .rank-avatar {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #1e4b3d, #0a201a);
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .tt-app .rank-row.you .rank-avatar {
+      background: linear-gradient(145deg, #67a9ff, #172554);
+      color: #fff;
+    }
+
+    .tt-app .rank-name {
+      flex: 1;
+      min-width: 0;
+      font-size: 9px;
+      font-weight: 600;
+    }
+
+    .tt-app .rank-name small {
+      margin-left: 4px;
+      padding: 1px 3px;
+      border-radius: 3px;
+      background: rgba(110, 231, 183, 0.12);
+      color: var(--mint);
+      font-size: 6px;
+      font-weight: 700;
+    }
+
+    .tt-app .rank-return {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+    }
+
+    
+    .tt-app .market-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .tt-app .index-card {
+      position: relative;
+      min-width: 0;
+      padding: 12px 13px 10px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: linear-gradient(150deg, rgba(16, 44, 35, 0.75), rgba(7, 24, 19, 0.9));
+    }
+
+    .tt-app .index-card::after {
+      content: "";
+      position: absolute;
+      right: -16px;
+      bottom: -24px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(110, 231, 183, 0.09), transparent 68%);
+      pointer-events: none;
+    }
+
+    .tt-app .index-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 9px;
+      white-space: nowrap;
+    }
+
+    .tt-app .index-top span:last-child {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      letter-spacing: 0.08em;
+    }
+
+    .tt-app .index-value {
+      position: relative;
+      z-index: 1;
+      margin-top: 7px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.5px;
+      line-height: 1;
+    }
+
+    .tt-app .index-bottom {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 6px;
+      margin-top: 5px;
+    }
+
+    .tt-app .index-change {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .tt-app .index-spark {
+      width: 58px;
+      height: 20px;
+      opacity: 0.9;
+    }
+
+    .tt-app .index-spark svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    
+    .tt-app .market-status-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 0 2px;
+    }
+
+    .tt-app .market-legend {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: var(--muted-2);
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    .tt-app .market-legend .up-dot, .tt-app .market-legend .down-dot {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+    }
+
+    .tt-app .market-legend .up-dot { background: var(--up); }
+    .tt-app .market-legend .down-dot { background: var(--down); }
+
+    .tt-app .refresh-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted-2);
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    .tt-app .refresh-chip::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.9);
+    }
+
+    .tt-app .refresh-chip b {
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 500;
+    }
+
+    
+    .tt-app .stock-panel {
+      border-radius: 19px;
+    }
+
+    .tt-app .stock-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 18px 20px 0;
+    }
+
+    .tt-app .stock-id {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      min-width: 0;
+    }
+
+    .tt-app .stock-logo {
+      display: grid;
+      place-items: center;
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      border-radius: 13px;
+      background:
+        radial-gradient(120% 120% at 20% 0%, #fef3c7, transparent 45%),
+        linear-gradient(145deg, #fbbf24, #b45309);
+      color: #422006;
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 19px;
+      font-weight: 800;
+      box-shadow: inset 0 1px rgba(255, 255, 255, 0.45);
+    }
+
+    .tt-app .stock-name {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 7px;
+      font-size: 18px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .tt-app .market-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 6px;
+      border: 1px solid rgba(110, 231, 183, 0.2);
+      border-radius: 4px;
+      background: rgba(110, 231, 183, 0.07);
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .tt-app .market-tag.us {
+      border-color: rgba(103, 169, 255, 0.25);
+      background: rgba(103, 169, 255, 0.08);
+      color: #9dc7ff;
+    }
+
+    .tt-app .stock-meta {
+      margin-top: 4px;
+      color: var(--muted);
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .stock-price {
+      margin-left: auto;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .tt-app .price-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: flex-end;
+      gap: 3px;
+      line-height: 1;
+    }
+
+    .tt-app .price-currency {
+      color: var(--muted);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .tt-app .price-main {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 34px;
+      font-weight: 600;
+      letter-spacing: -1px;
+      line-height: 1;
+    }
+
+    .tt-app .price-change {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 7px;
+      margin-top: 4px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+    }
+
+    .tt-app .price-change span {
+      color: inherit;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9.5px;
+      font-weight: 600;
+    }
+
+    .tt-app .stock-actions {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-left: 6px;
+      padding-top: 1px;
+      flex-shrink: 0;
+    }
+
+    .tt-app .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      height: 32px;
+      padding: 0 11px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+      transition: transform 0.15s, background 0.15s, border-color 0.15s;
+    }
+
+    .tt-app .action-btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .tt-app .action-btn.ghost {
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .tt-app .action-btn.ghost:hover, .tt-app .action-btn.ghost.active {
+      color: var(--gold-soft);
+      border-color: rgba(251, 191, 36, 0.28);
+      background: rgba(251, 191, 36, 0.07);
+    }
+
+    .tt-app .action-btn.buy {
+      border-color: rgba(253, 230, 138, 0.4);
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold));
+      color: #3a2404;
+      box-shadow: 0 4px 12px -6px rgba(251, 191, 36, 0.7);
+    }
+
+    .tt-app .action-btn.sell {
+      color: #f2b8b3;
+      border-color: rgba(255, 123, 114, 0.22);
+      background: rgba(255, 123, 114, 0.06);
+    }
+
+    .tt-app .action-btn.sell:hover {
+      border-color: rgba(255, 123, 114, 0.42);
+      background: rgba(255, 123, 114, 0.1);
+    }
+
+    .tt-app .stock-subbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 14px 20px 0;
+      padding-top: 11px;
+      border-top: 1px solid rgba(110, 231, 183, 0.09);
+    }
+
+    .tt-app .range-tabs {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      padding: 3px;
+      border: 1px solid rgba(110, 231, 183, 0.1);
+      border-radius: 7px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .tt-app .range-btn {
+      padding: 4px 8px;
+      border-radius: 5px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tt-app .range-btn.active {
+      background: rgba(110, 231, 183, 0.1);
+      color: var(--mint);
+    }
+
+    .tt-app .range-btn:hover {
+      color: var(--text);
+    }
+
+    .tt-app .chart-note {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--muted-2);
+      font-size: 8px;
+      white-space: nowrap;
+    }
+
+    .tt-app .chart-note::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 7px rgba(52, 211, 153, 0.9);
+    }
+
+    .tt-app .chart-wrap {
+      padding: 7px 20px 0;
+    }
+
+    .tt-app .chart-shell {
+      display: flex;
+      gap: 8px;
+      height: 220px;
+    }
+
+    .tt-app .chart-plot {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      border-bottom: 1px solid rgba(110, 231, 183, 0.12);
+      background-image: linear-gradient(rgba(110, 231, 183, 0.08) 1px, transparent 1px);
+      background-size: 100% 25%;
+      background-position: 0 9px;
+    }
+
+    .tt-app #priceChart {
+      display: block;
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .tt-app .chart-dot {
+      position: absolute;
+      right: 1px;
+      width: 7px;
+      height: 7px;
+      border: 2px solid #06110f;
+      border-radius: 50%;
+      background: var(--up);
+      box-shadow: 0 0 0 3px rgba(255, 123, 114, 0.12), 0 0 12px rgba(255, 123, 114, 0.75);
+      transform: translate(50%, -50%);
+      pointer-events: none;
+    }
+
+    .tt-app .chart-dot.down {
+      background: var(--down);
+      box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.12), 0 0 12px rgba(74, 222, 128, 0.75);
+    }
+
+    .tt-app .chart-y {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 0 0 38px;
+      padding: 2px 0 1px;
+      text-align: right;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+    }
+
+    .tt-app .chart-x {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 7px 46px 0 0;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+    }
+
+    .tt-app .quote-stats {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 1px;
+      margin-top: 5px;
+      border-top: 1px solid rgba(110, 231, 183, 0.09);
+      background: rgba(110, 231, 183, 0.09);
+    }
+
+    .tt-app .quote-stat {
+      padding: 9px 12px 11px;
+      background: rgba(8, 26, 20, 0.86);
+    }
+
+    .tt-app .quote-stat span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 8px;
+    }
+
+    .tt-app .quote-stat b {
+      display: block;
+      margin-top: 4px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    
+    .tt-app .watch-panel {
+      border-radius: 18px;
+    }
+
+    .tt-app .watch-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 16px 0;
+    }
+
+    .tt-app .watch-title {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .tt-app .watch-title span {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .tt-app .watch-tools {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 0;
+    }
+
+    .tt-app .search-box {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 145px;
+      padding: 6px 8px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .tt-app .search-box svg {
+      width: 12px;
+      height: 12px;
+      flex: 0 0 12px;
+      color: var(--muted-2);
+    }
+
+    .tt-app .search-box input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-size: 9px;
+    }
+
+    .tt-app .search-box input::placeholder {
+      color: var(--muted-2);
+    }
+
+    .tt-app .watch-tabs {
+      display: flex;
+      gap: 2px;
+      padding: 3px;
+      overflow-x: auto;
+      border-bottom: 1px solid rgba(110, 231, 183, 0.08);
+      scrollbar-width: none;
+    }
+
+    .tt-app .watch-tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tt-app .watch-tab {
+      flex: 0 0 auto;
+      padding: 5px 9px;
+      border-radius: 5px;
+      color: var(--muted-2);
+      font-size: 9px;
+      font-weight: 600;
+      white-space: nowrap;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tt-app .watch-tab:hover {
+      color: var(--text);
+    }
+
+    .tt-app .watch-tab.active {
+      color: var(--mint);
+      background: rgba(110, 231, 183, 0.09);
+    }
+
+    .tt-app .watch-tab small {
+      margin-left: 3px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 500;
+    }
+
+    .tt-app .watch-tab.active small {
+      color: rgba(110, 231, 183, 0.65);
+    }
+
+    .tt-app .table-wrap {
+      max-height: 296px;
+      overflow-y: auto;
+      overflow-x: auto;
+    }
+
+    .tt-app .market-table {
+      width: 100%;
+      min-width: 650px;
+      border-collapse: collapse;
+      table-layout: fixed;
+    }
+
+    .tt-app .market-table th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+      padding: 8px 8px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(8, 27, 21, 0.98);
+      color: var(--muted-2);
+      font-size: 8px;
+      font-weight: 500;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tt-app .market-table th:first-child, .tt-app .market-table td:first-child {
+      padding-left: 16px;
+      text-align: left;
+    }
+
+    .tt-app .market-table th:last-child, .tt-app .market-table td:last-child {
+      padding-right: 16px;
+    }
+
+    .tt-app .market-table th:nth-child(1) { width: 31%; }
+    .tt-app .market-table th:nth-child(2) { width: 12%; }
+    .tt-app .market-table th:nth-child(3) { width: 11%; }
+    .tt-app .market-table th:nth-child(4) { width: 10%; }
+    .tt-app .market-table th:nth-child(5) { width: 10%; }
+    .tt-app .market-table th:nth-child(6) { width: 10%; }
+    .tt-app .market-table th:nth-child(7) { width: 10%; }
+    .tt-app .market-table th:nth-child(8) { width: 6%; }
+
+    .tt-app .market-table td {
+      padding: 8px 8px;
+      border-bottom: 1px solid rgba(110, 231, 183, 0.065);
+      color: var(--muted);
+      font-size: 9px;
+      text-align: right;
+      white-space: nowrap;
+    }
+
+    .tt-app .market-table tbody tr {
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .tt-app .market-table tbody tr:hover {
+      background: rgba(110, 231, 183, 0.035);
+    }
+
+    .tt-app .market-table tbody tr.active {
+      background: rgba(110, 231, 183, 0.07);
+      box-shadow: inset 2px 0 0 var(--mint);
+    }
+
+    .tt-app .asset-cell {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .tt-app .star-btn {
+      flex: 0 0 12px;
+      color: #405c52;
+      font-size: 10px;
+      line-height: 1;
+      text-align: left;
+    }
+
+    .tt-app .star-btn.on {
+      color: var(--gold);
+    }
+
+    .tt-app .asset-tag {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 24px;
+      height: 18px;
+      border: 1px solid rgba(110, 231, 183, 0.14);
+      border-radius: 4px;
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 6px;
+      font-weight: 700;
+    }
+
+    .tt-app .asset-tag.us {
+      border-color: rgba(103, 169, 255, 0.2);
+      color: #9dc7ff;
+    }
+
+    .tt-app .asset-tag.index {
+      border-color: rgba(251, 191, 36, 0.24);
+      color: var(--gold-soft);
+      background: rgba(251, 191, 36, 0.055);
+    }
+
+    .tt-app .star-ghost {
+      display: inline-block;
+      flex: 0 0 12px;
+      width: 12px;
+      height: 10px;
+    }
+
+    .tt-app .market-table tbody tr.non-tradable {
+      cursor: default;
+    }
+
+    .tt-app .market-table tbody tr.non-tradable:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .tt-app .row-static {
+      color: var(--muted-2);
+      font-size: 8px;
+    }
+
+    .tt-app .asset-name {
+      min-width: 0;
+      overflow: hidden;
+      color: var(--text);
+      font-size: 10px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+    }
+
+    .tt-app .asset-code {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+    }
+
+    .tt-app .market-table td.price-cell {
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 600;
+    }
+
+    .tt-app .change-cell {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-weight: 600;
+    }
+
+    .tt-app .row-trade-btn {
+      padding: 4px 7px;
+      border: 1px solid rgba(110, 231, 183, 0.15);
+      border-radius: 5px;
+      color: var(--mint);
+      font-size: 8px;
+      font-weight: 600;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .tt-app .row-trade-btn:hover {
+      border-color: rgba(110, 231, 183, 0.35);
+      background: rgba(110, 231, 183, 0.08);
+    }
+
+    .tt-app .table-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 16px 12px;
+      color: var(--muted-2);
+      font-size: 8px;
+    }
+
+    
+    .tt-app .order-panel {
+      border-color: rgba(110, 231, 183, 0.22);
+    }
+
+    .tt-app .order-head {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 17px 17px 0;
+    }
+
+    .tt-app .order-head h3 {
+      font-size: 15px;
+      font-weight: 800;
+    }
+
+    .tt-app .order-mode {
+      padding: 4px 7px;
+      border: 1px solid rgba(110, 231, 183, 0.15);
+      border-radius: 5px;
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .tt-app .order-stock {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      margin: 14px 17px 0;
+      padding: 10px;
+      border: 1px solid rgba(110, 231, 183, 0.1);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .tt-app .order-stock-logo {
+      display: grid;
+      place-items: center;
+      width: 33px;
+      height: 33px;
+      flex: 0 0 33px;
+      border: 1px solid rgba(251, 191, 36, 0.3);
+      border-radius: 9px;
+      background: linear-gradient(145deg, #fef3c7, #fbbf24);
+      color: #422006;
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .tt-app .order-stock-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tt-app .order-stock-name {
+      overflow: hidden;
+      font-size: 12px;
+      font-weight: 700;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tt-app .order-stock-code {
+      margin-top: 2px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+    }
+
+    .tt-app .order-quote {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .tt-app .order-quote b {
+      display: block;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1;
+    }
+
+    .tt-app .order-quote span {
+      display: block;
+      margin-top: 3px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      font-weight: 600;
+    }
+
+    .tt-app .side-toggle {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3px;
+      margin: 14px 17px 0;
+      padding: 3px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .tt-app .side-btn {
+      padding: 8px 10px;
+      border-radius: 6px;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tt-app .side-btn:hover {
+      color: var(--text);
+    }
+
+    .tt-app .side-btn.buy.active {
+      color: #341f02;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold));
+      box-shadow: 0 4px 12px -8px rgba(251, 191, 36, 0.8);
+    }
+
+    .tt-app .side-btn.sell.active {
+      color: #ffd9d5;
+      background: rgba(255, 123, 114, 0.16);
+      box-shadow: inset 0 0 0 1px rgba(255, 123, 114, 0.2);
+    }
+
+    .tt-app .order-fields {
+      padding: 14px 17px 0;
+    }
+
+    .tt-app .field-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--muted);
+      font-size: 9px;
+    }
+
+    .tt-app .field-label span {
+      color: var(--muted-2);
+      font-size: 8px;
+    }
+
+    .tt-app .qty-stepper {
+      display: flex;
+      align-items: stretch;
+      height: 37px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .tt-app .qty-stepper button {
+      width: 36px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1;
+      transition: color 0.15s, background 0.15s;
+    }
+
+    .tt-app .qty-stepper button:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .tt-app .qty-stepper input {
+      width: 100%;
+      min-width: 0;
+      border: 0;
+      border-right: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+      outline: 0;
+      background: transparent;
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      -moz-appearance: textfield;
+    }
+
+    .tt-app .qty-stepper input::-webkit-outer-spin-button, .tt-app .qty-stepper input::-webkit-inner-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+
+    .tt-app .quick-qty {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .tt-app .quick-qty button {
+      padding: 6px 3px;
+      border: 1px solid rgba(110, 231, 183, 0.1);
+      border-radius: 5px;
+      color: var(--muted);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      font-weight: 600;
+      transition: color 0.15s, border-color 0.15s, background 0.15s;
+    }
+
+    .tt-app .quick-qty button:hover {
+      color: var(--mint);
+      border-color: rgba(110, 231, 183, 0.28);
+      background: rgba(110, 231, 183, 0.06);
+    }
+
+    .tt-app .order-summary {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 14px 17px 0;
+      padding: 10px 11px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.14);
+    }
+
+    .tt-app .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted-2);
+      font-size: 8px;
+    }
+
+    .tt-app .summary-row b {
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+    }
+
+    .tt-app .summary-row.main {
+      padding-top: 4px;
+      border-top: 1px dashed rgba(110, 231, 183, 0.12);
+    }
+
+    .tt-app .summary-row.main b {
+      color: var(--gold-soft);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .tt-app .submit-order {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: calc(100% - 34px);
+      height: 42px;
+      margin: 13px 17px 0;
+      border: 1px solid rgba(253, 230, 138, 0.4);
+      border-radius: 9px;
+      background: linear-gradient(145deg, var(--gold-soft), var(--gold));
+      color: #3a2404;
+      font-size: 12px;
+      font-weight: 800;
+      box-shadow: 0 4px 0 #b45309, 0 10px 20px -12px rgba(251, 191, 36, 0.7);
+      transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+    }
+
+    .tt-app .submit-order:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 5px 0 #b45309, 0 12px 22px -12px rgba(251, 191, 36, 0.85);
+    }
+
+    .tt-app .submit-order:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #b45309;
+    }
+
+    .tt-app .submit-order.sell-mode {
+      border-color: rgba(255, 123, 114, 0.35);
+      background: linear-gradient(145deg, #ffd9d5, #ff8a7e);
+      color: #42110d;
+      box-shadow: 0 4px 0 #9e2a22, 0 10px 20px -12px rgba(255, 123, 114, 0.65);
+    }
+
+    .tt-app .order-note {
+      padding: 10px 17px 15px;
+      color: var(--muted-2);
+      font-size: 8px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    
+    .tt-app .orders-panel .panel-inner {
+      padding-bottom: 12px;
+    }
+
+    .tt-app .order-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tt-app .order-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(110, 231, 183, 0.08);
+    }
+
+    .tt-app .order-item:last-child {
+      border-bottom: 0;
+      padding-bottom: 1px;
+    }
+
+    .tt-app .order-side {
+      display: grid;
+      place-items: center;
+      width: 22px;
+      height: 22px;
+      flex: 0 0 22px;
+      border-radius: 6px;
+      font-size: 8px;
+      font-weight: 800;
+    }
+
+    .tt-app .order-side.buy {
+      background: rgba(255, 123, 114, 0.1);
+      color: var(--up);
+    }
+
+    .tt-app .order-side.sell {
+      background: rgba(74, 222, 128, 0.09);
+      color: var(--down);
+    }
+
+    .tt-app .order-info {
+      min-width: 0;
+      flex: 1;
+    }
+
+    .tt-app .order-info b {
+      display: block;
+      overflow: hidden;
+      font-size: 9px;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .tt-app .order-info span {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+    }
+
+    .tt-app .order-status {
+      flex-shrink: 0;
+      padding: 2px 4px;
+      border-radius: 3px;
+      font-size: 7px;
+      font-weight: 600;
+    }
+
+    .tt-app .order-status.done {
+      color: var(--mint);
+      background: rgba(110, 231, 183, 0.08);
+    }
+
+    .tt-app .order-status.pending {
+      color: var(--gold-soft);
+      background: rgba(251, 191, 36, 0.08);
+    }
+
+    .tt-app .order-status.new {
+      color: #9dc7ff;
+      background: rgba(103, 169, 255, 0.1);
+    }
+
+    .tt-app .trade-tip {
+      display: flex;
+      gap: 8px;
+      padding: 11px 16px;
+      color: var(--muted-2);
+      font-size: 8px;
+      line-height: 1.55;
+    }
+
+    .tt-app .trade-tip::before {
+      content: "i";
+      display: grid;
+      place-items: center;
+      width: 14px;
+      height: 14px;
+      flex: 0 0 14px;
+      border: 1px solid rgba(110, 231, 183, 0.2);
+      border-radius: 50%;
+      color: var(--mint);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+    }
+
+    
+    .tt-app .ticker {
+      display: flex;
+      align-items: center;
+      width: calc(100% - 48px);
+      max-width: 1552px;
+      height: 38px;
+      margin: 0 auto 22px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(7, 23, 18, 0.78);
+    }
+
+    .tt-app .ticker-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      align-self: stretch;
+      padding: 0 12px;
+      border-right: 1px solid var(--line);
+      color: var(--gold-soft);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 7px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .tt-app .ticker-label::before {
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 7px rgba(52, 211, 153, 0.9);
+    }
+
+    .tt-app .ticker-viewport {
+      flex: 1;
+      overflow: hidden;
+    }
+
+    .tt-app .ticker-track {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+      width: max-content;
+      padding-left: 16px;
+      animation: tickerScroll 38s linear infinite;
+      white-space: nowrap;
+    }
+
+    .tt-app .ticker-track:hover {
+      animation-play-state: paused;
+    }
+
+    .tt-app .ticker-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--muted);
+      font-family: "Bricolage Grotesque", "PingFang SC", sans-serif;
+      font-size: 9px;
+    }
+
+    .tt-app .ticker-item b {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .tt-app .ticker-item i {
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .tt-app .ticker-dot {
+      width: 3px;
+      height: 3px;
+      border-radius: 50%;
+      background: #2c4d42;
+    }
+
+    @keyframes tickerScroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    
+    .tt-app .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 22px;
+      z-index: 100;
+      max-width: calc(100vw - 32px);
+      padding: 10px 16px;
+      border: 1px solid rgba(110, 231, 183, 0.22);
+      border-radius: 9px;
+      background: rgba(5, 20, 15, 0.94);
+      color: var(--text);
+      font-size: 11px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 16px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .tt-app .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+    
+    @media (max-width: 1320px) {
+      .tt-app .dashboard {
+        grid-template-columns: 240px minmax(0, 1fr) 320px;
+        gap: 14px;
+        padding: 16px 18px 22px;
+      }
+
+      .tt-app .topbar-inner {
+        padding: 12px 18px;
+      }
+
+      .tt-app .nav {
+        margin-left: 0;
+      }
+
+      .tt-app .quote-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .tt-app .market-table th:nth-child(4), .tt-app .market-table td:nth-child(4), .tt-app .market-table th:nth-child(5), .tt-app .market-table td:nth-child(5), .tt-app .market-table th:nth-child(6), .tt-app .market-table td:nth-child(6) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 1120px) {
+      .tt-app .nav {
+        display: none;
+      }
+
+      .tt-app .dashboard {
+        grid-template-columns: minmax(0, 1fr) 320px;
+        grid-template-areas:
+          "indices order"
+          "stock order"
+          "watch order"
+          "left left";
+      }
+
+      .tt-app .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .tt-app .left-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+
+      .tt-app .left-column .player-card, .tt-app .left-column > .panel:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .tt-app .market-table {
+        min-width: 620px;
+      }
+    }
+
+    @media (max-width: 860px) {
+      .tt-app .topbar-inner {
+        gap: 12px;
+        padding: 10px 14px;
+      }
+
+      .tt-app .brand-title {
+        font-size: 17px;
+      }
+
+      .tt-app .brand-title em, .tt-app .market-chip span {
+        display: none;
+      }
+
+      .tt-app .prototype-pill {
+        display: none;
+      }
+
+      .tt-app .market-chip {
+        padding: 5px 8px;
+      }
+
+      .tt-app .wallet {
+        gap: 6px;
+        padding: 4px 8px 4px 4px;
+      }
+
+      .tt-app .wallet-coin {
+        width: 20px;
+        height: 20px;
+        font-size: 9px;
+      }
+
+      .tt-app .wallet small {
+        display: none;
+      }
+
+      .tt-app .wallet b {
+        margin-top: 0;
+        font-size: 10px;
+      }
+
+      .tt-app .dashboard {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+          "indices"
+          "stock"
+          "order"
+          "watch"
+          "left";
+        gap: 12px;
+        padding: 12px 14px 18px;
+      }
+
+      .tt-app .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .tt-app .left-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .tt-app .left-column .player-card, .tt-app .left-column > .panel:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .tt-app .market-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .tt-app .stock-head {
+        flex-wrap: wrap;
+        padding: 15px 16px 0;
+      }
+
+      .tt-app .stock-price {
+        margin-left: 0;
+        text-align: left;
+      }
+
+      .tt-app .price-change {
+        justify-content: flex-start;
+      }
+
+      .tt-app .stock-actions {
+        width: 100%;
+        margin-left: 0;
+        padding-top: 5px;
+      }
+
+      .tt-app .action-btn {
+        flex: 1;
+      }
+
+      .tt-app .stock-subbar {
+        margin: 12px 16px 0;
+      }
+
+      .tt-app .chart-wrap {
+        padding: 6px 16px 0;
+      }
+
+      .tt-app .chart-shell {
+        height: 190px;
+      }
+
+      .tt-app .watch-head {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 8px;
+        padding: 13px 14px 0;
+      }
+
+      .tt-app .watch-tools {
+        width: 100%;
+      }
+
+      .tt-app .search-box {
+        width: 100%;
+      }
+
+      .tt-app .market-table {
+        min-width: 560px;
+      }
+
+      .tt-app .market-table th:nth-child(7), .tt-app .market-table td:nth-child(7) {
+        display: none;
+      }
+
+      .tt-app .quote-stat {
+        padding: 8px 10px 9px;
+      }
+
+      .tt-app .order-panel {
+        grid-row: auto;
+      }
+
+      .tt-app .right-column .trade-tip {
+        grid-column: auto;
+      }
+
+      .tt-app .ticker {
+        width: calc(100% - 28px);
+        margin-bottom: 16px;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .tt-app .market-chip {
+        display: none;
+      }
+
+      .tt-app .user-avatar {
+        width: 31px;
+        height: 31px;
+      }
+
+      .tt-app .left-column {
+        grid-template-columns: 1fr;
+      }
+
+      .tt-app .left-column .player-card, .tt-app .left-column > .panel:last-child {
+        grid-column: auto;
+      }
+
+      .tt-app .market-strip {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .tt-app .index-card {
+        padding: 10px;
+      }
+
+      .tt-app .index-value {
+        font-size: 17px;
+      }
+
+      .tt-app .index-spark {
+        width: 42px;
+      }
+
+      .tt-app .stock-name {
+        font-size: 16px;
+      }
+
+      .tt-app .price-main {
+        font-size: 30px;
+      }
+
+      .tt-app .quote-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .tt-app .market-table {
+        min-width: 500px;
+      }
+
+      .tt-app .market-table th:nth-child(7), .tt-app .market-table td:nth-child(7), .tt-app .market-table th:nth-child(8), .tt-app .market-table td:nth-child(8) {
+        display: none;
+      }
+
+      .tt-app .market-table th:nth-child(1) { width: 46%; }
+      .tt-app .market-table th:nth-child(2) { width: 18%; }
+      .tt-app .market-table th:nth-child(3) { width: 18%; }
+      .tt-app .market-table th:nth-child(4) { width: 18%; }
+
+      .tt-app .watch-tab {
+        padding: 5px 8px;
+      }
+    }
+
+    @media (max-width: 400px) {
+      .tt-app .wallet {
+        display: none;
+      }
+
+      .tt-app .brand-mark {
+        width: 38px;
+        height: 38px;
+      }
+
+      .tt-app .brand-title {
+        font-size: 16px;
+      }
+
+      .tt-app .topbar-inner {
+        gap: 8px;
+        padding: 9px 12px;
+      }
+
+      .tt-app .index-spark {
+        display: none;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .tt-app .ticker-track {
+        animation: none;
+      }
+
+      .tt-app .stock-card, .tt-app .action-btn, .tt-app .toast {
+        transition: none;
+      }
+    }
+
+    
+
+    .tt-app {
+      height: 100%;
+    }
+
+    .tt-app {
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    
+    .tt-app .topbar {
+      flex: 0 0 auto;
+    }
+
+    .tt-app .topbar-inner {
+      gap: 18px;
+      padding: 9px 20px;
+    }
+
+    .tt-app .brand-mark {
+      width: 40px;
+      height: 40px;
+    }
+
+    .tt-app .brand-title {
+      font-size: 20px;
+    }
+
+    .tt-app .brand-kicker {
+      font-size: 8px;
+    }
+
+    .tt-app .nav-btn {
+      padding: 7px 13px;
+      font-size: 12.5px;
+    }
+
+    .tt-app .prototype-pill, .tt-app .market-chip {
+      font-size: 10px;
+      padding: 6px 10px;
+    }
+
+    .tt-app .wallet small {
+      font-size: 8px;
+    }
+
+    .tt-app .wallet b {
+      font-size: 13px;
+    }
+
+    .tt-app .wallet-coin {
+      width: 26px;
+      height: 26px;
+      font-size: 11px;
+    }
+
+    .tt-app .user-avatar {
+      width: 34px;
+      height: 34px;
+      font-size: 14px;
+    }
+
+    
+    .tt-app .dashboard {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 268px minmax(0, 1fr) 352px;
+      grid-template-areas: none;
+      grid-template-rows: minmax(0, 1fr);
+      gap: 12px;
+      align-items: stretch;
+      padding: 12px 20px;
+      overflow: hidden;
+    }
+
+    .tt-app .column {
+      height: 100%;
+      min-height: 0;
+      gap: 12px;
+    }
+
+    .tt-app .left-column {
+      grid-area: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    .tt-app .center-column {
+      grid-area: auto;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tt-app .right-column {
+      grid-area: auto;
+      overflow-x: hidden;
+      overflow-y: auto;
+    }
+
+    
+    .tt-app .left-column::-webkit-scrollbar, .tt-app .right-column::-webkit-scrollbar, .tt-app .holdings-list::-webkit-scrollbar, .tt-app .table-wrap::-webkit-scrollbar, .tt-app .order-list::-webkit-scrollbar, .tt-app .dashboard::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+
+    .tt-app .left-column::-webkit-scrollbar-thumb, .tt-app .right-column::-webkit-scrollbar-thumb, .tt-app .holdings-list::-webkit-scrollbar-thumb, .tt-app .table-wrap::-webkit-scrollbar-thumb, .tt-app .order-list::-webkit-scrollbar-thumb, .tt-app .dashboard::-webkit-scrollbar-thumb {
+      border: 1px solid #06110f;
+      border-radius: 99px;
+      background: #245143;
+    }
+
+    .tt-app .left-column::-webkit-scrollbar-track, .tt-app .right-column::-webkit-scrollbar-track, .tt-app .holdings-list::-webkit-scrollbar-track, .tt-app .table-wrap::-webkit-scrollbar-track, .tt-app .order-list::-webkit-scrollbar-track, .tt-app .dashboard::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    
+    .tt-app .player-card {
+      flex: 0 0 auto;
+      padding: 12px 14px;
+    }
+
+    .tt-app .player-avatar {
+      width: 40px;
+      height: 40px;
+      flex: 0 0 40px;
+      font-size: 16px;
+    }
+
+    .tt-app .player-name {
+      font-size: 16.5px;
+    }
+
+    .tt-app .player-sub {
+      font-size: 10px;
+    }
+
+    .tt-app .wealth-label {
+      margin-top: 11px;
+      font-size: 10px;
+    }
+
+    .tt-app .wealth-value {
+      font-size: 29px;
+    }
+
+    .tt-app .wealth-value small {
+      font-size: 12.5px;
+    }
+
+    .tt-app .wealth-delta {
+      margin-top: 3px;
+      font-size: 12px;
+    }
+
+    .tt-app .wealth-delta span {
+      font-size: 10px;
+    }
+
+    .tt-app .equity-curve {
+      height: 26px;
+      margin-top: 7px;
+    }
+
+    .tt-app .player-stats {
+      margin-top: 9px;
+    }
+
+    .tt-app .player-stat {
+      padding: 7px 7px;
+    }
+
+    .tt-app .player-stat span {
+      font-size: 9.5px;
+    }
+
+    .tt-app .player-stat b {
+      margin-top: 3px;
+      font-size: 11.5px;
+    }
+
+    .tt-app .holdings-panel {
+      flex: 1 1 0;
+      min-height: 96px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .tt-app .holdings-panel .panel-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      padding: 13px 15px;
+    }
+
+    .tt-app .holdings-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .tt-app .holding-row {
+      gap: 10px;
+      padding: 9px 0;
+    }
+
+    .tt-app .holding-logo {
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      font-size: 13px;
+    }
+
+    .tt-app .holding-name {
+      font-size: 13px;
+    }
+
+    .tt-app .holding-code {
+      margin-top: 3px;
+      font-size: 10.5px;
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .holding-value {
+      flex: 0 0 86px;
+    }
+
+    .tt-app .holding-value b {
+      font-size: 12px;
+    }
+
+    .tt-app .holding-value span {
+      font-size: 11px;
+    }
+
+    .tt-app .alloc-panel {
+      flex: 0 0 auto;
+    }
+
+    .tt-app .rank-panel {
+      flex: 1 1 0;
+      min-height: 96px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .tt-app .alloc-panel .panel-inner {
+      padding: 13px 15px;
+    }
+
+    .tt-app .rank-panel .panel-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      padding: 13px 15px;
+    }
+
+    .tt-app .rank-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .tt-app .alloc-legend {
+      gap: 7px 8px;
+    }
+
+    .tt-app .alloc-item {
+      font-size: 11px;
+    }
+
+    .tt-app .alloc-item b {
+      font-size: 11px;
+    }
+
+    .tt-app .rank-list {
+      gap: 3px;
+    }
+
+    .tt-app .rank-row {
+      padding: 6px 7px;
+    }
+
+    .tt-app .rank-no {
+      width: 15px;
+      font-size: 10.5px;
+    }
+
+    .tt-app .rank-avatar {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      font-size: 9.5px;
+    }
+
+    .tt-app .rank-name {
+      font-size: 11.5px;
+    }
+
+    .tt-app .rank-return {
+      font-size: 12px;
+    }
+
+    .tt-app .panel-title {
+      font-size: 14px;
+    }
+
+    .tt-app .panel-title small {
+      font-size: 10px;
+    }
+
+    .tt-app .panel-action {
+      font-size: 11px;
+    }
+
+    .tt-app .micro {
+      font-size: 9px;
+    }
+
+    
+    .tt-app .market-overview {
+      flex: 0 0 auto;
+      gap: 8px;
+    }
+
+    .tt-app .market-strip {
+      gap: 8px;
+    }
+
+    .tt-app .index-card {
+      padding: 10px 12px 9px;
+    }
+
+    .tt-app .index-top {
+      font-size: 10.5px;
+    }
+
+    .tt-app .index-top span:last-child {
+      font-size: 8.5px;
+    }
+
+    .tt-app .index-value {
+      margin-top: 6px;
+      font-size: 22px;
+    }
+
+    .tt-app .index-change {
+      font-size: 11.5px;
+    }
+
+    .tt-app .market-status-row {
+      margin: 0 2px;
+    }
+
+    .tt-app .market-legend {
+      font-size: 10px;
+    }
+
+    .tt-app .refresh-chip {
+      font-size: 10px;
+    }
+
+    .tt-app .stock-panel {
+      flex: 1.3 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tt-app .stock-head {
+      flex: 0 0 auto;
+      gap: 12px;
+      padding: 13px 18px 0;
+    }
+
+    .tt-app .stock-id {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .tt-app .stock-logo {
+      width: 44px;
+      height: 44px;
+      flex: 0 0 44px;
+      font-size: 20px;
+    }
+
+    .tt-app .stock-name {
+      gap: 8px;
+      font-size: 21px;
+    }
+
+    .tt-app .market-tag {
+      padding: 3px 7px;
+      font-size: 9px;
+    }
+
+    .tt-app .stock-meta {
+      margin-top: 5px;
+      font-size: 12px;
+      letter-spacing: 0.01em;
+    }
+
+    .tt-app .price-currency {
+      font-size: 15px;
+    }
+
+    .tt-app .price-main {
+      font-size: 38px;
+    }
+
+    .tt-app .price-change {
+      margin-top: 5px;
+      font-size: 13px;
+    }
+
+    .tt-app .price-change span {
+      font-size: 12px;
+    }
+
+    .tt-app .action-btn {
+      height: 34px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+
+    .tt-app .stock-subbar {
+      flex: 0 0 auto;
+      margin: 9px 18px 0;
+      padding-top: 8px;
+    }
+
+    .tt-app .range-btn {
+      padding: 4px 9px;
+      font-size: 11px;
+    }
+
+    .tt-app .chart-note {
+      font-size: 10px;
+    }
+
+    .tt-app .chart-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      padding: 4px 18px 0;
+    }
+
+    .tt-app .chart-shell {
+      flex: 1 1 auto;
+      height: auto;
+      min-height: 54px;
+    }
+
+    .tt-app .chart-y {
+      flex: 0 0 42px;
+      font-size: 10px;
+    }
+
+    .tt-app .chart-x {
+      flex: 0 0 auto;
+      padding: 5px 50px 0 0;
+      font-size: 10px;
+    }
+
+    .tt-app .quote-stats {
+      flex: 0 0 auto;
+      margin-top: 4px;
+    }
+
+    .tt-app .quote-stat {
+      padding: 6px 12px 8px;
+    }
+
+    .tt-app .quote-stat span {
+      font-size: 10px;
+    }
+
+    .tt-app .quote-stat b {
+      margin-top: 3px;
+      font-size: 13px;
+    }
+
+    .tt-app .watch-panel {
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tt-app .watch-head {
+      flex: 0 0 auto;
+      padding: 12px 16px 0;
+    }
+
+    .tt-app .watch-title {
+      font-size: 14px;
+    }
+
+    .tt-app .watch-title span {
+      font-size: 10.5px;
+    }
+
+    .tt-app .search-box {
+      width: 168px;
+      padding: 6px 9px;
+    }
+
+    .tt-app .search-box input {
+      font-size: 11px;
+    }
+
+    .tt-app .watch-tabs {
+      flex: 0 0 auto;
+      padding: 3px 13px;
+    }
+
+    .tt-app .watch-tab {
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+
+    .tt-app .watch-tab small {
+      font-size: 9px;
+    }
+
+    .tt-app .table-wrap {
+      flex: 1 1 auto;
+      min-height: 84px;
+      max-height: none;
+    }
+
+    .tt-app .market-table {
+      min-width: 760px;
+    }
+
+    .tt-app .market-table th {
+      padding: 7px 8px;
+      font-size: 10.5px;
+    }
+
+    .tt-app .market-table th:nth-child(1) { width: 30%; }
+    .tt-app .market-table th:nth-child(2) { width: 12%; }
+    .tt-app .market-table th:nth-child(3) { width: 10%; }
+    .tt-app .market-table th:nth-child(4) { width: 10%; }
+    .tt-app .market-table th:nth-child(5) { width: 10%; }
+    .tt-app .market-table th:nth-child(6) { width: 10%; }
+    .tt-app .market-table th:nth-child(7) { width: 10%; }
+    .tt-app .market-table th:nth-child(8) { width: 8%; }
+
+    .tt-app .market-table td {
+      padding: 7px 8px;
+      font-size: 12px;
+    }
+
+    .tt-app .asset-cell {
+      gap: 9px;
+    }
+
+    .tt-app .star-btn {
+      flex: 0 0 14px;
+      font-size: 12px;
+    }
+
+    .tt-app .star-ghost {
+      flex: 0 0 14px;
+      width: 14px;
+      height: 11px;
+    }
+
+    .tt-app .asset-tag {
+      flex: 0 0 30px;
+      height: 20px;
+      font-size: 8.5px;
+    }
+
+    .tt-app .asset-name {
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .tt-app .asset-code {
+      margin-top: 1px;
+      font-size: 10.5px;
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .market-table td.price-cell {
+      font-size: 12.5px;
+    }
+
+    .tt-app .change-cell {
+      font-size: 12px;
+    }
+
+    .tt-app .row-trade-btn {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    .tt-app .row-static {
+      font-size: 10.5px;
+    }
+
+    .tt-app .table-foot {
+      flex: 0 0 auto;
+      padding: 7px 16px 9px;
+      font-size: 10px;
+    }
+
+    
+    .tt-app .order-panel {
+      flex: 0 0 auto;
+    }
+
+    .tt-app .order-head {
+      padding: 14px 16px 0;
+    }
+
+    .tt-app .order-head h3 {
+      font-size: 17px;
+    }
+
+    .tt-app .panel-kicker {
+      font-size: 9px;
+    }
+
+    .tt-app .order-mode {
+      padding: 4px 8px;
+      font-size: 9.5px;
+    }
+
+    .tt-app .order-stock {
+      margin: 9px 16px 0;
+      padding: 9px 10px;
+    }
+
+    .tt-app .order-stock-logo {
+      width: 36px;
+      height: 36px;
+      flex: 0 0 36px;
+      font-size: 15px;
+    }
+
+    .tt-app .order-stock-name {
+      font-size: 15px;
+    }
+
+    .tt-app .order-stock-code {
+      margin-top: 3px;
+      font-size: 11px;
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .order-quote b {
+      font-size: 18px;
+    }
+
+    .tt-app .order-quote span {
+      margin-top: 4px;
+      font-size: 11px;
+    }
+
+    .tt-app .side-toggle {
+      margin: 9px 16px 0;
+    }
+
+    .tt-app .side-btn {
+      padding: 7px 10px;
+      font-size: 13.5px;
+    }
+
+    .tt-app .order-fields {
+      padding: 10px 16px 0;
+    }
+
+    .tt-app .field-label {
+      margin-bottom: 6px;
+      font-size: 11.5px;
+    }
+
+    .tt-app .field-label span {
+      font-size: 10px;
+    }
+
+    .tt-app .qty-stepper {
+      height: 40px;
+    }
+
+    .tt-app .qty-stepper button {
+      width: 38px;
+      font-size: 18px;
+    }
+
+    .tt-app .qty-stepper input {
+      font-size: 18px;
+    }
+
+    .tt-app .quick-qty {
+      gap: 5px;
+      margin-top: 7px;
+    }
+
+    .tt-app .quick-qty button {
+      padding: 6px 2px;
+      font-size: 10.5px;
+    }
+
+    .tt-app .order-summary {
+      gap: 5px;
+      margin: 9px 16px 0;
+      padding: 8px 11px;
+    }
+
+    .tt-app .summary-row {
+      font-size: 10.5px;
+    }
+
+    .tt-app .summary-row b {
+      font-size: 11.5px;
+    }
+
+    .tt-app .summary-row.main b {
+      font-size: 15px;
+    }
+
+    .tt-app .submit-order {
+      width: calc(100% - 32px);
+      height: 42px;
+      margin: 9px 16px 0;
+      font-size: 14.5px;
+    }
+
+    .tt-app .order-note {
+      padding: 7px 16px 10px;
+      font-size: 9.5px;
+    }
+
+    .tt-app .orders-panel {
+      flex: 1 1 auto;
+      min-height: 108px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .tt-app .orders-panel .panel-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      padding: 13px 15px 10px;
+    }
+
+    .tt-app .order-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+    }
+
+    .tt-app .order-item {
+      gap: 9px;
+      padding: 8px 0;
+    }
+
+    .tt-app .order-side {
+      width: 24px;
+      height: 24px;
+      flex: 0 0 24px;
+      font-size: 10px;
+    }
+
+    .tt-app .order-info b {
+      font-size: 11.5px;
+    }
+
+    .tt-app .order-info span {
+      margin-top: 3px;
+      font-size: 9.5px;
+    }
+
+    .tt-app .order-status {
+      padding: 3px 5px;
+      font-size: 9px;
+    }
+
+    .tt-app .trade-tip {
+      flex: 0 0 auto;
+      padding: 10px 15px;
+      font-size: 10px;
+    }
+
+    
+    .tt-app .ticker {
+      flex: 0 0 auto;
+      width: calc(100% - 40px);
+      height: 34px;
+      margin: 0 auto 12px;
+    }
+
+    .tt-app .ticker-label {
+      font-size: 8.5px;
+    }
+
+    .tt-app .ticker-item {
+      font-size: 10.5px;
+    }
+
+    
+    @keyframes orderPulse {
+      0% { box-shadow: 0 0 0 0 rgba(110, 231, 183, 0.42); }
+      100% { box-shadow: 0 0 0 14px rgba(110, 231, 183, 0); }
+    }
+
+    .tt-app .order-panel.pulse {
+      animation: orderPulse 0.75s ease-out 2;
+    }
+
+    
+    .tt-app .holdings-panel::after, .tt-app .rank-panel::after, .tt-app .watch-panel::after, .tt-app .orders-panel::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      bottom: 1px;
+      left: 1px;
+      height: 16px;
+      border-radius: 0 0 17px 17px;
+      background: linear-gradient(to bottom, rgba(7, 24, 19, 0), rgba(7, 24, 19, 0.94));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    
+
+    
+    .tt-app .market-strip {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      gap: 7px;
+    }
+
+    .tt-app .index-card {
+      padding: 8px 10px 7px;
+    }
+
+    .tt-app .index-top {
+      gap: 6px;
+      font-size: 9.5px;
+    }
+
+    .tt-app .index-top span:last-child {
+      font-size: 7.5px;
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .index-value {
+      margin-top: 4px;
+      font-size: 18px;
+    }
+
+    .tt-app .index-bottom {
+      margin-top: 4px;
+      gap: 6px;
+    }
+
+    .tt-app .index-change {
+      font-size: 10.5px;
+    }
+
+    .tt-app .index-spark {
+      width: 46px;
+    }
+
+    
+    .tt-app .order-panel {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .tt-app .order-panel > .order-head, .tt-app .order-panel > .order-stock, .tt-app .order-panel > .side-toggle, .tt-app .order-panel > .order-fields, .tt-app .order-panel > .order-summary, .tt-app .order-panel > .submit-order {
+      flex: 0 0 auto;
+    }
+
+    .tt-app .order-rules {
+      position: relative;
+      flex: 1 1 auto;
+      min-height: 92px;
+      display: flex;
+      flex-direction: column;
+      margin: 10px 16px 13px;
+      padding: 9px 11px 10px;
+      border: 1px dashed rgba(126, 231, 183, 0.2);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.016);
+      overflow: hidden;
+    }
+
+    .tt-app .rules-head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 6px;
+      color: var(--gold-soft);
+      font-size: 10.5px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .tt-app .rules-head .micro {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8px;
+      letter-spacing: 0.14em;
+    }
+
+    .tt-app .rules-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      color: var(--muted);
+      font-size: 10.5px;
+      line-height: 1.62;
+    }
+
+    .tt-app .rules-body p {
+      margin: 0 0 4px;
+    }
+
+    .tt-app .rules-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .tt-app .order-rules::after {
+      content: "";
+      position: absolute;
+      right: 1px;
+      bottom: 1px;
+      left: 1px;
+      height: 14px;
+      border-radius: 0 0 8px 8px;
+      background: linear-gradient(to bottom, rgba(8, 26, 21, 0), rgba(8, 26, 21, 0.92));
+      pointer-events: none;
+    }
+
+    .tt-app .rules-body::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .tt-app .rules-body::-webkit-scrollbar-thumb {
+      border-radius: 99px;
+      background: #245143;
+    }
+
+    
+    .tt-app .orders-panel {
+      flex: 1 1 0;
+    }
+
+    
+    .tt-app .ticker-speed {
+      display: flex;
+      align-items: center;
+      gap: 2px;
+      align-self: stretch;
+      flex: 0 0 auto;
+      padding: 0 7px;
+      border-left: 1px solid var(--line);
+    }
+
+    .tt-app .speed-btn {
+      padding: 4px 8px;
+      border: 0;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--muted-2);
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: color 0.18s ease, background 0.18s ease;
+    }
+
+    .tt-app .speed-btn:hover {
+      color: var(--text);
+    }
+
+    .tt-app .speed-btn.active {
+      background: rgba(110, 231, 183, 0.14);
+      color: var(--mint);
+      font-weight: 700;
+    }
+
+    
+    @media (max-width: 1440px) {
+      .tt-app .dashboard {
+        grid-template-columns: 248px minmax(0, 1fr) 330px;
+        gap: 10px;
+        padding: 10px 16px;
+      }
+
+      .tt-app .stock-name {
+        font-size: 19px;
+      }
+
+      .tt-app .price-main {
+        font-size: 34px;
+      }
+
+      .tt-app .stock-meta {
+        font-size: 11px;
+      }
+
+      .tt-app .market-table {
+        min-width: 700px;
+      }
+    }
+
+    @media (max-width: 1240px) {
+      .tt-app .dashboard {
+        grid-template-columns: 226px minmax(0, 1fr) 304px;
+      }
+
+      .tt-app .nav {
+        display: none;
+      }
+
+      .tt-app .prototype-pill {
+        display: none;
+      }
+
+      .tt-app .stock-name {
+        font-size: 17.5px;
+      }
+
+      .tt-app .price-main {
+        font-size: 30px;
+      }
+
+      .tt-app .stock-meta {
+        font-size: 10.5px;
+      }
+
+      .tt-app .action-btn {
+        height: 31px;
+        padding: 0 9px;
+        font-size: 11px;
+      }
+
+      .tt-app .index-value {
+        font-size: 19px;
+      }
+
+      .tt-app .market-table th:nth-child(4), .tt-app .market-table td:nth-child(4), .tt-app .market-table th:nth-child(5), .tt-app .market-table td:nth-child(5), .tt-app .market-table th:nth-child(6), .tt-app .market-table td:nth-child(6) {
+        display: none;
+      }
+
+      .tt-app .market-table {
+        min-width: 470px;
+      }
+
+      .tt-app .market-table th:nth-child(1) { width: 42%; }
+      .tt-app .market-table th:nth-child(2) { width: 20%; }
+      .tt-app .market-table th:nth-child(3) { width: 16%; }
+      .tt-app .market-table th:nth-child(7) { width: 14%; }
+      .tt-app .market-table th:nth-child(8) { width: 8%; }
+    }
+
+    
+    @media (max-width: 1024px) {
+      .tt-app .dashboard {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        overflow-y: auto;
+        padding: 12px 14px;
+      }
+
+      .tt-app .column {
+        flex: 0 0 auto;
+        height: auto;
+        min-height: auto;
+        overflow: visible;
+      }
+
+      .tt-app .center-column {
+        order: 1;
+        overflow: visible;
+      }
+
+      .tt-app .right-column {
+        order: 2;
+        overflow: visible;
+      }
+
+      .tt-app .left-column {
+        order: 3;
+        overflow: visible;
+      }
+
+      .tt-app .left-column, .tt-app .center-column, .tt-app .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .tt-app .stock-panel, .tt-app .watch-panel, .tt-app .holdings-panel, .tt-app .orders-panel, .tt-app .order-panel {
+        flex: 0 0 auto;
+      }
+
+      .tt-app .order-rules {
+        flex: 0 0 auto;
+        min-height: 0;
+      }
+
+      .tt-app .holdings-list, .tt-app .order-list, .tt-app .table-wrap {
+        overflow: visible;
+      }
+
+      .tt-app .holdings-panel::after, .tt-app .rank-panel::after, .tt-app .watch-panel::after, .tt-app .orders-panel::after {
+        display: none;
+      }
+
+      .tt-app .table-wrap {
+        max-height: 360px;
+        overflow: auto;
+      }
+
+      .tt-app .chart-shell {
+        height: 200px;
+      }
+
+      .tt-app .market-strip {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .tt-app .market-table {
+        min-width: 620px;
+      }
+
+      .tt-app .topbar-inner {
+        gap: 12px;
+        padding: 9px 14px;
+      }
+    }
+
+    @media (max-width: 1240px) {
+      .tt-app .index-top span:last-child {
+        display: none;
+      }
+
+      .tt-app .index-spark {
+        display: none;
+      }
+
+      .tt-app .index-value {
+        font-size: 16.5px;
+      }
+
+      .tt-app .index-card {
+        padding: 8px 9px 7px;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .tt-app .brand-title em, .tt-app .market-chip {
+        display: none;
+      }
+
+      .tt-app .stock-head {
+        flex-wrap: wrap;
+      }
+
+      .tt-app .stock-price {
+        margin-left: 0;
+        text-align: left;
+      }
+
+      .tt-app .price-change {
+        justify-content: flex-start;
+      }
+
+      .tt-app .stock-actions {
+        width: 100%;
+        margin-left: 0;
+        padding-top: 6px;
+      }
+
+      .tt-app .action-btn {
+        flex: 1;
+      }
+
+      .tt-app .market-table {
+        min-width: 520px;
+      }
+
+      .tt-app .market-table th:nth-child(7), .tt-app .market-table td:nth-child(7) {
+        display: none;
+      }
+    }
+
+    @media (max-height: 760px) and (min-width: 1025px) {
+      .tt-app .topbar-inner {
+        padding: 7px 16px;
+      }
+
+      .tt-app .brand-mark {
+        width: 36px;
+        height: 36px;
+      }
+
+      .tt-app .dashboard {
+        padding: 8px 16px;
+        gap: 9px;
+      }
+
+      .tt-app .column {
+        gap: 9px;
+      }
+
+      .tt-app .panel-head {
+        margin-bottom: 9px;
+      }
+
+      
+      .tt-app .player-card {
+        padding: 10px 13px;
+      }
+
+      .tt-app .player-avatar {
+        width: 36px;
+        height: 36px;
+        flex: 0 0 36px;
+        font-size: 14px;
+      }
+
+      .tt-app .equity-curve {
+        display: none;
+      }
+
+      .tt-app .wealth-label {
+        margin-top: 8px;
+      }
+
+      .tt-app .wealth-value {
+        font-size: 25px;
+      }
+
+      .tt-app .player-stats {
+        margin-top: 7px;
+      }
+
+      .tt-app .player-stat {
+        padding: 6px;
+      }
+
+      .tt-app .holdings-panel, .tt-app .rank-panel {
+        min-height: 74px;
+      }
+
+      .tt-app .alloc-panel .panel-inner, .tt-app .rank-panel .panel-inner {
+        padding: 10px 13px;
+      }
+
+      .tt-app .holdings-panel .panel-inner {
+        padding: 10px 13px;
+      }
+
+      .tt-app .holding-row {
+        gap: 8px;
+        padding: 5px 0;
+      }
+
+      .tt-app .holding-logo {
+        width: 27px;
+        height: 27px;
+        flex: 0 0 27px;
+        font-size: 11px;
+      }
+
+      .tt-app .holding-name {
+        font-size: 12px;
+      }
+
+      .tt-app .holding-code {
+        margin-top: 2px;
+        font-size: 9.5px;
+      }
+
+      .tt-app .holding-value b {
+        font-size: 11px;
+      }
+
+      .tt-app .holding-value span {
+        font-size: 10px;
+      }
+
+      .tt-app .alloc-bar {
+        margin: 2px 0 9px;
+      }
+
+      .tt-app .rank-row {
+        padding: 5px 6px;
+      }
+
+      
+      .tt-app .market-overview {
+        gap: 6px;
+      }
+
+      .tt-app .index-card {
+        padding: 7px 10px 6px;
+      }
+
+      .tt-app .index-value {
+        margin-top: 4px;
+        font-size: 18px;
+      }
+
+      .tt-app .index-spark {
+        display: none;
+      }
+
+      .tt-app .stock-head {
+        padding: 10px 16px 0;
+      }
+
+      .tt-app .stock-logo {
+        width: 38px;
+        height: 38px;
+        flex: 0 0 38px;
+        font-size: 17px;
+      }
+
+      .tt-app .stock-name {
+        font-size: 18px;
+      }
+
+      .tt-app .price-main {
+        font-size: 30px;
+      }
+
+      .tt-app .stock-subbar {
+        margin: 7px 16px 0;
+        padding-top: 6px;
+      }
+
+      .tt-app .chart-wrap {
+        padding: 2px 16px 0;
+      }
+
+      .tt-app .quote-stat {
+        padding: 5px 10px 6px;
+      }
+
+      .tt-app .quote-stat b {
+        font-size: 12px;
+      }
+
+      .tt-app .watch-head {
+        padding: 10px 14px 0;
+      }
+
+      .tt-app .watch-tabs {
+        padding: 2px 12px;
+      }
+
+      .tt-app .table-foot {
+        display: none;
+      }
+
+      .tt-app .table-wrap {
+        min-height: 56px;
+      }
+
+      
+      .tt-app .order-head {
+        padding: 11px 15px 0;
+      }
+
+      .tt-app .order-head h3 {
+        font-size: 15px;
+      }
+
+      .tt-app .order-stock {
+        margin: 8px 15px 0;
+        padding: 7px 9px;
+      }
+
+      .tt-app .order-stock-logo {
+        width: 30px;
+        height: 30px;
+        flex: 0 0 30px;
+        font-size: 13px;
+      }
+
+      .tt-app .side-toggle {
+        margin: 8px 15px 0;
+      }
+
+      .tt-app .side-btn {
+        padding: 6px 10px;
+      }
+
+      .tt-app .order-fields {
+        padding: 8px 15px 0;
+      }
+
+      .tt-app .qty-stepper {
+        height: 34px;
+      }
+
+      .tt-app .qty-stepper input {
+        font-size: 16px;
+      }
+
+      .tt-app .order-summary {
+        gap: 4px;
+        margin: 8px 15px 0;
+        padding: 7px 10px;
+      }
+
+      .tt-app .submit-order {
+        width: calc(100% - 30px);
+        height: 38px;
+        margin: 8px 15px 0;
+      }
+
+      .tt-app .order-note {
+        display: none;
+      }
+
+      .tt-app .order-rules {
+        min-height: 64px;
+        margin: 8px 15px 10px;
+        padding: 7px 9px 8px;
+      }
+
+      .tt-app .rules-body {
+        font-size: 9.5px;
+        line-height: 1.55;
+      }
+
+      .tt-app .orders-panel {
+        min-height: 78px;
+      }
+
+      .tt-app .orders-panel .panel-inner {
+        padding: 10px 13px 8px;
+      }
+
+      .tt-app .order-item {
+        gap: 7px;
+        padding: 6px 0;
+      }
+
+      .tt-app .order-side {
+        width: 20px;
+        height: 20px;
+        flex: 0 0 20px;
+        font-size: 9px;
+      }
+
+      .tt-app .order-info b {
+        font-size: 11px;
+      }
+
+      .tt-app .order-info span {
+        margin-top: 2px;
+        font-size: 9px;
+      }
+
+      .tt-app .order-status {
+        padding: 2px 4px;
+        font-size: 8.5px;
+      }
+
+      .tt-app .trade-tip {
+        display: none;
+      }
+
+      .tt-app .ticker {
+        height: 30px;
+        margin-bottom: 8px;
+      }
+    }
+  

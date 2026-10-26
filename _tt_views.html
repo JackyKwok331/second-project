@@ -1,0 +1,189 @@
+    <!-- ===================== 行情 ===================== -->
+    <main class="tt-page tt-hidden" id="ttViewMarket" data-view="market">
+      <div class="pg-head">
+        <div class="pg-title">行情 <span>MARKET WATCH</span></div>
+        <div class="pg-tools">
+          <div class="watch-tabs" id="mkTabs">
+            <button class="watch-tab active" data-cat="全部">全部</button>
+            <button class="watch-tab" data-cat="A股">A 股</button>
+            <button class="watch-tab" data-cat="ETF">ETF</button>
+            <button class="watch-tab" data-cat="美股">美股</button>
+            <button class="watch-tab" data-cat="指数">指数</button>
+          </div>
+          <label class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+            <input type="search" id="mkSearch" placeholder="搜索名称 / 代码" aria-label="搜索名称或代码">
+          </label>
+          <button class="sort-btn" type="button" id="mkSortPct" data-sort="pct">涨跌幅 ↓</button>
+          <button class="sort-btn" type="button" id="mkSortAmt" data-sort="amount">成交额</button>
+        </div>
+      </div>
+
+      <div class="mk-index-line" id="mkIndexLine"></div>
+
+      <div class="mk-panel">
+        <div class="mk-table-wrap">
+          <table class="market-table mk-table">
+            <thead>
+              <tr>
+                <th>名称 / 代码</th>
+                <th>最新价</th>
+                <th>涨跌幅</th>
+                <th>今开</th>
+                <th>最高</th>
+                <th>最低</th>
+                <th>成交额</th>
+                <th>换手</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="mkRows"></tbody>
+          </table>
+        </div>
+        <div class="mk-foot">
+          <span id="mkFoot">共 0 个标的</span>
+          <span>点击任意一行 → 回到交易台并带入下单面板</span>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===================== 持仓 ===================== -->
+    <main class="tt-page tt-hidden" id="ttViewPos" data-view="positions">
+      <div class="pg-head">
+        <div class="pg-title">持仓 <span>PORTFOLIO</span></div>
+        <div class="pg-tools">
+          <button class="sort-btn" type="button" id="posGoMarket">去行情选股 →</button>
+          <button class="sort-btn" type="button" id="posGoDesk">回到交易台</button>
+        </div>
+      </div>
+
+      <div class="pos-stats">
+        <div class="pos-stat">
+          <span>持仓市值</span>
+          <b id="posValue">0.0</b>
+          <small>按最新价折算</small>
+        </div>
+        <div class="pos-stat">
+          <span>累计盈亏</span>
+          <b id="posPnl">0.0</b>
+          <small id="posPnlPct">0.00%</small>
+        </div>
+        <div class="pos-stat">
+          <span>可用积分</span>
+          <b id="posAvail">0.0</b>
+          <small>个人 + 赠送</small>
+        </div>
+        <div class="pos-stat">
+          <span>今日成交</span>
+          <b id="posTrades">0 笔</b>
+          <small>手续费合计 <i id="posFees">0.0</i></small>
+        </div>
+      </div>
+
+      <div class="pos-body">
+        <div class="pos-main">
+          <div class="mk-table-wrap">
+            <table class="market-table pos-table">
+              <thead>
+                <tr>
+                  <th>名称 / 代码</th>
+                  <th>持股</th>
+                  <th>可卖</th>
+                  <th>成本价</th>
+                  <th>现价</th>
+                  <th>市值</th>
+                  <th>盈亏</th>
+                  <th>盈亏%</th>
+                  <th>操作</th>
+                </tr>
+              </thead>
+              <tbody id="posRows"></tbody>
+            </table>
+            <div class="tt-empty tt-hidden" id="posEmpty">
+              <div class="tt-empty-icon">📈</div>
+              <div class="tt-empty-title">还没有持仓</div>
+              <div class="tt-empty-desc">先去行情里挑一只标的，用积分买入第一手。<br>首次进入已赠送 20,000 积分到证券账户。</div>
+              <button class="tt-empty-btn" type="button" id="posEmptyBtn">去行情选股</button>
+            </div>
+          </div>
+          <div class="mk-foot">
+            <span id="posFoot">共 0 只</span>
+            <span>当日买入次日可卖（T+1）</span>
+          </div>
+        </div>
+
+        <aside class="pos-side">
+          <section class="panel alloc-panel">
+            <div class="panel-inner">
+              <div class="panel-head">
+                <div class="panel-title">资产配置</div>
+                <span class="micro">ALLOCATION</span>
+              </div>
+              <div class="alloc-bar" id="posAllocBar" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+              <div class="alloc-legend" id="posAllocLegend"></div>
+            </div>
+          </section>
+
+          <section class="panel orders-panel">
+            <div class="panel-inner">
+              <div class="panel-head">
+                <div class="panel-title">今日委托</div>
+                <span class="micro">ORDERS</span>
+              </div>
+              <div class="order-list" id="posOrderList"></div>
+            </div>
+          </section>
+        </aside>
+      </div>
+    </main>
+
+    <!-- ===================== 积分账户弹窗 ===================== -->
+    <div class="tt-modal" id="ttAccountModal" role="dialog" aria-modal="true" aria-labelledby="ttAccTitle">
+      <div class="tt-modal-card">
+        <div class="tt-modal-kicker">POINTS ACCOUNT</div>
+        <div class="tt-modal-title" id="ttAccTitle">积分账户</div>
+        <p class="tt-modal-desc">博客积分与证券账户 1:1 互转。转入后可交易；卖出所得进入「个人积分」，随时可提现。赠送积分不可提现。</p>
+
+        <div class="tt-modal-list">
+          <div><span>博客积分</span><b id="mBlogPoints">0</b></div>
+          <div><span>证券账户 · 个人积分</span><b id="mPersonal">0.0</b></div>
+          <div><span>证券账户 · 赠送积分</span><b class="gold" id="mGift">0.0</b></div>
+          <div><span>可用积分合计</span><b id="mAvail">0.0</b></div>
+        </div>
+
+        <div class="tt-field">
+          <input type="number" id="mAmount" min="1" step="1" placeholder="输入积分数量" inputmode="numeric">
+          <button type="button" id="mTransferBtn">转入</button>
+        </div>
+        <div class="tt-quick">
+          <button type="button" data-amt="100">100</button>
+          <button type="button" data-amt="500">500</button>
+          <button type="button" data-amt="1000">1,000</button>
+          <button type="button" data-amt="all">全部博客积分</button>
+        </div>
+
+        <div class="tt-field">
+          <button type="button" id="mWithdrawBtn" style="flex:1;">提现到博客积分</button>
+        </div>
+        <p class="tt-modal-desc" style="margin-top:8px;">提现只从「个人积分」扣除；赠送积分始终留在证券账户内。</p>
+
+        <div class="tt-modal-actions">
+          <button class="tt-modal-btn primary" type="button" id="mCloseBtn">完成</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== 首次赠送弹窗 ===================== -->
+    <div class="tt-modal" id="ttGiftModal" role="dialog" aria-modal="true" aria-labelledby="ttGiftTitle">
+      <div class="tt-modal-card">
+        <div class="tt-modal-kicker">WELCOME BONUS</div>
+        <div class="tt-modal-title" id="ttGiftTitle">欢迎来到行情交易终端</div>
+        <div class="tt-gift-amount">20,000</div>
+        <div class="tt-gift-unit">积分已发放到证券账户</div>
+        <p class="tt-modal-desc">这是<b>一次性</b>新手积分，已直接计入「赠送积分」，可用来交易，但<b>不能</b>提现成博客积分。之后再次进入不会重复发放。</p>
+        <p class="tt-modal-desc">想把博客里攒的积分也拿来练手？进入后点「博客积分转入」，按 1:1 换到证券账户即可。</p>
+        <div class="tt-modal-actions">
+          <button class="tt-modal-btn primary" type="button" id="ttGiftOkBtn">开始交易</button>
+        </div>
+      </div>
+    </div>

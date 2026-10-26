@@ -1,0 +1,1279 @@
+    /* =====================================================================
+       行情交易终端 · 集成层（浮层 / 视图 / 账户 / 弹窗）
+       ===================================================================== */
+
+    /* ---------- 浮层外壳 ---------- */
+    .tt-app {
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      height: 100dvh;
+      min-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(10px) scale(0.995);
+      transition: opacity 0.26s ease, transform 0.26s ease, visibility 0.26s;
+    }
+
+    .tt-app.tt-open {
+      opacity: 1;
+      visibility: visible;
+      transform: none;
+    }
+
+    .tt-app::before {
+      position: absolute;
+    }
+
+    body.tt-locked {
+      overflow: hidden;
+    }
+
+    .tt-hidden {
+      display: none !important;
+    }
+
+    /* ---------- 顶栏补充 ---------- */
+    .tt-close {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      flex: 0 0 32px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-size: 15px;
+      cursor: pointer;
+      transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .tt-close:hover {
+      border-color: rgba(255, 123, 114, 0.5);
+      background: rgba(255, 123, 114, 0.12);
+      color: #ffb4ad;
+    }
+
+    .tt-app .wallet {
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .tt-app .wallet:hover {
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tt-app .wallet-coin {
+      font-size: 12px;
+      font-weight: 800;
+    }
+
+    /* ---------- 积分账户卡 ---------- */
+    .tt-account-card .player-head {
+      margin-bottom: 10px;
+    }
+
+    .acc-split {
+      display: grid;
+      gap: 3px;
+      margin-top: 9px;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .acc-row {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 8px;
+      color: var(--muted);
+      font-size: 10.5px;
+    }
+
+    .acc-row b {
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .acc-row.gift b {
+      color: var(--gold-soft);
+    }
+
+    .acc-row.total {
+      margin-top: 2px;
+      padding-top: 4px;
+      border-top: 1px dashed rgba(126, 231, 183, 0.16);
+      color: var(--text);
+      font-size: 11px;
+    }
+
+    .acc-row.total b {
+      color: var(--mint);
+      font-size: 13px;
+    }
+
+    .acc-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .acc-btn {
+      padding: 7px 6px;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s ease, border-color 0.18s ease, transform 0.12s ease;
+    }
+
+    .acc-btn:hover {
+      background: rgba(110, 231, 183, 0.1);
+      border-color: rgba(110, 231, 183, 0.4);
+    }
+
+    .acc-btn:active {
+      transform: translateY(1px);
+    }
+
+    .acc-btn.primary {
+      border-color: rgba(251, 191, 36, 0.34);
+      background: linear-gradient(180deg, #fde68a, #fbbf24);
+      color: #3a2503;
+    }
+
+    .acc-btn.primary:hover {
+      background: linear-gradient(180deg, #fef3c7, #fbbf24);
+    }
+
+    /* ---------- 下单面板：提示与禁用 ---------- */
+    .order-warn {
+      margin: 7px 16px 0;
+      padding: 6px 10px;
+      border: 1px solid rgba(255, 123, 114, 0.34);
+      border-radius: 8px;
+      background: rgba(255, 123, 114, 0.1);
+      color: #ffb4ad;
+      font-size: 10.5px;
+      line-height: 1.5;
+    }
+
+    .submit-order:disabled,
+    .submit-order.is-disabled {
+      background: linear-gradient(180deg, #4b5754, #3a4643);
+      color: #9aa8a4;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .tt-mini {
+      margin-left: 5px;
+      color: var(--muted-2);
+      font-size: 9px;
+      font-style: normal;
+    }
+
+    .summary-row b.tt-up {
+      color: var(--up);
+    }
+
+    .summary-row b.tt-down {
+      color: var(--down);
+    }
+
+    /* ---------- 通用页面视图（行情 / 持仓） ---------- */
+    .tt-page {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding: 12px 20px 10px;
+      overflow: hidden;
+    }
+
+    .pg-head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .pg-title {
+      display: flex;
+      align-items: baseline;
+      gap: 9px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+
+    .pg-title span {
+      color: var(--muted-2);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+    }
+
+    .pg-tools {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* 指数横条 */
+    .mk-index-line {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 8px 12px;
+      overflow-x: auto;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(7, 23, 18, 0.62);
+      white-space: nowrap;
+      scrollbar-width: none;
+    }
+
+    .mk-index-line::-webkit-scrollbar {
+      display: none;
+    }
+
+    .mk-index-item {
+      display: inline-flex;
+      align-items: baseline;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .mk-index-item b {
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+
+    .mk-index-item i {
+      font-style: normal;
+      font-weight: 700;
+    }
+
+    /* 行情面板 */
+    .mk-panel {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .mk-table-wrap {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: auto;
+    }
+
+    .mk-table {
+      min-width: 900px;
+    }
+
+    .mk-table th {
+      padding: 9px 10px;
+      font-size: 10.5px;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .mk-table td {
+      padding: 8px 10px;
+      font-size: 12px;
+    }
+
+    .mk-table tbody tr {
+      cursor: pointer;
+    }
+
+    .mk-foot {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted-2);
+      font-size: 10px;
+    }
+
+    /* 排序按钮 */
+    .sort-btn {
+      padding: 5px 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 10.5px;
+      cursor: pointer;
+      transition: color 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .sort-btn:hover {
+      color: var(--text);
+      border-color: var(--line-strong);
+    }
+
+    .sort-btn.active {
+      border-color: rgba(110, 231, 183, 0.4);
+      background: rgba(110, 231, 183, 0.12);
+      color: var(--mint);
+      font-weight: 600;
+    }
+
+    /* 持仓页 */
+    .pos-stats {
+      flex: 0 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .pos-stat {
+      padding: 10px 13px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--panel);
+    }
+
+    .pos-stat span {
+      display: block;
+      color: var(--muted-2);
+      font-size: 9.5px;
+      letter-spacing: 0.04em;
+    }
+
+    .pos-stat b {
+      display: block;
+      margin-top: 4px;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .pos-stat small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted-2);
+      font-size: 9.5px;
+    }
+
+    .pos-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 10px;
+    }
+
+    .pos-main {
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .pos-side {
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      overflow: hidden;
+    }
+
+    .pos-side .panel {
+      min-height: 0;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .pos-side .panel-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      padding: 12px 14px;
+    }
+
+    .pos-side .alloc-panel {
+      flex: 0 0 auto;
+    }
+
+    .pos-side .orders-panel {
+      flex: 1 1 auto;
+    }
+
+    .pos-table {
+      min-width: 860px;
+    }
+
+    .pos-table th {
+      padding: 9px 10px;
+      font-size: 10.5px;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+
+    .pos-table td {
+      padding: 9px 10px;
+      font-size: 12px;
+    }
+
+    /* 空状态 */
+    .tt-empty {
+      flex: 1 1 auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 24px;
+      color: var(--muted-2);
+      text-align: center;
+    }
+
+    .tt-empty-icon {
+      font-size: 26px;
+      opacity: 0.8;
+    }
+
+    .tt-empty-title {
+      color: var(--text);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .tt-empty-desc {
+      font-size: 11px;
+      line-height: 1.6;
+    }
+
+    .tt-empty-btn {
+      margin-top: 4px;
+      padding: 7px 14px;
+      border: 1px solid rgba(251, 191, 36, 0.34);
+      border-radius: 8px;
+      background: linear-gradient(180deg, #fde68a, #fbbf24);
+      color: #3a2503;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* ---------- 弹窗 ---------- */
+    .tt-modal {
+      position: absolute;
+      inset: 0;
+      z-index: 60;
+      display: none;
+      place-items: center;
+      padding: 16px;
+      background: rgba(2, 10, 8, 0.74);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+    }
+
+    .tt-modal.show {
+      display: grid;
+    }
+
+    .tt-modal-card {
+      width: min(430px, 100%);
+      max-height: 88vh;
+      overflow-y: auto;
+      padding: 20px;
+      border: 1px solid var(--line-strong);
+      border-radius: 16px;
+      background: linear-gradient(180deg, #0d2a23 0%, #081a16 100%);
+      box-shadow: 0 30px 70px -30px rgba(0, 0, 0, 0.95);
+    }
+
+    .tt-modal-kicker {
+      color: var(--gold-soft);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8.5px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    .tt-modal-title {
+      margin-top: 5px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .tt-modal-desc {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.65;
+    }
+
+    .tt-modal-list {
+      display: grid;
+      gap: 6px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.022);
+    }
+
+    .tt-modal-list div {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 11px;
+    }
+
+    .tt-modal-list b {
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 13px;
+    }
+
+    .tt-modal-list b.gold {
+      color: var(--gold-soft);
+    }
+
+    .tt-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .tt-field input {
+      flex: 1 1 auto;
+      min-width: 0;
+      height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      background: rgba(0, 0, 0, 0.32);
+      color: var(--text);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 15px;
+      outline: none;
+    }
+
+    .tt-field input:focus {
+      border-color: rgba(110, 231, 183, 0.6);
+    }
+
+    .tt-field button {
+      height: 38px;
+      padding: 0 16px;
+      border-radius: 9px;
+      background: linear-gradient(180deg, #6ee7b7, #34d399);
+      color: #052a1f;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .tt-field button:disabled {
+      background: #33443f;
+      color: #7d918c;
+      cursor: not-allowed;
+    }
+
+    .tt-quick {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .tt-quick button {
+      flex: 1;
+      padding: 6px 0;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--muted);
+      font-family: inherit;
+      font-size: 10.5px;
+      cursor: pointer;
+    }
+
+    .tt-quick button:hover {
+      color: var(--mint);
+      border-color: rgba(110, 231, 183, 0.4);
+    }
+
+    .tt-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+      margin-top: 16px;
+    }
+
+    .tt-modal-btn {
+      padding: 9px 18px;
+      border: 1px solid var(--line-strong);
+      border-radius: 9px;
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tt-modal-btn.primary {
+      border-color: rgba(251, 191, 36, 0.36);
+      background: linear-gradient(180deg, #fde68a, #fbbf24);
+      color: #3a2503;
+      font-weight: 800;
+    }
+
+    .tt-gift-amount {
+      margin: 10px 0 2px;
+      color: var(--gold-soft);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 34px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      text-align: center;
+    }
+
+    .tt-gift-unit {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* ---------- 博客首页入口横幅 ---------- */
+    .term-banner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 20px;
+      padding: 24px 28px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 123, 114, 0.22);
+      border-radius: 16px;
+      background:
+        radial-gradient(80% 130% at 88% 12%, rgba(255, 123, 114, 0.16) 0%, transparent 56%),
+        radial-gradient(70% 120% at 0% 108%, rgba(110, 231, 183, 0.12) 0%, transparent 58%),
+        linear-gradient(135deg, #0a1512 0%, #0d1f1b 48%, #12241f 100%);
+      box-shadow:
+        0 24px 45px -30px rgba(2, 26, 22, 0.9),
+        0 0 0 1px rgba(255, 255, 255, 0.03) inset;
+      isolation: isolate;
+    }
+
+    .term-banner::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-image:
+        linear-gradient(rgba(110, 231, 183, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(110, 231, 183, 0.05) 1px, transparent 1px);
+      background-size: 26px 26px;
+      -webkit-mask-image: radial-gradient(circle at 78% 20%, #000 0%, transparent 76%);
+      mask-image: radial-gradient(circle at 78% 20%, #000 0%, transparent 76%);
+    }
+
+    .term-content {
+      position: relative;
+      z-index: 2;
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .term-kicker {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: var(--gold-soft);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+    }
+
+    .term-kicker::before {
+      content: "";
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #ff7b72;
+      box-shadow: 0 0 8px rgba(255, 123, 114, 0.9);
+    }
+
+    .term-title {
+      margin: 8px 0 6px;
+      color: #f4f8f6;
+      font-size: 25px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      line-height: 1.15;
+    }
+
+    .term-title em {
+      margin-left: 8px;
+      color: rgba(244, 248, 246, 0.42);
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 11px;
+      font-style: normal;
+      font-weight: 600;
+      letter-spacing: 0.16em;
+      vertical-align: middle;
+    }
+
+    .term-desc {
+      max-width: 460px;
+      color: rgba(233, 245, 241, 0.68);
+      font-size: 12.5px;
+      line-height: 1.65;
+    }
+
+    .term-actions {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .term-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fde68a, #fbbf24);
+      color: #3a2503;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 10px 22px -14px rgba(251, 191, 36, 0.9);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .term-cta:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 14px 26px -12px rgba(251, 191, 36, 0.95);
+    }
+
+    .term-hint {
+      color: rgba(233, 245, 241, 0.5);
+      font-size: 11px;
+    }
+
+    .term-hint b {
+      color: #6ee7b7;
+    }
+
+    .term-art {
+      position: relative;
+      z-index: 1;
+      flex: 0 0 240px;
+      height: 96px;
+      align-self: center;
+    }
+
+    .term-art svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+    }
+
+    .term-pill {
+      position: absolute;
+      top: -4px;
+      right: 4px;
+      padding: 3px 8px;
+      border: 1px solid rgba(110, 231, 183, 0.28);
+      border-radius: 999px;
+      background: rgba(6, 24, 19, 0.8);
+      color: #6ee7b7;
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    /* 游戏厅里的入口卡片 */
+    .stock-entry-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      padding: 30px 20px;
+      text-align: center;
+    }
+
+    .stock-entry-card .coming-soon-icon {
+      margin-bottom: 0;
+    }
+
+    .stock-entry-btn {
+      padding: 11px 26px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #fde68a, #fbbf24);
+      color: #3a2503;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+
+    /* ---------- 响应式 ---------- */
+    @media (max-width: 1180px) {
+      .pos-body {
+        grid-template-columns: minmax(0, 1fr) 260px;
+      }
+
+      .pos-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 900px) {
+      .term-banner {
+        display: block;
+        padding: 20px;
+      }
+
+      .term-art {
+        display: none;
+      }
+
+      .pos-body {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .pos-side {
+        flex: 0 0 auto;
+      }
+    }
+
+    /* ---------- 指数条：窄屏隐藏代码副标题，避免 6 张卡片互相挤压 ---------- */
+    @media (min-width: 1025px) and (max-width: 1340px) {
+      .tt-app .index-top span:last-child {
+        display: none;
+      }
+
+      .tt-app .index-value {
+        font-size: 16px;
+      }
+
+      /* 左栏变窄后，账户卡里的按钮与副标题不换行 */
+      .tt-app .acc-btn {
+        white-space: nowrap;
+        font-size: 10.5px;
+        padding: 7px 3px;
+        letter-spacing: -0.2px;
+      }
+
+      .tt-app .player-sub {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    /* ---------- 行情页表格是 9 列（多一列「换手」），需要单独分配宽度 ----------
+       原来的 8 列宽度加起来正好 100%，导致第 9 列「操作」被压成 0 宽，
+       交易按钮被挤到表格外面看不见。这里重新按 9 列分配。 */
+    .tt-app .mk-table th:nth-child(1) { width: 26%; }
+    .tt-app .mk-table th:nth-child(2) { width: 11%; }
+    .tt-app .mk-table th:nth-child(3) { width: 10%; }
+    .tt-app .mk-table th:nth-child(4) { width: 9%; }
+    .tt-app .mk-table th:nth-child(5) { width: 9%; }
+    .tt-app .mk-table th:nth-child(6) { width: 9%; }
+    .tt-app .mk-table th:nth-child(7) { width: 9%; }
+    .tt-app .mk-table th:nth-child(8) { width: 9%; }
+    .tt-app .mk-table th:nth-child(9) { width: 8%; }
+
+    .tt-app .mk-table th:last-child,
+    .tt-app .mk-table td:last-child {
+      text-align: center;
+    }
+
+    /* 窄屏时列会被隐藏，用固定像素保证「操作」列始终放得下按钮 */
+    @media (max-width: 1024px) {
+      .tt-app .mk-table th:nth-child(1) { width: auto; }
+      .tt-app .mk-table th:last-child,
+      .tt-app .mk-table td:last-child { width: 72px; }
+    }
+
+    /* =====================================================================
+       交易台左栏改版：小按钮 + 自选股 + 持仓/委托合并
+       ===================================================================== */
+
+    /* 1) 转入 / 提现 按钮缩小 */
+    .tt-app .acc-actions {
+      margin-top: 7px;
+      gap: 5px;
+    }
+
+    .tt-app .acc-btn {
+      padding: 5px 4px;
+      border-radius: 7px;
+      font-size: 10.5px;
+      letter-spacing: -0.2px;
+      white-space: nowrap;
+    }
+
+    /* 2) 持仓 + 委托 合并成一个框 */
+    .tt-app .book-panel .holdings-list {
+      flex: 1.15 1 0;
+      min-height: 0;
+    }
+
+    .tt-app .book-panel .order-list {
+      flex: 1 1 0;
+      min-height: 34px;
+    }
+
+    .tt-app .book-split {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 7px 0 5px;
+      padding-top: 7px;
+      border-top: 1px dashed rgba(110, 231, 183, 0.16);
+    }
+
+    .tt-app .book-split-title {
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--muted);
+      letter-spacing: 0.02em;
+    }
+
+    .tt-app .book-split-count {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 9.5px;
+      color: var(--muted-2);
+    }
+
+    /* 3) 自选股 */
+    .tt-app .watchlist-panel {
+      flex: 1 1 0;
+      min-height: 104px;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .tt-app .watchlist-panel .panel-inner {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      min-height: 0;
+      padding: 12px 15px;
+    }
+
+    .tt-app .wl-list {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    .tt-app .wl-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 3px;
+      border-radius: 7px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .tt-app .wl-row:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .tt-app .wl-logo {
+      flex: 0 0 auto;
+      width: 23px;
+      height: 23px;
+      border-radius: 7px;
+      display: grid;
+      place-items: center;
+      font-size: 10.5px;
+      font-weight: 700;
+      background: rgba(110, 231, 183, 0.12);
+      color: #8ff0cd;
+    }
+
+    .tt-app .wl-main {
+      min-width: 0;
+      flex: 1 1 auto;
+    }
+
+    .tt-app .wl-name {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tt-app .wl-code {
+      font-family: "Bricolage Grotesque", sans-serif;
+      font-size: 8.5px;
+      color: var(--muted-2);
+      letter-spacing: 0.02em;
+      line-height: 1.2;
+    }
+
+    .tt-app .wl-right {
+      flex: 0 0 auto;
+      text-align: right;
+      line-height: 1.2;
+    }
+
+    .tt-app .wl-price {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tt-app .wl-pct {
+      font-size: 9px;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tt-app .wl-del {
+      flex: 0 0 auto;
+      width: 16px;
+      height: 16px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: none;
+      border-radius: 50%;
+      background: transparent;
+      color: var(--muted-2);
+      font-size: 13px;
+      line-height: 1;
+      cursor: pointer;
+      opacity: 0;
+      transition: opacity 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .tt-app .wl-row:hover .wl-del {
+      opacity: 1;
+    }
+
+    .tt-app .wl-del:hover {
+      background: rgba(248, 113, 113, 0.18);
+      color: #fca5a5;
+    }
+
+    /* 4) 自选星标：未选中时暗一点 */
+    .tt-app .star-btn {
+      opacity: 0.28;
+    }
+
+    .tt-app .star-btn.on {
+      opacity: 1;
+    }
+
+    .tt-app .star-btn:hover {
+      opacity: 0.75;
+    }
+
+    /* 余额提示条出现时，给「交易规则」多留一点高度，保证 5 条不被切 */
+    .tt-app .order-rules {
+      margin: 8px 16px 8px;
+    }
+
+    /* 底部渐隐只在内容真的需要滚动时才显示，
+       否则「刚好放得下」时最后一条会被无谓地压暗 */
+    .tt-app .order-rules::after {
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .tt-app .order-rules.can-scroll::after {
+      opacity: 1;
+    }
+
+    /* =====================================================================
+       矮屏收敛（1366×768 等）：保证左栏不被压扁、自选 3 行可见、规则 5 条不被裁
+       ===================================================================== */
+
+    /* 合并框内的空态提示：压成一行，避免被压成 0 高时只露半行字 */
+    .tt-app .tt-empty-compact {
+      padding: 4px 2px;
+    }
+
+    .tt-app .tt-empty-compact .tt-empty-desc {
+      font-size: 10.5px;
+      line-height: 1.4;
+    }
+
+    /* 合并框里的空态贴着标题显示，不要悬在大片空白中间 */
+    .tt-app .book-panel .tt-empty-compact {
+      flex: 0 0 auto;
+      justify-content: flex-start;
+    }
+
+    /* 合并框：持仓列表与委托列表都不允许塌陷为 0 */
+    .tt-app .book-panel {
+      min-height: 120px;
+    }
+
+    .tt-app .book-panel .holdings-list {
+      flex: 1 1 0;
+      min-height: 24px;
+    }
+
+    .tt-app .book-panel .order-list {
+      flex: 1 1 0;
+      min-height: 24px;
+    }
+
+    /* 自选股：矮屏下也完整露出 3 行 */
+    .tt-app .watchlist-panel {
+      min-height: 142px;
+    }
+
+    .tt-app .wl-row {
+      padding: 3px;
+    }
+
+    @media (max-height: 820px) {
+      /* 账户卡瘦身：把纵向留白收一收，给下面两个面板腾地方 */
+      .tt-app .player-card {
+        padding: 9px 12px;
+      }
+
+      .tt-app .player-head {
+        margin-bottom: 4px;
+      }
+
+      .tt-app .wealth-label {
+        margin-top: 5px;
+      }
+
+      .tt-app .wealth-value {
+        font-size: 22px;
+        line-height: 1.15;
+      }
+
+      .tt-app .wealth-delta {
+        margin-top: 2px;
+      }
+
+      .tt-app .acc-split {
+        margin-top: 6px;
+        padding: 6px 9px;
+        gap: 2px;
+      }
+
+      .tt-app .acc-row.total {
+        margin-top: 1px;
+        padding-top: 3px;
+      }
+
+      .tt-app .acc-actions {
+        margin-top: 5px;
+      }
+
+      .tt-app .player-stats {
+        margin-top: 4px;
+      }
+
+      .tt-app .player-stat {
+        padding: 3px 6px;
+      }
+
+      .tt-app .left-column {
+        gap: 6px;
+      }
+
+      .tt-app .book-panel .panel-inner,
+      .tt-app .watchlist-panel .panel-inner {
+        padding: 10px 14px;
+      }
+
+      /* 下单面板：规则区字号收紧，5 条规则整体放得下 */
+      .tt-app .order-rules {
+        margin: 7px 14px 7px;
+        padding: 8px 10px 9px;
+      }
+
+      .tt-app .rules-head {
+        margin-bottom: 5px;
+      }
+
+      .tt-app .rules-body {
+        font-size: 10px;
+        line-height: 1.5;
+      }
+
+      .tt-app .rules-body p {
+        margin-bottom: 3px;
+      }
+
+      .tt-app .trade-tip {
+        padding: 7px 14px;
+        font-size: 9.5px;
+      }
+    }
